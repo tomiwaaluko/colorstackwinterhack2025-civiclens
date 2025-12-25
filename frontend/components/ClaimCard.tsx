@@ -1,5 +1,4 @@
-import type { Claim, Citation } from '@/lib/types';
-import SourceLink from './SourceLink';
+import type { Claim, Citation } from "@/lib/types";
 
 interface ClaimCardProps {
   claim: Claim;
@@ -20,41 +19,40 @@ export default function ClaimCard({
   );
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-4">
-      <div className="flex items-start gap-3">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-semibold text-blue-700">
+    <div className="group rounded-lg border border-ink-100 bg-white p-5 transition-all hover:border-ink-300 hover:shadow-md">
+      <div className="flex items-start gap-4">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-100 text-sm font-bold text-amber-800">
           {index + 1}
         </div>
         <div className="flex-1">
-          <p className="text-gray-900 mb-3">{claim.text}</p>
+          <p className="text-lg font-medium text-ink-900 mb-3">{claim.text}</p>
+
           {claim.confidence !== undefined && (
-            <div className="mb-3">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-gray-600">
-                  Confidence:
-                </span>
-                <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-blue-600 rounded-full"
-                    style={{ width: `${claim.confidence * 100}%` }}
-                  />
-                </div>
-                <span className="text-xs text-gray-600">
-                  {Math.round(claim.confidence * 100)}%
-                </span>
+            <div className="mb-4 flex items-center gap-3">
+              <span className="text-xs font-semibold uppercase tracking-wider text-ink-500">
+                Confidence
+              </span>
+              <div className="h-1.5 w-24 rounded-full bg-ink-100 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-ink-900"
+                  style={{ width: `${claim.confidence * 100}%` }}
+                />
               </div>
+              <span className="text-xs font-medium text-ink-600">
+                {Math.round(claim.confidence * 100)}%
+              </span>
             </div>
           )}
+
           {claimCitations.length > 0 && (
             <div className="flex flex-wrap gap-2">
-              <span className="text-xs font-medium text-gray-600">Sources:</span>
               {claimCitations.map((citation, idx) => (
                 <button
                   key={idx}
                   onClick={() => onCitationClick?.(citation)}
-                  className="text-xs text-blue-600 hover:text-blue-800 hover:underline"
+                  className="inline-flex items-center rounded border border-ink-200 bg-ink-50 px-2 py-1 text-xs font-medium text-ink-600 transition-colors hover:bg-white hover:text-amber-700 hover:border-amber-300"
                 >
-                  {citation.title || `Source ${idx + 1}`}
+                  Source {idx + 1}
                 </button>
               ))}
             </div>
@@ -64,4 +62,3 @@ export default function ClaimCard({
     </div>
   );
 }
-

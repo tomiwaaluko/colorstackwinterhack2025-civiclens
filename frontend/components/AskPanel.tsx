@@ -1,24 +1,25 @@
-'use client';
+"use client";
 
-import { useState, FormEvent } from 'react';
-import type { AIResponse, Citation } from '@/lib/types';
-import { askQuestion } from '@/lib/api';
-import ClaimCard from './ClaimCard';
-import Citations from './Citations';
-import LoadingSpinner from './LoadingSpinner';
-import InsufficientData from './InsufficientData';
-import SourceDrawer from './SourceDrawer';
+import { useState, FormEvent } from "react";
+import type { AIResponse, Citation } from "@/lib/types";
+import { askQuestion } from "@/lib/api";
+import ClaimCard from "./ClaimCard";
+import Citations from "./Citations";
+import LoadingSpinner from "./LoadingSpinner";
+import SourceDrawer from "./SourceDrawer";
 
 interface AskPanelProps {
   politicianIds?: string[];
 }
 
 export default function AskPanel({ politicianIds }: AskPanelProps) {
-  const [question, setQuestion] = useState('');
+  const [question, setQuestion] = useState("");
   const [response, setResponse] = useState<AIResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedCitation, setSelectedCitation] = useState<Citation | null>(null);
+  const [selectedCitation, setSelectedCitation] = useState<Citation | null>(
+    null
+  );
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -36,7 +37,7 @@ export default function AskPanel({ politicianIds }: AskPanelProps) {
       });
       setResponse(result);
     } catch (err: any) {
-      setError(err.message || 'Failed to get answer');
+      setError(err.message || "Failed to get answer");
     } finally {
       setIsLoading(false);
     }
@@ -53,40 +54,47 @@ export default function AskPanel({ politicianIds }: AskPanelProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Question Input */}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label
-            htmlFor="question"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            Ask a Question
-          </label>
-          <textarea
-            id="question"
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder="e.g., What is this politician's stance on healthcare?"
-            rows={4}
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            disabled={isLoading}
-          />
-          <p className="mt-2 text-xs text-gray-500">
-            Ask evidence-based questions. The system will only answer from available sources.
-          </p>
-        </div>
-        <button
-          type="submit"
-          disabled={isLoading || !question.trim()}
-          className="rounded-lg bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {isLoading ? 'Asking...' : 'Ask Question'}
-        </button>
-      </form>
+      <div className="rounded-xl bg-ink-900 p-6 text-white shadow-lg">
+        <h2 className="headline-sm mb-4 text-white">Ask CivicLens AI</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="question" className="sr-only">
+              Ask a Question
+            </label>
+            <textarea
+              id="question"
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              placeholder="e.g., What is this politician's stance on healthcare?"
+              rows={3}
+              className="w-full rounded-lg border-0 bg-white/10 px-4 py-3 text-white placeholder-white/50 ring-1 ring-white/20 focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              disabled={isLoading}
+            />
+            <p className="mt-2 text-xs text-white/60">
+              Ask evidence-based questions. The system will only answer from
+              available sources.
+            </p>
+          </div>
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              disabled={isLoading || !question.trim()}
+              className="rounded-lg bg-amber-500 px-6 py-2.5 font-medium text-ink-900 transition-colors hover:bg-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-ink-900 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isLoading ? "Analyzing..." : "Ask Question"}
+            </button>
+          </div>
+        </form>
+      </div>
 
       {/* Loading State */}
-      {isLoading && <LoadingSpinner />}
+      {isLoading && (
+        <div className="flex justify-center py-12">
+          <LoadingSpinner />
+        </div>
+      )}
 
       {/* Error State */}
       {error && (
@@ -97,21 +105,23 @@ export default function AskPanel({ politicianIds }: AskPanelProps) {
 
       {/* Response */}
       {response && (
-        <div className="space-y-6">
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
           {/* Answer */}
-          <div className="rounded-lg border border-gray-200 bg-white p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">
-              Answer
-            </h2>
-            <p className="text-gray-700 leading-relaxed">{response.answer}</p>
+          <div className="rounded-xl border border-ink-200 bg-white p-8 shadow-sm">
+            <h2 className="headline-sm mb-4 text-ink-900">Analysis</h2>
+            <div className="prose prose-ink max-w-none">
+              <p className="text-lg leading-relaxed text-ink-800">
+                {response.answer}
+              </p>
+            </div>
           </div>
 
           {/* Claims */}
           {response.claims && response.claims.length > 0 && (
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                Supporting Evidence
-              </h2>
+              <h3 className="headline-sm mb-6 text-ink-900">
+                Key Claims & Evidence
+              </h3>
               <div className="space-y-4">
                 {response.claims.map((claim, idx) => (
                   <ClaimCard
@@ -134,25 +144,21 @@ export default function AskPanel({ politicianIds }: AskPanelProps) {
             />
           )}
 
-          {/* Limitations */}
-          {response.limitations && (
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-              <h3 className="text-sm font-semibold text-amber-900 mb-2">
-                Limitations
-              </h3>
-              <p className="text-sm text-amber-800">{response.limitations}</p>
-            </div>
-          )}
-
-          {/* Disclosure */}
-          {response.disclosure && (
-            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-              <h3 className="text-sm font-semibold text-blue-900 mb-2">
-                Disclosure
-              </h3>
-              <p className="text-sm text-blue-800">{response.disclosure}</p>
-            </div>
-          )}
+          {/* Limitations & Disclosure */}
+          <div className="grid gap-4 sm:grid-cols-2">
+            {response.limitations && (
+              <div className="rounded-lg bg-amber-50 p-4 text-sm text-amber-900">
+                <h3 className="font-semibold mb-1">Limitations</h3>
+                <p>{response.limitations}</p>
+              </div>
+            )}
+            {response.disclosure && (
+              <div className="rounded-lg bg-ink-50 p-4 text-sm text-ink-900">
+                <h3 className="font-semibold mb-1">Disclosure</h3>
+                <p>{response.disclosure}</p>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -165,4 +171,3 @@ export default function AskPanel({ politicianIds }: AskPanelProps) {
     </div>
   );
 }
-

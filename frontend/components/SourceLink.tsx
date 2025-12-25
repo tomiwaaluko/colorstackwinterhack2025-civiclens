@@ -1,17 +1,19 @@
-'use client';
+"use client";
 
-import type { Citation } from '@/lib/types';
+import type { Citation } from "@/lib/types";
 
 interface SourceLinkProps {
   citation: Citation;
   className?: string;
   onClick?: (citation: Citation) => void;
+  compact?: boolean;
 }
 
 export default function SourceLink({
   citation,
-  className = '',
+  className = "",
   onClick,
+  compact = false,
 }: SourceLinkProps) {
   const handleClick = (e: React.MouseEvent) => {
     if (onClick) {
@@ -26,11 +28,11 @@ export default function SourceLink({
       target="_blank"
       rel="noopener noreferrer"
       onClick={handleClick}
-      className={`inline-flex items-center text-sm text-blue-600 hover:text-blue-800 hover:underline ${className}`}
+      className={`inline-flex items-center gap-1 rounded-full bg-ink-50 px-3 py-1 text-xs font-medium text-ink-600 transition-colors hover:bg-ink-100 hover:text-ink-900 ${className}`}
       title={`Source: ${citation.title} - ${citation.publisher}`}
     >
       <svg
-        className="mr-1 h-4 w-4"
+        className="h-3 w-3"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -49,36 +51,19 @@ export default function SourceLink({
 
 interface ViewSourcesButtonProps {
   citations: Citation[];
-  label?: string;
   onCitationClick?: (citation: Citation) => void;
 }
 
 export function ViewSourcesButton({
   citations,
-  label = 'View sources',
   onCitationClick,
 }: ViewSourcesButtonProps) {
-  if (citations.length === 0) {
-    return null;
-  }
-
-  const handleClick = () => {
-    if (onCitationClick && citations[0]) {
-      onCitationClick(citations[0]);
-    } else if (citations[0]?.url) {
-      window.open(citations[0].url, '_blank', 'noopener,noreferrer');
-    }
-  };
-
   return (
-    <div className="mt-4">
-      <button
-        className="text-sm font-medium text-blue-600 hover:text-blue-800"
-        onClick={handleClick}
-      >
-        {label} ({citations.length})
-      </button>
-    </div>
+    <button
+      onClick={() => onCitationClick && onCitationClick(citations[0])}
+      className="text-sm font-medium text-amber-600 hover:text-amber-700 hover:underline"
+    >
+      View {citations.length} Source{citations.length !== 1 ? "s" : ""}
+    </button>
   );
 }
-

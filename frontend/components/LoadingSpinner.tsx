@@ -1,9 +1,10 @@
 export default function LoadingSpinner() {
   return (
-    <div className="flex items-center justify-center p-8">
-      <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600"></div>
-      <span className="ml-3 text-gray-600">Loading...</span>
+    <div className="flex flex-col items-center justify-center p-8 space-y-4">
+      <div className="h-10 w-10 animate-spin rounded-full border-4 border-ink-100 border-t-ink-900"></div>
+      <span className="text-sm font-medium text-ink-500 uppercase tracking-wider">
+        Loading Analysis...
+      </span>
     </div>
   );
 }
-

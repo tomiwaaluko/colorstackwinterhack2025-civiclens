@@ -1,16 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import type { ComparisonResult, Politician, Citation } from '@/lib/types';
-import { comparePoliticians, searchPoliticians } from '@/lib/api';
-import ProfileHeader from './ProfileHeader';
-import KeyVotes from './KeyVotes';
-import DonorChart from './DonorChart';
-import StatementsList from './StatementsList';
-import LoadingSpinner from './LoadingSpinner';
-import InsufficientData from './InsufficientData';
-import SourceDrawer from './SourceDrawer';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import type { ComparisonResult, Politician, Citation } from "@/lib/types";
+import { comparePoliticians, searchPoliticians } from "@/lib/api";
+import ProfileHeader from "./ProfileHeader";
+import KeyVotes from "./KeyVotes";
+import DonorChart from "./DonorChart";
+import StatementsList from "./StatementsList";
+import LoadingSpinner from "./LoadingSpinner";
+import SourceDrawer from "./SourceDrawer";
 
 interface CompareViewProps {
   politicianAId?: string;
@@ -27,11 +26,13 @@ export default function CompareView({
   const [comparison, setComparison] = useState<ComparisonResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedA, setSelectedA] = useState<string>(politicianAId || '');
-  const [selectedB, setSelectedB] = useState<string>(politicianBId || '');
+  const [selectedA, setSelectedA] = useState<string>(politicianAId || "");
+  const [selectedB, setSelectedB] = useState<string>(politicianBId || "");
   const [politicians, setPoliticians] = useState<Politician[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCitation, setSelectedCitation] = useState<Citation | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCitation, setSelectedCitation] = useState<Citation | null>(
+    null
+  );
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const handleCitationClick = (citation: Citation) => {
@@ -51,7 +52,7 @@ export default function CompareView({
         const result = await searchPoliticians();
         setPoliticians(result.politicians || []);
       } catch (err) {
-        console.error('Failed to load politicians:', err);
+        console.error("Failed to load politicians:", err);
       }
     };
     loadPoliticians();
@@ -66,7 +67,7 @@ export default function CompareView({
 
   const handleCompare = async () => {
     if (!selectedA || !selectedB) {
-      setError('Please select both politicians to compare');
+      setError("Please select both politicians to compare");
       return;
     }
 
@@ -81,7 +82,7 @@ export default function CompareView({
       });
       setComparison(result);
     } catch (err: any) {
-      setError(err.message || 'Failed to load comparison');
+      setError(err.message || "Failed to load comparison");
       setComparison(null);
     } finally {
       setIsLoading(false);
@@ -94,17 +95,21 @@ export default function CompareView({
       const result = await searchPoliticians(searchQuery);
       setPoliticians(result.politicians || []);
     } catch (err) {
-      console.error('Search failed:', err);
+      console.error("Search failed:", err);
     }
   };
 
   if (isLoading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="flex justify-center py-12">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   if (error && !comparison) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-6">
+      <div className="rounded-xl border border-red-200 bg-red-50 p-6">
         <p className="text-red-800">{error}</p>
       </div>
     );
@@ -114,13 +119,13 @@ export default function CompareView({
     <div className="space-y-8">
       {/* Selection UI */}
       {(!selectedA || !selectedB || !comparison) && (
-        <div className="rounded-lg border border-gray-200 bg-white p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        <div className="rounded-xl border border-ink-200 bg-white p-8 shadow-sm">
+          <h2 className="headline-sm mb-6 text-ink-900">
             Select Politicians to Compare
           </h2>
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-ink-700 mb-2">
                 Search for Politicians
               </label>
               <div className="flex gap-2">
@@ -128,27 +133,27 @@ export default function CompareView({
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  onKeyPress={(e) => e.key === "Enter" && handleSearch()}
                   placeholder="Search by name..."
-                  className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 rounded-lg border border-ink-300 px-4 py-2 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
                 <button
                   onClick={handleSearch}
-                  className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                  className="rounded-lg bg-ink-900 px-6 py-2 font-medium text-white hover:bg-ink-800 transition-colors"
                 >
                   Search
                 </button>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink-700 mb-2">
                   Politician A
                 </label>
                 <select
                   value={selectedA}
                   onChange={(e) => setSelectedA(e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-ink-300 px-4 py-2 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                 >
                   <option value="">Select...</option>
                   {politicians.map((p) => (
@@ -159,13 +164,13 @@ export default function CompareView({
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink-700 mb-2">
                   Politician B
                 </label>
                 <select
                   value={selectedB}
                   onChange={(e) => setSelectedB(e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg border border-ink-300 px-4 py-2 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                 >
                   <option value="">Select...</option>
                   {politicians.map((p) => (
@@ -179,7 +184,7 @@ export default function CompareView({
             {selectedA && selectedB && (
               <button
                 onClick={handleCompare}
-                className="w-full rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
+                className="w-full rounded-lg bg-amber-500 px-4 py-3 font-medium text-ink-900 hover:bg-amber-400 transition-colors"
               >
                 Compare
               </button>
@@ -192,9 +197,9 @@ export default function CompareView({
       {comparison && (
         <div className="space-y-8">
           {topic && (
-            <div className="rounded-lg bg-blue-50 border border-blue-200 p-4">
-              <p className="text-sm font-medium text-blue-900">
-                Comparing on topic: <span className="font-semibold">{topic}</span>
+            <div className="rounded-lg bg-amber-50 border border-amber-200 p-4">
+              <p className="text-sm font-medium text-amber-900">
+                Comparing on topic: <span className="font-bold">{topic}</span>
               </p>
             </div>
           )}
@@ -202,68 +207,68 @@ export default function CompareView({
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Politician A */}
             <div className="space-y-6">
-              <div className="sticky top-4">
-                <div className="rounded-lg bg-white border border-gray-200 p-6 shadow-sm">
-                  <div className="mb-4 pb-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Politician A
-                    </h3>
-                    <ProfileHeader politician={comparison.politician_a.politician} />
-                  </div>
-                  <div className="space-y-6">
-                    <section>
-                      <KeyVotes
-                        votes={comparison.politician_a.votes || []}
-                        onCitationClick={handleCitationClick}
-                      />
-                    </section>
-                    <section>
-                      <DonorChart
-                        donations={comparison.politician_a.donations || []}
-                        onCitationClick={handleCitationClick}
-                      />
-                    </section>
-                    <section>
-                      <StatementsList
-                        statements={comparison.politician_a.statements || []}
-                        onCitationClick={handleCitationClick}
-                      />
-                    </section>
-                  </div>
+              <div className="rounded-xl bg-white border border-ink-200 p-6 shadow-sm">
+                <div className="mb-6 pb-6 border-b border-ink-100">
+                  <h3 className="headline-sm text-ink-900 mb-4">
+                    Politician A
+                  </h3>
+                  <ProfileHeader
+                    politician={comparison.politician_a.politician}
+                  />
+                </div>
+                <div className="space-y-8">
+                  <section>
+                    <KeyVotes
+                      votes={comparison.politician_a.votes || []}
+                      onCitationClick={handleCitationClick}
+                    />
+                  </section>
+                  <section>
+                    <DonorChart
+                      donations={comparison.politician_a.donations || []}
+                      onCitationClick={handleCitationClick}
+                    />
+                  </section>
+                  <section>
+                    <StatementsList
+                      statements={comparison.politician_a.statements || []}
+                      onCitationClick={handleCitationClick}
+                    />
+                  </section>
                 </div>
               </div>
             </div>
 
             {/* Politician B */}
             <div className="space-y-6">
-              <div className="sticky top-4">
-                <div className="rounded-lg bg-white border border-gray-200 p-6 shadow-sm">
-                  <div className="mb-4 pb-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Politician B
-                    </h3>
-                    <ProfileHeader politician={comparison.politician_b.politician} />
-                  </div>
-                  <div className="space-y-6">
-                    <section>
-                      <KeyVotes
-                        votes={comparison.politician_b.votes || []}
-                        onCitationClick={handleCitationClick}
-                      />
-                    </section>
-                    <section>
-                      <DonorChart
-                        donations={comparison.politician_b.donations || []}
-                        onCitationClick={handleCitationClick}
-                      />
-                    </section>
-                    <section>
-                      <StatementsList
-                        statements={comparison.politician_b.statements || []}
-                        onCitationClick={handleCitationClick}
-                      />
-                    </section>
-                  </div>
+              <div className="rounded-xl bg-white border border-ink-200 p-6 shadow-sm">
+                <div className="mb-6 pb-6 border-b border-ink-100">
+                  <h3 className="headline-sm text-ink-900 mb-4">
+                    Politician B
+                  </h3>
+                  <ProfileHeader
+                    politician={comparison.politician_b.politician}
+                  />
+                </div>
+                <div className="space-y-8">
+                  <section>
+                    <KeyVotes
+                      votes={comparison.politician_b.votes || []}
+                      onCitationClick={handleCitationClick}
+                    />
+                  </section>
+                  <section>
+                    <DonorChart
+                      donations={comparison.politician_b.donations || []}
+                      onCitationClick={handleCitationClick}
+                    />
+                  </section>
+                  <section>
+                    <StatementsList
+                      statements={comparison.politician_b.statements || []}
+                      onCitationClick={handleCitationClick}
+                    />
+                  </section>
                 </div>
               </div>
             </div>
@@ -279,4 +284,3 @@ export default function CompareView({
     </div>
   );
 }
-

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import type { Citation } from '@/lib/types';
+import { useEffect } from "react";
+import type { Citation } from "@/lib/types";
 
 interface SourceDrawerProps {
   citation: Citation | null;
@@ -16,12 +16,12 @@ export default function SourceDrawer({
 }: SourceDrawerProps) {
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
@@ -30,12 +30,12 @@ export default function SourceDrawer({
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -43,21 +43,21 @@ export default function SourceDrawer({
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-40 bg-black bg-opacity-50 transition-opacity"
+        className="fixed inset-0 z-40 bg-ink-900/50 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
       {/* Drawer */}
-      <div className="fixed right-0 top-0 z-50 h-full w-full max-w-2xl bg-white shadow-xl transform transition-transform duration-300 ease-in-out">
+      <div className="fixed inset-y-0 right-0 z-50 w-full max-w-md transform bg-white shadow-2xl transition-transform duration-300 ease-in-out">
         <div className="flex h-full flex-col">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-            <h2 className="text-xl font-semibold text-gray-900">Source Details</h2>
+          <div className="flex items-center justify-between border-b border-ink-100 px-6 py-4">
+            <h2 className="headline-sm text-ink-900">Source Details</h2>
             <button
               onClick={onClose}
-              className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
-              aria-label="Close drawer"
+              className="rounded-full p-2 text-ink-400 hover:bg-ink-50 hover:text-ink-600"
             >
+              <span className="sr-only">Close</span>
               <svg
                 className="h-6 w-6"
                 fill="none"
@@ -75,55 +75,52 @@ export default function SourceDrawer({
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto px-6 py-6">
+          <div className="flex-1 overflow-y-auto p-6">
             <div className="space-y-6">
-              {/* Title */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {citation.title}
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-ink-500">
+                  Title
                 </h3>
-                <p className="text-sm text-gray-600">{citation.publisher}</p>
+                <p className="mt-1 text-lg font-medium text-ink-900">
+                  {citation.title}
+                </p>
               </div>
 
-              {/* Metadata */}
-              <div className="space-y-2 border-t border-gray-200 pt-4">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium text-gray-700">Retrieved:</span>
-                  <span className="text-gray-600">
-                    {formatDate(citation.retrieved_at)}
-                  </span>
-                </div>
-                {citation.source_id && (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium text-gray-700">Source ID:</span>
-                    <span className="font-mono text-gray-600 text-xs">
-                      {citation.source_id}
-                    </span>
-                  </div>
-                )}
+              <div>
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-ink-500">
+                  Publisher
+                </h3>
+                <p className="mt-1 text-ink-900">{citation.publisher}</p>
               </div>
 
-              {/* Snippet */}
+              <div>
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-ink-500">
+                  Retrieved Date
+                </h3>
+                <p className="mt-1 text-ink-900">
+                  {formatDate(citation.retrieved_at)}
+                </p>
+              </div>
+
               {citation.snippet && (
-                <div className="border-t border-gray-200 pt-4">
-                  <h4 className="text-sm font-semibold text-gray-900 mb-2">
-                    Excerpt
-                  </h4>
-                  <p className="text-gray-700 italic bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <div>
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-ink-500">
+                    Relevant Excerpt
+                  </h3>
+                  <blockquote className="mt-2 border-l-4 border-amber-500 pl-4 italic text-ink-700">
                     "{citation.snippet}"
-                  </p>
+                  </blockquote>
                 </div>
               )}
 
-              {/* Link */}
-              <div className="border-t border-gray-200 pt-4">
+              <div className="pt-6">
                 <a
                   href={citation.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+                  className="flex w-full items-center justify-center rounded-lg bg-ink-900 px-4 py-3 font-medium text-white transition-colors hover:bg-ink-800"
                 >
-                  <span>Open Source</span>
+                  Visit Original Source
                   <svg
                     className="ml-2 h-4 w-4"
                     fill="none"
@@ -146,4 +143,3 @@ export default function SourceDrawer({
     </>
   );
 }
-
