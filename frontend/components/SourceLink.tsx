@@ -1,16 +1,31 @@
+'use client';
+
 import type { Citation } from '@/lib/types';
 
 interface SourceLinkProps {
   citation: Citation;
   className?: string;
+  onClick?: (citation: Citation) => void;
 }
 
-export default function SourceLink({ citation, className = '' }: SourceLinkProps) {
+export default function SourceLink({
+  citation,
+  className = '',
+  onClick,
+}: SourceLinkProps) {
+  const handleClick = (e: React.MouseEvent) => {
+    if (onClick) {
+      e.preventDefault();
+      onClick(citation);
+    }
+  };
+
   return (
     <a
       href={citation.url}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={handleClick}
       className={`inline-flex items-center text-sm text-blue-600 hover:text-blue-800 hover:underline ${className}`}
       title={`Source: ${citation.title} - ${citation.publisher}`}
     >
@@ -35,24 +50,31 @@ export default function SourceLink({ citation, className = '' }: SourceLinkProps
 interface ViewSourcesButtonProps {
   citations: Citation[];
   label?: string;
+  onCitationClick?: (citation: Citation) => void;
 }
 
-export function ViewSourcesButton({ citations, label = 'View sources' }: ViewSourcesButtonProps) {
+export function ViewSourcesButton({
+  citations,
+  label = 'View sources',
+  onCitationClick,
+}: ViewSourcesButtonProps) {
   if (citations.length === 0) {
     return null;
   }
+
+  const handleClick = () => {
+    if (onCitationClick && citations[0]) {
+      onCitationClick(citations[0]);
+    } else if (citations[0]?.url) {
+      window.open(citations[0].url, '_blank', 'noopener,noreferrer');
+    }
+  };
 
   return (
     <div className="mt-4">
       <button
         className="text-sm font-medium text-blue-600 hover:text-blue-800"
-        onClick={() => {
-          // Week 2: Open source drawer
-          // For now, open first citation
-          if (citations[0]?.url) {
-            window.open(citations[0].url, '_blank', 'noopener,noreferrer');
-          }
-        }}
+        onClick={handleClick}
       >
         {label} ({citations.length})
       </button>

@@ -74,9 +74,46 @@ export interface ApiError {
   request_id?: string;
 }
 
+// Comparison types
+export interface ComparisonRequest {
+  politician_a_id: string;
+  politician_b_id: string;
+  topic?: string;
+}
+
+export interface ComparisonResult {
+  politician_a: PoliticianProfile;
+  politician_b: PoliticianProfile;
+  topic?: string;
+  comparison_summary?: string;
+}
+
+// AI Q&A types (matching AI response schema)
+export interface Claim {
+  text: string;
+  citations: string[]; // citation IDs
+  confidence?: number;
+}
+
+export interface AIResponse {
+  answer: string;
+  claims: Claim[];
+  citations: Citation[];
+  limitations?: string;
+  disclosure?: string;
+}
+
+export interface AskRequest {
+  question: string;
+  politician_ids?: string[];
+  topic?: string;
+}
+
 // Demo/offline mode data
 export interface DemoData {
   politicians: Politician[];
   profiles: Record<string, PoliticianProfile>;
+  comparisons?: Record<string, ComparisonResult>;
+  aiResponses?: Record<string, AIResponse>;
 }
 

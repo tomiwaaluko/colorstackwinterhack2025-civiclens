@@ -4,6 +4,11 @@ import type {
   SearchResult,
   ApiError,
   DemoData,
+  ComparisonRequest,
+  ComparisonResult,
+  AskRequest,
+  AIResponse,
+  Citation,
 } from './types';
 
 // API base URL - defaults to localhost for development
@@ -163,6 +168,89 @@ export async function getPoliticianDonations(
   }
 
   return fetchApi<{ donations: any[] }>(`/politician/${id}/donations`);
+}
+
+export async function comparePoliticians(
+  request: ComparisonRequest
+): Promise<ComparisonResult> {
+  if (DEMO_MODE) {
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    
+    const profileA = DEMO_DATA.profiles[request.politician_a_id];
+    const profileB = DEMO_DATA.profiles[request.politician_b_id];
+    
+    if (!profileA || !profileB) {
+      throw {
+        code: 'NOT_FOUND',
+        message: 'One or both politicians not found',
+      } as ApiError;
+    }
+    
+    return {
+      politician_a: profileA,
+      politician_b: profileB,
+      topic: request.topic,
+    };
+  }
+
+  return fetchApi<ComparisonResult>('/compare', {
+    method: 'POST',
+    body: JSON.stringify(request),
+  });
+}
+
+export async function askQuestion(
+  request: AskRequest
+): Promise<AIResponse> {
+  if (DEMO_MODE) {
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    
+    // Demo AI response matching the schema
+    const demoCitations: Citation[] = [
+      {
+        source_id: 'demo-1',
+        url: 'https://example.com/source1',
+        title: 'Voting Record Database',
+        publisher: 'ProPublica',
+        retrieved_at: new Date().toISOString(),
+        snippet: 'Sample evidence snippet from voting records.',
+      },
+      {
+        source_id: 'demo-2',
+        url: 'https://example.com/source2',
+        title: 'Campaign Finance Report',
+        publisher: 'OpenSecrets',
+        retrieved_at: new Date().toISOString(),
+        snippet: 'Sample evidence snippet from campaign finance data.',
+      },
+    ];
+    
+    const demoResponse: AIResponse = {
+      answer: 'Based on available evidence, this politician has voted on several key bills related to this topic. The voting record shows a pattern of support for measures in this area.',
+      claims: [
+        {
+          text: 'Voted yes on Bill H.R. 1234 related to the topic',
+          citations: ['demo-1'],
+          confidence: 0.9,
+        },
+        {
+          text: 'Received campaign contributions from organizations in this sector',
+          citations: ['demo-2'],
+          confidence: 0.85,
+        },
+      ],
+      citations: demoCitations,
+      limitations: 'This response is based on limited available data. Some information may be incomplete.',
+      disclosure: 'This system provides evidence-based information only. No rankings, predictions, or endorsements are made.',
+    };
+    
+    return demoResponse;
+  }
+
+  return fetchApi<AIResponse>('/ai/ask', {
+    method: 'POST',
+    body: JSON.stringify(request),
+  });
 }
 
 // Helper to check if we're in demo mode

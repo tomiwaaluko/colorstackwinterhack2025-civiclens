@@ -1,13 +1,14 @@
-import type { Vote } from '@/lib/types';
+import type { Vote, Citation } from '@/lib/types';
 import SourceLink from './SourceLink';
 import { ViewSourcesButton } from './SourceLink';
 import InsufficientData from './InsufficientData';
 
 interface KeyVotesProps {
   votes: Vote[];
+  onCitationClick?: (citation: Citation) => void;
 }
 
-export default function KeyVotes({ votes }: KeyVotesProps) {
+export default function KeyVotes({ votes, onCitationClick }: KeyVotesProps) {
   if (votes.length === 0) {
     return (
       <InsufficientData
@@ -46,7 +47,10 @@ export default function KeyVotes({ votes }: KeyVotesProps) {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-900">Key Votes</h2>
         {allCitations.length > 0 && (
-          <ViewSourcesButton citations={allCitations} />
+          <ViewSourcesButton
+            citations={allCitations}
+            onCitationClick={onCitationClick}
+          />
         )}
       </div>
       <div className="space-y-4">
@@ -82,7 +86,11 @@ export default function KeyVotes({ votes }: KeyVotesProps) {
                 {vote.citations && vote.citations.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-2">
                     {vote.citations.map((citation, idx) => (
-                      <SourceLink key={idx} citation={citation} />
+                      <SourceLink
+                        key={idx}
+                        citation={citation}
+                        onClick={onCitationClick}
+                      />
                     ))}
                   </div>
                 )}

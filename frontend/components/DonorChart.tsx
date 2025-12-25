@@ -10,15 +10,19 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts';
-import type { DonationAggregate } from '@/lib/types';
+import type { DonationAggregate, Citation } from '@/lib/types';
 import { ViewSourcesButton } from './SourceLink';
 import InsufficientData from './InsufficientData';
 
 interface DonorChartProps {
   donations: DonationAggregate[];
+  onCitationClick?: (citation: Citation) => void;
 }
 
-export default function DonorChart({ donations }: DonorChartProps) {
+export default function DonorChart({
+  donations,
+  onCitationClick,
+}: DonorChartProps) {
   if (donations.length === 0) {
     return (
       <InsufficientData
@@ -53,7 +57,10 @@ export default function DonorChart({ donations }: DonorChartProps) {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-900">Donor Breakdown</h2>
         {allCitations.length > 0 && (
-          <ViewSourcesButton citations={allCitations} />
+          <ViewSourcesButton
+            citations={allCitations}
+            onCitationClick={onCitationClick}
+          />
         )}
       </div>
       <div className="rounded-lg border border-gray-200 bg-white p-4">

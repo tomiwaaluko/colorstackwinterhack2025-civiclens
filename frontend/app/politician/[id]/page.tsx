@@ -3,13 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { getPoliticianProfile } from '@/lib/api';
-import type { PoliticianProfile, ApiError } from '@/lib/types';
+import type { PoliticianProfile, ApiError, Citation } from '@/lib/types';
 import ProfileHeader from '@/components/ProfileHeader';
 import KeyVotes from '@/components/KeyVotes';
 import DonorChart from '@/components/DonorChart';
 import StatementsList from '@/components/StatementsList';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import InsufficientData from '@/components/InsufficientData';
+import SourceDrawer from '@/components/SourceDrawer';
 
 export default function PoliticianProfilePage() {
   const params = useParams();
@@ -17,6 +18,18 @@ export default function PoliticianProfilePage() {
   const [profile, setProfile] = useState<PoliticianProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCitation, setSelectedCitation] = useState<Citation | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const handleCitationClick = (citation: Citation) => {
+    setSelectedCitation(citation);
+    setIsDrawerOpen(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false);
+    setSelectedCitation(null);
+  };
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -76,15 +89,24 @@ export default function PoliticianProfilePage() {
 
         <div className="mt-8 space-y-12">
           <section>
-            <KeyVotes votes={profile.votes || []} />
+            <KeyVotes
+              votes={profile.votes || []}
+              onCitationClick={handleCitationClick}
+            />
           </section>
 
           <section>
-            <DonorChart donations={profile.donations || []} />
+            <DonorChart
+              donations={profile.donations || []}
+              onCitationClick={handleCitationClick}
+            />
           </section>
 
           <section>
-            <StatementsList statements={profile.statements || []} />
+            <StatementsList
+              statements={profile.statements || []}
+              onCitationClick={handleCitationClick}
+            />
           </section>
         </div>
 
@@ -97,6 +119,12 @@ export default function PoliticianProfilePage() {
           </div>
         )}
       </div>
+
+      <SourceDrawer
+        citation={selectedCitation}
+        isOpen={isDrawerOpen}
+        onClose={handleCloseDrawer}
+      />
     </div>
   );
 }
