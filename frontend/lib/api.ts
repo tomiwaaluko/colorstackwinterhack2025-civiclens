@@ -1,0 +1,172 @@
+import type {
+  Politician,
+  PoliticianProfile,
+  SearchResult,
+  ApiError,
+  DemoData,
+} from './types';
+
+// API base URL - defaults to localhost for development
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+// Demo mode flag - set to true to use offline demo data
+const DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
+
+// Demo data for offline mode
+const DEMO_DATA: DemoData = {
+  politicians: [
+    {
+      id: '1',
+      name: 'John Doe',
+      party: 'Democrat',
+      office: 'Senator',
+      state: 'CA',
+    },
+    {
+      id: '2',
+      name: 'Jane Smith',
+      party: 'Republican',
+      office: 'Representative',
+      state: 'TX',
+      district: '5',
+    },
+  ],
+  profiles: {
+    '1': {
+      politician: {
+        id: '1',
+        name: 'John Doe',
+        party: 'Democrat',
+        office: 'Senator',
+        state: 'CA',
+      },
+      votes: [],
+      donations: [],
+      statements: [],
+      source_count: 0,
+    },
+    '2': {
+      politician: {
+        id: '2',
+        name: 'Jane Smith',
+        party: 'Republican',
+        office: 'Representative',
+        state: 'TX',
+        district: '5',
+      },
+      votes: [],
+      donations: [],
+      statements: [],
+      source_count: 0,
+    },
+  },
+};
+
+async function fetchApi<T>(
+  endpoint: string,
+  options?: RequestInit
+): Promise<T> {
+  const url = `${API_BASE_URL}${endpoint}`;
+  
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options?.headers,
+      },
+    });
+
+    if (!response.ok) {
+      const error: ApiError = await response.json().catch(() => ({
+        code: 'HTTP_ERROR',
+        message: `HTTP ${response.status}: ${response.statusText}`,
+      }));
+      throw error;
+    }
+
+    return await response.json();
+  } catch (error) {
+    if (error instanceof TypeError && error.message === 'Failed to fetch') {
+      throw {
+        code: 'NETWORK_ERROR',
+        message: 'Unable to connect to the API. Please check your connection.',
+      } as ApiError;
+    }
+    throw error;
+  }
+}
+
+export async function searchPoliticians(
+  name?: string,
+  zip?: string
+): Promise<SearchResult> {
+  if (DEMO_MODE) {
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    
+    let results = DEMO_DATA.politicians;
+    if (name) {
+      const searchName = name.toLowerCase();
+      results = results.filter((p) =>
+        p.name.toLowerCase().includes(searchName)
+      );
+    }
+    return { politicians: results };
+  }
+
+  const params = new URLSearchParams();
+  if (name) params.append('name', name);
+  if (zip) params.append('zip', zip);
+
+  return fetchApi<SearchResult>(`/search?${params.toString()}`);
+}
+
+export async function getPoliticianProfile(
+  id: string
+): Promise<PoliticianProfile> {
+  if (DEMO_MODE) {
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    
+    const profile = DEMO_DATA.profiles[id];
+    if (!profile) {
+      throw {
+        code: 'NOT_FOUND',
+        message: `Politician with ID ${id} not found`,
+      } as ApiError;
+    }
+    return profile;
+  }
+
+  return fetchApi<PoliticianProfile>(`/politician/${id}`);
+}
+
+export async function getPoliticianVotes(
+  id: string
+): Promise<{ votes: any[] }> {
+  if (DEMO_MODE) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return { votes: [] };
+  }
+
+  return fetchApi<{ votes: any[] }>(`/politician/${id}/votes`);
+}
+
+export async function getPoliticianDonations(
+  id: string
+): Promise<{ donations: any[] }> {
+  if (DEMO_MODE) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return { donations: [] };
+  }
+
+  return fetchApi<{ donations: any[] }>(`/politician/${id}/donations`);
+}
+
+// Helper to check if we're in demo mode
+export function isDemoMode(): boolean {
+  return DEMO_MODE;
+}
+

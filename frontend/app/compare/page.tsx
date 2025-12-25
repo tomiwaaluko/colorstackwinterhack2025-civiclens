@@ -1,0 +1,15 @@
+export default function ComparePage() {
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="rounded-lg bg-white p-8 shadow">
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">
+          Compare Politicians
+        </h1>
+        <p className="text-gray-600">
+          Compare two politicians side-by-side. This feature will be implemented in Week 2.
+        </p>
+      </div>
+    </div>
+  );
+}
+

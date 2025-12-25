@@ -1,0 +1,3 @@
+# MCP configuration files (may contain sensitive tokens)
+.cursor/mcp.json
+

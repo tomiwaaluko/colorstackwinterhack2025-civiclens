@@ -1,1 +1,0 @@
-indicating the frontend folder. this file serves no functional purpose
