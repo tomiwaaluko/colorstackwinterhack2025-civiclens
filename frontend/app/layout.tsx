@@ -1,25 +1,28 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Source_Serif_4, DM_Sans } from "next/font/google";
+import { Space_Grotesk, Lora, Space_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
 });
 
-const sourceSerif = Source_Serif_4({
-  variable: "--font-source-serif",
+const lora = Lora({
+  variable: "--font-serif",
   subsets: ["latin"],
   display: "swap",
 });
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const spaceMono = Space_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
   display: "swap",
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -36,26 +39,15 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${sourceSerif.variable} ${dmSans.variable}`}
+      className={`${spaceGrotesk.variable} ${lora.variable} ${spaceMono.variable}`}
     >
-      <body className="antialiased bg-[var(--background)] text-[var(--ink-900)] min-h-screen flex flex-col">
+      <body className="antialiased bg-background text-foreground min-h-screen flex flex-col font-sans">
         <ErrorBoundary>
-          <Navbar />
-          <main className="flex-grow">{children}</main>
-          <footer className="py-8 border-t border-[var(--ink-100)] bg-[var(--surface)]">
-            <div className="mx-auto max-w-7xl px-4 text-center">
-              <p className="font-serif text-[var(--ink-500)] italic">
-                CivicLens &mdash; Evidence First.
-              </p>
-              <div className="mt-4 flex justify-center gap-6 text-sm text-[var(--ink-400)] font-sans">
-                <span>No Rankings</span>
-                <span>&bull;</span>
-                <span>No Endorsements</span>
-                <span>&bull;</span>
-                <span>Privacy First</span>
-              </div>
-            </div>
-          </footer>
+          <TooltipProvider>
+            <Header />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </TooltipProvider>
         </ErrorBoundary>
       </body>
     </html>
