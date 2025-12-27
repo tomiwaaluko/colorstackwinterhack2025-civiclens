@@ -51,7 +51,7 @@ export default function StatementsList({
         {statements.map((statement) => (
           <div
             key={statement.id}
-            className="relative rounded-xl border border-ink-100 bg-white p-6 shadow-sm transition-all hover:shadow-md"
+            className="relative bg-card border-2 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
           >
             {/* Editorial accent line */}
             <div className="absolute left-0 top-6 h-12 w-1 rounded-r bg-amber-500" />

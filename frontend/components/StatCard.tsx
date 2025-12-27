@@ -12,10 +12,10 @@ interface StatCardProps {
 
 export function StatCard({ icon: Icon, value, label, trend }: StatCardProps) {
   return (
-    <div className="civic-card p-6">
+    <div className="bg-card border-2 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
       <div className="flex items-start justify-between mb-4">
-        <div className="p-3 rounded-xl bg-primary/10">
-          <Icon className="h-6 w-6 text-primary" />
+        <div className="p-3 rounded-lg bg-gray-100 border border-black/10">
+          <Icon className="h-6 w-6 text-black" />
         </div>
         {trend && (
           <span

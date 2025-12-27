@@ -8,7 +8,7 @@ export default function InsufficientData({
   message = "There is not enough evidence available to display this information.",
 }: InsufficientDataProps) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-ink-200 bg-ink-50/50 p-12 text-center">
+    <div className="flex flex-col items-center justify-center bg-ink-50/50 border-2 border-dashed border-black p-12 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-ink-100">
         <svg
           className="h-6 w-6 text-ink-400"

@@ -26,7 +26,7 @@ export default function SearchResults({
 
   if (error) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
+      <div className="bg-red-50 border-2 border-black p-6 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
         <p className="text-red-800 font-medium">{error}</p>
       </div>
     );

@@ -37,7 +37,7 @@ export function PoliticianCardNew({
   return (
     <Link
       href={`/politician/${id}`}
-      className={`civic-card group block p-6 ${
+      className={`bg-card border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] group block p-6 ${
         featured ? "ring-2 ring-accent" : ""
       }`}
     >

@@ -118,7 +118,7 @@ export default function SourceDrawer({
                   href={citation.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex w-full items-center justify-center rounded-lg bg-ink-900 px-4 py-3 font-medium text-white transition-colors hover:bg-ink-800"
+                  className="flex w-full items-center justify-center bg-ink-900 border-2 border-black px-4 py-3 font-medium text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:bg-ink-800"
                 >
                   Visit Original Source
                   <svg

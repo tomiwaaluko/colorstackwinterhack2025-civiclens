@@ -9,7 +9,7 @@ export default function PoliticianCard({ politician }: PoliticianCardProps) {
   return (
     <Link
       href={`/politician/${politician.id}`}
-      className="group relative block h-full bg-white border border-ink-200 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-amber-300"
+      className="group relative block h-full bg-card border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden"
     >
       {/* Accent Bar */}
       <div className="absolute top-0 left-0 w-full h-1 bg-ink-100 group-hover:bg-amber-400 transition-colors duration-300" />

@@ -107,7 +107,7 @@ export default function AskPanel({ politicianIds }: AskPanelProps) {
       {response && (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
           {/* Answer */}
-          <div className="rounded-xl border border-ink-200 bg-white p-8 shadow-sm">
+          <div className="bg-card border-2 border-black p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <h2 className="headline-sm mb-4 text-ink-900">Analysis</h2>
             <div className="prose prose-ink max-w-none">
               <p className="text-lg leading-relaxed text-ink-800">
@@ -147,13 +147,13 @@ export default function AskPanel({ politicianIds }: AskPanelProps) {
           {/* Limitations & Disclosure */}
           <div className="grid gap-4 sm:grid-cols-2">
             {response.limitations && (
-              <div className="rounded-lg bg-amber-50 p-4 text-sm text-amber-900">
+              <div className="bg-amber-50 border-2 border-black p-4 text-sm text-amber-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <h3 className="font-semibold mb-1">Limitations</h3>
                 <p>{response.limitations}</p>
               </div>
             )}
             {response.disclosure && (
-              <div className="rounded-lg bg-ink-50 p-4 text-sm text-ink-900">
+              <div className="bg-ink-50 border-2 border-black p-4 text-sm text-ink-900 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <h3 className="font-semibold mb-1">Disclosure</h3>
                 <p>{response.disclosure}</p>
               </div>

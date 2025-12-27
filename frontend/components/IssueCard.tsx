@@ -25,7 +25,7 @@ export function IssueCard({
   return (
     <Link
       href={`/issues/${id}`}
-      className="civic-card group block p-6 relative overflow-hidden"
+      className="bg-card border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] group block p-6 relative overflow-hidden"
     >
       <div
         className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl opacity-20 ${color}`}

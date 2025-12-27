@@ -19,7 +19,7 @@ export default function ClaimCard({
   );
 
   return (
-    <div className="group rounded-lg border border-ink-100 bg-white p-5 transition-all hover:border-ink-300 hover:shadow-md">
+    <div className="group bg-card border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-5">
       <div className="flex items-start gap-4">
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-100 text-sm font-bold text-amber-800">
           {index + 1}

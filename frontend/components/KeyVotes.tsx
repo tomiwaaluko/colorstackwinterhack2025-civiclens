@@ -67,7 +67,7 @@ export default function KeyVotes({ votes, onCitationClick }: KeyVotesProps) {
         {votes.map((vote, index) => (
           <div
             key={index}
-            className="group relative bg-white border border-[var(--ink-200)] rounded-lg p-5 transition-all hover:shadow-md hover:border-[var(--ink-300)]"
+            className="group relative bg-card border-2 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
           >
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
               <div className="flex-1">

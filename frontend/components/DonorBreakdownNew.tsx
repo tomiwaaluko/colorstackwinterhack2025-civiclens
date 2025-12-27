@@ -16,7 +16,7 @@ export function DonorBreakdownNew({
   totalDonations,
 }: DonorBreakdownNewProps) {
   return (
-    <div className="civic-card p-6">
+    <div className="bg-card border-2 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       <h3 className="font-serif text-lg font-semibold text-foreground mb-6">
         Donor Breakdown by Industry
       </h3>
@@ -41,7 +41,7 @@ export function DonorBreakdownNew({
                 contentStyle={{
                   backgroundColor: "hsl(var(--card))",
                   border: "1px solid hsl(var(--border))",
-                  borderRadius: "8px",
+                  borderRadius: "0px",
                 }}
                 formatter={(value) => [
                   `$${(value as number).toLocaleString()}`,
@@ -63,7 +63,7 @@ export function DonorBreakdownNew({
             <div key={index} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div
-                  className="w-3 h-3 rounded-sm"
+                  className="w-3 h-3 rounded-none"
                   style={{ backgroundColor: item.color }}
                 />
                 <span className="text-sm text-foreground">{item.name}</span>

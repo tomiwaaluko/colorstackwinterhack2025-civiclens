@@ -65,7 +65,7 @@ export default function DonorChart({
         )}
       </div>
 
-      <div className="rounded-xl border border-ink-200 bg-white p-6 shadow-sm">
+      <div className="bg-card border-2 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
         <div className="h-[400px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
@@ -116,7 +116,7 @@ export default function DonorChart({
           </ResponsiveContainer>
         </div>
 
-        <div className="mt-6 rounded-lg bg-ink-50 p-4 text-sm text-ink-600">
+        <div className="mt-6 bg-ink-50 border-2 border-black p-4 text-sm text-ink-600 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
           <p className="font-medium mb-1">Note on Influence</p>
           <p>
             Donation records are aggregated by industry or organization.
