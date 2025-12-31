@@ -1,0 +1,128 @@
+[
+  {
+    "id": 1,
+    "name": "Joe Biden",
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Joe_Biden_presidential_portrait.jpg/220px-Joe_Biden_presidential_portrait.jpg",
+    "party": "Democrat",
+    "state_or_district": "Delaware",
+    "position": "Senator",
+    "vote_count": 342,
+    "statement_count": 156,
+    "politician_details": {
+      "statements": [
+        "We need to build back better",
+        "Infrastructure is critical for America's future",
+        "Climate change is an existential threat"
+      ],
+      "votes": [
+        "Infrastructure Investment and Jobs Act",
+        "Yes"
+      ]
+    }
+  },
+  {
+    "id": 2,
+    "name": "Kamala Harris",
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Kamala_Harris_Vice_Presidential_Portrait.jpg/220px-Kamala_Harris_Vice_Presidential_Portrait.jpg",
+    "party": "Democrat",
+    "state_or_district": "California",
+    "position": "Senator",
+    "vote_count": 289,
+    "statement_count": 134,
+    "politician_details": {
+      "statements": [
+        "Healthcare is a right, not a privilege",
+        "We must protect voting rights",
+        "Criminal justice reform is overdue"
+      ],
+      "votes": [
+        "Voting Rights Act",
+        "Yes"
+      ]
+    }
+  },
+  {
+    "id": 3,
+    "name": "Mitch McConnell",
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Mitch_McConnell_portrait_2016.jpg/220px-Mitch_McConnell_portrait_2016.jpg",
+    "party": "Republican",
+    "state_or_district": "Kentucky",
+    "position": "Senator",
+    "vote_count": 456,
+    "statement_count": 201,
+    "politician_details": {
+      "statements": [
+        "We need to protect conservative values",
+        "Lower taxes spur economic growth",
+        "Strong national defense is essential"
+      ],
+      "votes": [
+        "Tax Cuts and Jobs Act",
+        "Yes"
+      ]
+    }
+  },
+  {
+    "id": 4,
+    "name": "Nancy Pelosi",
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Nancy_Pelosi_2023.jpg/220px-Nancy_Pelosi_2023.jpg",
+    "party": "Democrat",
+    "state_or_district": "California 12th",
+    "position": "Representative",
+    "vote_count": 512,
+    "statement_count": 267,
+    "politician_details": {
+      "statements": [
+        "We must protect Social Security and Medicare",
+        "Workers deserve fair wages",
+        "Democracy is under threat"
+      ],
+      "votes": [
+        "Affordable Care Act",
+        "Yes"
+      ]
+    }
+  },
+  {
+    "id": 5,
+    "name": "Kevin McCarthy",
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Kevin_McCarthy_official_photo_%28cropped%29.jpg/220px-Kevin_McCarthy_official_photo_%28cropped%29.jpg",
+    "party": "Republican",
+    "state_or_district": "California 20th",
+    "position": "Representative",
+    "vote_count": 378,
+    "statement_count": 189,
+    "politician_details": {
+      "statements": [
+        "We need to secure the border",
+        "Small businesses are the backbone of America",
+        "Energy independence is crucial"
+      ],
+      "votes": [
+        "Border Security Act",
+        "Yes"
+      ]
+    }
+  },
+  {
+    "id": 6,
+    "name": "Alexandria Ocasio-Cortez",
+    "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Alexandria_Ocasio-Cortez_Official_Portrait.jpg/220px-Alexandria_Ocasio-Cortez_Official_Portrait.jpg",
+    "party": "Democrat",
+    "state_or_district": "New York 14th",
+    "position": "Representative",
+    "vote_count": 145,
+    "statement_count": 98,
+    "politician_details": {
+      "statements": [
+        "Green New Deal is our future",
+        "Healthcare and housing are human rights",
+        "We must tax the ultra-wealthy"
+      ],
+      "votes": [
+        "Green New Deal Resolution",
+        "Yes"
+      ]
+    }
+  }
+]
