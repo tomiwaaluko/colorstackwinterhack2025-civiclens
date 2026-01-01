@@ -62,3 +62,30 @@ class PoliticianRepo:
 
         return results
         
+    def get_national_politicians(self):
+        """Get all national-level politicians (President, VP)"""
+        return [p for p in self.politicians if p.get('is_national', False)]
+
+    def get_politicians_by_location(self, lat: float = None, lng: float = None, state: str = None):
+        """
+        Get politicians by location (state or coordinates).
+
+        Args:
+            lat: Latitude
+            lng: Longitude
+            state: State abbreviation (e.g., 'CA', 'NY')
+
+        Returns:
+            List of politicians serving that location
+        """
+        if state:
+            # Filter by state
+            return [
+                p for p in self.politicians
+                if not p.get('is_national', False) and
+                state.upper() in p.get('state_or_district', '').upper()
+            ]
+
+        # For now, return all non-national politicians
+        # In production, you'd use reverse geocoding or point-in-polygon checks
+        return [p for p in self.politicians if not p.get('is_national', False)]
