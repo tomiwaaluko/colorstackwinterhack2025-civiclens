@@ -4,20 +4,79 @@
     "name": "Joe Biden",
     "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Joe_Biden_presidential_portrait.jpg/220px-Joe_Biden_presidential_portrait.jpg",
     "party": "Democrat",
-    "state_or_district": "Delaware",
+    "state_or_district": "National",
     "position": "Senator",
     "vote_count": 342,
     "statement_count": 156,
+    "is_national": true,
     "politician_details": {
       "statements": [
         "We need to build back better",
         "Infrastructure is critical for America's future",
         "Climate change is an existential threat"
       ],
-      "votes": [
-        "Infrastructure Investment and Jobs Act",
-        "Yes"
-      ]
+      "votes": ["Infrastructure Investment and Jobs Act", "Yes"]
+    },
+    "location": {
+      "type": "national",
+      "center": {"lat": 38.9072, "lng": -77.0369}
+    },
+    "recent_votes": [
+      {
+        "bill_name": "Infrastructure Investment and Jobs Act",
+        "vote": "Yes",
+        "date": "2021-11-15",
+        "description": "Invests $1.2 trillion in roads, bridges, and broadband infrastructure"
+      },
+      {
+        "bill_name": "Inflation Reduction Act",
+        "vote": "Yes",
+        "date": "2022-08-16",
+        "description": "Reduces prescription drug costs and invests in clean energy"
+      },
+      {
+        "bill_name": "CHIPS and Science Act",
+        "vote": "Yes",
+        "date": "2022-08-09",
+        "description": "Boosts domestic semiconductor manufacturing and research"
+      }
+    ],
+    "key_policies": [
+      {
+        "category": "Economy",
+        "stance": "Support",
+        "description": "Raised minimum wage for federal contractors to $15/hr",
+        "impact": "Affects 390,000 federal contract workers nationwide"
+      },
+      {
+        "category": "Climate",
+        "stance": "Support",
+        "description": "Rejoined Paris Climate Agreement",
+        "impact": "Commits US to reduce emissions 50% by 2030"
+      },
+      {
+        "category": "Healthcare",
+        "stance": "Support",
+        "description": "Extended Affordable Care Act subsidies",
+        "impact": "Reduced premiums for 13 million Americans"
+      }
+    ],
+    "current_bills": [
+      {
+        "title": "Build Back Better Act",
+        "status": "In Negotiation",
+        "your_impact": "Would expand childcare access and reduce costs by up to 50%"
+      },
+      {
+        "title": "Voting Rights Act",
+        "status": "In Committee",
+        "your_impact": "Would protect voting access and expand early voting"
+      }
+    ],
+    "contact_info": {
+      "email": "president@whitehouse.gov",
+      "phone": "(202) 456-1414",
+      "office": "1600 Pennsylvania Avenue NW, Washington, DC 20500"
     }
   },
   {
@@ -25,20 +84,62 @@
     "name": "Kamala Harris",
     "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Kamala_Harris_Vice_Presidential_Portrait.jpg/220px-Kamala_Harris_Vice_Presidential_Portrait.jpg",
     "party": "Democrat",
-    "state_or_district": "California",
+    "state_or_district": "National",
     "position": "Senator",
     "vote_count": 289,
     "statement_count": 134,
+    "is_national": true,
     "politician_details": {
       "statements": [
         "Healthcare is a right, not a privilege",
         "We must protect voting rights",
         "Criminal justice reform is overdue"
       ],
-      "votes": [
-        "Voting Rights Act",
-        "Yes"
-      ]
+      "votes": ["Voting Rights Act", "Yes"]
+    },
+    "location": {
+      "type": "national",
+      "center": {"lat": 38.9072, "lng": -77.0369}
+    },
+    "recent_votes": [
+      {
+        "bill_name": "George Floyd Justice in Policing Act",
+        "vote": "Yes",
+        "date": "2021-03-03",
+        "description": "Reforms police accountability and bans chokeholds"
+      },
+      {
+        "bill_name": "American Rescue Plan",
+        "vote": "Yes",
+        "date": "2021-03-11",
+        "description": "Provides $1.9 trillion in COVID-19 relief"
+      }
+    ],
+    "key_policies": [
+      {
+        "category": "Criminal Justice",
+        "stance": "Support",
+        "description": "End federal private prisons",
+        "impact": "Affects 14,000 inmates in federal private facilities"
+      },
+      {
+        "category": "Immigration",
+        "stance": "Support",
+        "description": "Pathway to citizenship for Dreamers",
+        "impact": "Would provide legal status to 1.8 million young immigrants"
+      }
+    ],
+    "current_bills": [
+      {
+        "title": "Maternal Health Act",
+        "status": "In Committee",
+        "your_impact": "Would reduce maternal mortality rates by expanding healthcare access"
+      }
+    ],
+    "contact_info": {
+      "email": "vicepresident@whitehouse.gov",
+      "phone": "(202) 456-1414",
+      "office": "1600 Pennsylvania Avenue NW, Washington, DC 20500"
     }
   },
   {
@@ -50,16 +151,59 @@
     "position": "Senator",
     "vote_count": 456,
     "statement_count": 201,
+    "is_national": false,
     "politician_details": {
       "statements": [
         "We need to protect conservative values",
         "Lower taxes spur economic growth",
         "Strong national defense is essential"
       ],
-      "votes": [
-        "Tax Cuts and Jobs Act",
-        "Yes"
-      ]
+      "votes": ["Tax Cuts and Jobs Act", "Yes"]
+    },
+    "location": {
+      "type": "state",
+      "state": "KY",
+      "center": {"lat": 37.8393, "lng": -84.2700}
+    },
+    "recent_votes": [
+      {
+        "bill_name": "Tax Cuts and Jobs Act",
+        "vote": "Yes",
+        "date": "2017-12-20",
+        "description": "Reduced corporate tax rate from 35% to 21%"
+      },
+      {
+        "bill_name": "Infrastructure Investment and Jobs Act",
+        "vote": "Yes",
+        "date": "2021-08-10",
+        "description": "Bipartisan infrastructure investment"
+      }
+    ],
+    "key_policies": [
+      {
+        "category": "Economy",
+        "stance": "Support",
+        "description": "Cut regulations on small businesses",
+        "impact": "Reduced compliance costs for Kentucky businesses by $2.1 billion"
+      },
+      {
+        "category": "Judiciary",
+        "stance": "Support",
+        "description": "Confirmed 3 Supreme Court justices",
+        "impact": "Shaped court composition for decades"
+      }
+    ],
+    "current_bills": [
+      {
+        "title": "Coal Industry Protection Act",
+        "status": "In Committee",
+        "your_impact": "Would protect 8,000 coal mining jobs in Kentucky"
+      }
+    ],
+    "contact_info": {
+      "email": "senator@mcconnell.senate.gov",
+      "phone": "(202) 224-2541",
+      "office": "317 Russell Senate Office Building, Washington, DC 20510"
     }
   },
   {
@@ -71,16 +215,60 @@
     "position": "Representative",
     "vote_count": 512,
     "statement_count": 267,
+    "is_national": false,
     "politician_details": {
       "statements": [
         "We must protect Social Security and Medicare",
         "Workers deserve fair wages",
         "Democracy is under threat"
       ],
-      "votes": [
-        "Affordable Care Act",
-        "Yes"
-      ]
+      "votes": ["Affordable Care Act", "Yes"]
+    },
+    "location": {
+      "type": "district",
+      "state": "CA",
+      "district": "12",
+      "center": {"lat": 37.7749, "lng": -122.4194}
+    },
+    "recent_votes": [
+      {
+        "bill_name": "Affordable Care Act",
+        "vote": "Yes",
+        "date": "2010-03-21",
+        "description": "Expanded healthcare coverage to 20 million Americans"
+      },
+      {
+        "bill_name": "American Rescue Plan",
+        "vote": "Yes",
+        "date": "2021-03-11",
+        "description": "COVID-19 relief including $1,400 stimulus checks"
+      }
+    ],
+    "key_policies": [
+      {
+        "category": "Healthcare",
+        "stance": "Support",
+        "description": "Protect and expand the Affordable Care Act",
+        "impact": "Ensures coverage for 133,000 residents in CA-12"
+      },
+      {
+        "category": "Housing",
+        "stance": "Support",
+        "description": "Invest in affordable housing",
+        "impact": "Would create 15,000 affordable units in San Francisco"
+      }
+    ],
+    "current_bills": [
+      {
+        "title": "Build Back Better Act",
+        "status": "In Negotiation",
+        "your_impact": "Would reduce childcare costs by 50% for SF families"
+      }
+    ],
+    "contact_info": {
+      "email": "sf.nancy@mail.house.gov",
+      "phone": "(202) 225-4965",
+      "office": "1236 Longworth House Office Building, Washington, DC 20515"
     }
   },
   {
@@ -92,16 +280,60 @@
     "position": "Representative",
     "vote_count": 378,
     "statement_count": 189,
+    "is_national": false,
     "politician_details": {
       "statements": [
         "We need to secure the border",
         "Small businesses are the backbone of America",
         "Energy independence is crucial"
       ],
-      "votes": [
-        "Border Security Act",
-        "Yes"
-      ]
+      "votes": ["Border Security Act", "Yes"]
+    },
+    "location": {
+      "type": "district",
+      "state": "CA",
+      "district": "20",
+      "center": {"lat": 35.3733, "lng": -119.0187}
+    },
+    "recent_votes": [
+      {
+        "bill_name": "Tax Cuts and Jobs Act",
+        "vote": "Yes",
+        "date": "2017-12-19",
+        "description": "Reduced taxes for businesses and individuals"
+      },
+      {
+        "bill_name": "Border Security Act",
+        "vote": "Yes",
+        "date": "2023-05-11",
+        "description": "Increased funding for border security"
+      }
+    ],
+    "key_policies": [
+      {
+        "category": "Agriculture",
+        "stance": "Support",
+        "description": "Support Central Valley farmers",
+        "impact": "Secured $2 billion in water infrastructure for CA-20"
+      },
+      {
+        "category": "Energy",
+        "stance": "Support",
+        "description": "Expand domestic oil production",
+        "impact": "Would create 5,000 energy jobs in California"
+      }
+    ],
+    "current_bills": [
+      {
+        "title": "Water Infrastructure Act",
+        "status": "In Committee",
+        "your_impact": "Would deliver more water to Central Valley farms"
+      }
+    ],
+    "contact_info": {
+      "email": "kevinmccarthy@mail.house.gov",
+      "phone": "(202) 225-2915",
+      "office": "2468 Rayburn House Office Building, Washington, DC 20515"
     }
   },
   {
@@ -113,16 +345,66 @@
     "position": "Representative",
     "vote_count": 145,
     "statement_count": 98,
+    "is_national": false,
     "politician_details": {
       "statements": [
         "Green New Deal is our future",
         "Healthcare and housing are human rights",
         "We must tax the ultra-wealthy"
       ],
-      "votes": [
-        "Green New Deal Resolution",
-        "Yes"
-      ]
+      "votes": ["Green New Deal Resolution", "Yes"]
+    },
+    "location": {
+      "type": "district",
+      "state": "NY",
+      "district": "14",
+      "center": {"lat": 40.7489, "lng": -73.9680}
+    },
+    "recent_votes": [
+      {
+        "bill_name": "Green New Deal Resolution",
+        "vote": "Yes",
+        "date": "2019-02-07",
+        "description": "Addresses climate change and economic inequality"
+      },
+      {
+        "bill_name": "For the People Act",
+        "vote": "Yes",
+        "date": "2021-03-03",
+        "description": "Expands voting rights and reduces money in politics"
+      }
+    ],
+    "key_policies": [
+      {
+        "category": "Climate",
+        "stance": "Support",
+        "description": "Green New Deal for clean energy transition",
+        "impact": "Would create 20 million green jobs nationwide"
+      },
+      {
+        "category": "Housing",
+        "stance": "Support",
+        "description": "Universal rent control",
+        "impact": "Would reduce rents by 30% in NY-14"
+      },
+      {
+        "category": "Healthcare",
+        "stance": "Support",
+        "description": "Medicare for All",
+        "impact": "Would provide healthcare to all 650,000 residents in NY-14"
+      }
+    ],
+    "current_bills": [
+      {
+        "title": "Green New Deal for Public Housing Act",
+        "status": "In Committee",
+        "your_impact": "Would retrofit 20,000 public housing units in Queens and Bronx"
+      }
+    ],
+    "contact_info": {
+      "email": "aoc@mail.house.gov",
+      "phone": "(202) 225-3965",
+      "office": "229 Cannon House Office Building, Washington, DC 20515"
     }
   }
 ]
