@@ -3,6 +3,45 @@ import SourceLink from "./SourceLink";
 import { ViewSourcesButton } from "./SourceLink";
 import InsufficientData from "./InsufficientData";
 
+const formatDate = (dateString: string): string => {
+  if (!dateString) {
+    return "";
+  }
+
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return "";
+    }
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  } catch {
+    return "";
+  }
+};
+
+const getVoteColor = (position?: Vote["vote_position"]): string => {
+  const key = (position ?? "").toLowerCase();
+
+  switch (key) {
+    case "yes":
+    case "yea":
+    case "aye":
+      return "bg-green-50 text-green-700 border-green-200";
+    case "no":
+    case "nay":
+      return "bg-red-50 text-red-700 border-red-200";
+    case "abstain":
+    case "present":
+      return "bg-yellow-50 text-yellow-700 border-yellow-200";
+    default:
+      return "bg-[var(--ink-50)] text-[var(--ink-600)] border-[var(--ink-200)]";
+  }
+};
+
 interface KeyVotesProps {
   votes: Vote[];
   onCitationClick?: (citation: Citation) => void;
@@ -17,31 +56,6 @@ export default function KeyVotes({ votes, onCitationClick }: KeyVotesProps) {
       />
     );
   }
-
-  const getVoteColor = (position: Vote["vote_position"]) => {
-    switch (position.toLowerCase()) {
-      case "yes":
-      case "yea":
-      case "aye":
-        return "bg-green-50 text-green-700 border-green-200";
-      case "no":
-      case "nay":
-        return "bg-red-50 text-red-700 border-red-200";
-      case "abstain":
-      case "present":
-        return "bg-yellow-50 text-yellow-700 border-yellow-200";
-      default:
-        return "bg-[var(--ink-50)] text-[var(--ink-600)] border-[var(--ink-200)]";
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
 
   // Collect all citations from votes
   const allCitations = votes.flatMap((vote) => vote.citations || []);
@@ -64,9 +78,9 @@ export default function KeyVotes({ votes, onCitationClick }: KeyVotesProps) {
       </div>
 
       <div className="space-y-4">
-        {votes.map((vote, index) => (
+        {votes.map((vote) => (
           <div
-            key={index}
+            key={vote.id}
             className="group relative bg-card border-2 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
           >
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
@@ -111,7 +125,6 @@ export default function KeyVotes({ votes, onCitationClick }: KeyVotesProps) {
                   <SourceLink
                     citation={vote.citations[0]}
                     onClick={onCitationClick}
-                    compact
                   />
                 </div>
               )}

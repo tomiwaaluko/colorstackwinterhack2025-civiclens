@@ -15,7 +15,12 @@ import AskPanel from "@/components/AskPanel";
 
 export default function PoliticianProfilePage() {
   const params = useParams();
-  const id = params.id as string;
+
+  // Validate params.id is a string (not array or undefined)
+  const rawId = params.id;
+  const id =
+    typeof rawId === "string" ? rawId : Array.isArray(rawId) ? rawId[0] : null;
+
   const [profile, setProfile] = useState<PoliticianProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,6 +41,13 @@ export default function PoliticianProfilePage() {
 
   useEffect(() => {
     const loadProfile = async () => {
+      // Guard: only proceed if id is a valid string
+      if (!id || typeof id !== "string") {
+        setError("Invalid politician ID");
+        setIsLoading(false);
+        return;
+      }
+
       setIsLoading(true);
       setError(null);
 
@@ -50,9 +62,7 @@ export default function PoliticianProfilePage() {
       }
     };
 
-    if (id) {
-      loadProfile();
-    }
+    loadProfile();
   }, [id]);
 
   if (isLoading) {
@@ -125,7 +135,7 @@ export default function PoliticianProfilePage() {
               <h3 className="headline-sm mb-4 text-ink-900">
                 Ask About {profile.politician.name}
               </h3>
-              <AskPanel politicianIds={[id]} />
+              {id && <AskPanel politicianIds={[id]} />}
             </section>
           </div>
         </div>

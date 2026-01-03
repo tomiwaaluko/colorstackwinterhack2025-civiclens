@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useEffect, useRef } from "react";
 import { VotingChart } from "@/components/VotingChart";
 import { DonorBreakdownNew } from "@/components/DonorBreakdownNew";
 import { CitationBadge } from "@/components/CitationBadge";
@@ -11,9 +11,12 @@ import {
   Quote,
   Building2,
   ExternalLink,
+  Loader2,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { searchPoliticians, getPoliticianProfile } from "@/lib/api";
+import type { Politician, PoliticianProfile } from "@/lib/types";
 
 const mockPoliticianA = {
   id: "1",
@@ -84,8 +87,242 @@ const mockPoliticianB = {
 function ComparePageContent() {
   const [searchA, setSearchA] = useState("");
   const [searchB, setSearchB] = useState("");
-  const [politicianA] = useState(mockPoliticianA);
-  const [politicianB] = useState(mockPoliticianB);
+  const [searchResultsA, setSearchResultsA] = useState<Politician[]>([]);
+  const [searchResultsB, setSearchResultsB] = useState<Politician[]>([]);
+  const [loadingA, setLoadingA] = useState(false);
+  const [loadingB, setLoadingB] = useState(false);
+  const [activeIndexA, setActiveIndexA] = useState(-1);
+  const [activeIndexB, setActiveIndexB] = useState(-1);
+  const [politicianA, setPoliticianA] = useState(mockPoliticianA);
+  const [politicianB, setPoliticianB] = useState(mockPoliticianB);
+  const dropdownRefA = useRef<HTMLDivElement>(null);
+  const dropdownRefB = useRef<HTMLDivElement>(null);
+
+  // Search for Politician A
+  useEffect(() => {
+    const controller = new AbortController();
+    const searchTimer = setTimeout(async () => {
+      if (searchA.trim().length >= 2) {
+        setLoadingA(true);
+        try {
+          const results = await searchPoliticians(searchA, controller.signal);
+          setSearchResultsA(results.politicians);
+        } catch (error) {
+          if (error instanceof Error && error.name === "AbortError") {
+            // Request was aborted, don't update state
+            return;
+          }
+          console.error("Search error:", error);
+          setSearchResultsA([]);
+        } finally {
+          setLoadingA(false);
+        }
+      } else {
+        setSearchResultsA([]);
+      }
+    }, 300);
+
+    return () => {
+      clearTimeout(searchTimer);
+      controller.abort();
+    };
+  }, [searchA]);
+
+  // Reset activeIndexA when search results change
+  useEffect(() => {
+    setActiveIndexA(-1);
+  }, [searchResultsA]);
+
+  // Click outside to close dropdown A
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRefA.current &&
+        !dropdownRefA.current.contains(event.target as Node)
+      ) {
+        setSearchResultsA([]);
+        setActiveIndexA(-1);
+      }
+    };
+
+    if (searchResultsA.length > 0) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [searchResultsA]);
+
+  // Search for Politician B
+  useEffect(() => {
+    const controller = new AbortController();
+    const searchTimer = setTimeout(async () => {
+      if (searchB.trim().length >= 2) {
+        setLoadingB(true);
+        try {
+          const results = await searchPoliticians(searchB, controller.signal);
+          setSearchResultsB(results.politicians);
+        } catch (error) {
+          if (error instanceof Error && error.name === "AbortError") {
+            // Request was aborted, don't update state
+            return;
+          }
+          console.error("Search error:", error);
+          setSearchResultsB([]);
+        } finally {
+          setLoadingB(false);
+        }
+      } else {
+        setSearchResultsB([]);
+      }
+    }, 300);
+
+    return () => {
+      clearTimeout(searchTimer);
+      controller.abort();
+    };
+  }, [searchB]);
+
+  // Reset activeIndexB when search results change
+  useEffect(() => {
+    setActiveIndexB(-1);
+  }, [searchResultsB]);
+
+  // Click outside to close dropdown B
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRefB.current &&
+        !dropdownRefB.current.contains(event.target as Node)
+      ) {
+        setSearchResultsB([]);
+        setActiveIndexB(-1);
+      }
+    };
+
+    if (searchResultsB.length > 0) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [searchResultsB]);
+
+  const handleSelectPoliticianA = async (politician: Politician) => {
+    setLoadingA(true);
+    try {
+      const profile = await getPoliticianProfile(politician.id);
+      // Transform API profile to match mock data structure
+      setPoliticianA({
+        id: profile.politician.id,
+        name: profile.politician.name,
+        party: profile.politician.party || "Unknown",
+        state: profile.politician.state || "N/A",
+        position: profile.politician.office || "Unknown",
+        votingData: mockPoliticianA.votingData, // Keep mock data for now
+        donorData: mockPoliticianA.donorData,
+        totalDonations: "$0",
+        statements:
+          profile.statements?.slice(0, 2).map((s) => ({
+            text: s.text,
+            date: s.date || "N/A",
+            source: s.source_type || "Unknown",
+          })) || [],
+      });
+      setSearchA("");
+      setSearchResultsA([]);
+      setActiveIndexA(-1);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+    } finally {
+      setLoadingA(false);
+    }
+  };
+
+  const handleKeyDownA = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (searchResultsA.length === 0) return;
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setActiveIndexA((prev) => (prev + 1) % searchResultsA.length);
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setActiveIndexA(
+          (prev) => (prev - 1 + searchResultsA.length) % searchResultsA.length
+        );
+        break;
+      case "Enter":
+        e.preventDefault();
+        if (activeIndexA >= 0 && activeIndexA < searchResultsA.length) {
+          handleSelectPoliticianA(searchResultsA[activeIndexA]);
+        }
+        break;
+      case "Escape":
+        e.preventDefault();
+        setSearchResultsA([]);
+        setActiveIndexA(-1);
+        break;
+    }
+  };
+
+  const handleKeyDownB = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (searchResultsB.length === 0) return;
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setActiveIndexB((prev) => (prev + 1) % searchResultsB.length);
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setActiveIndexB(
+          (prev) => (prev - 1 + searchResultsB.length) % searchResultsB.length
+        );
+        break;
+      case "Enter":
+        e.preventDefault();
+        if (activeIndexB >= 0 && activeIndexB < searchResultsB.length) {
+          handleSelectPoliticianB(searchResultsB[activeIndexB]);
+        }
+        break;
+      case "Escape":
+        e.preventDefault();
+        setSearchResultsB([]);
+        setActiveIndexB(-1);
+        break;
+    }
+  };
+
+  const handleSelectPoliticianB = async (politician: Politician) => {
+    setLoadingB(true);
+    try {
+      const profile = await getPoliticianProfile(politician.id);
+      // Transform API profile to match mock data structure
+      setPoliticianB({
+        id: profile.politician.id,
+        name: profile.politician.name,
+        party: profile.politician.party || "Unknown",
+        state: profile.politician.state || "N/A",
+        position: profile.politician.office || "Unknown",
+        votingData: mockPoliticianB.votingData, // Keep mock data for now
+        donorData: mockPoliticianB.donorData,
+        totalDonations: "$0",
+        statements:
+          profile.statements?.slice(0, 2).map((s) => ({
+            text: s.text,
+            date: s.date || "N/A",
+            source: s.source_type || "Unknown",
+          })) || [],
+      });
+      setSearchB("");
+      setSearchResultsB([]);
+      setActiveIndexB(-1);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+    } finally {
+      setLoadingB(false);
+    }
+  };
 
   const citation = {
     id: "1",
@@ -123,15 +360,60 @@ function ComparePageContent() {
             {/* Politician A */}
             <div className="civic-card p-6">
               <div className="flex items-center gap-3 mb-6">
-                <div className="relative flex-1">
+                <div className="relative flex-1" ref={dropdownRefA}>
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="text"
                     placeholder="Search first politician..."
                     value={searchA}
                     onChange={(e) => setSearchA(e.target.value)}
+                    onKeyDown={handleKeyDownA}
                     className="pl-10"
+                    role="combobox"
+                    aria-expanded={searchResultsA.length > 0}
+                    aria-controls="search-results-a"
+                    aria-activedescendant={
+                      activeIndexA >= 0 ? `result-a-${activeIndexA}` : undefined
+                    }
                   />
+                  {loadingA && (
+                    <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground animate-spin" />
+                  )}
+                  {/* Search Results Dropdown */}
+                  {searchResultsA.length > 0 && (
+                    <div
+                      id="search-results-a"
+                      className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto"
+                      role="listbox"
+                    >
+                      {searchResultsA.map((politician, index) => (
+                        <button
+                          key={politician.id}
+                          id={`result-a-${index}`}
+                          onClick={() => handleSelectPoliticianA(politician)}
+                          className={`w-full text-left px-4 py-3 transition-colors border-b border-border last:border-b-0 ${
+                            index === activeIndexA
+                              ? "bg-muted"
+                              : "hover:bg-muted"
+                          }`}
+                          role="option"
+                          aria-selected={index === activeIndexA}
+                          tabIndex={-1}
+                        >
+                          <div className="font-medium text-foreground">
+                            {politician.name}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {politician.party && `${politician.party} • `}
+                            {politician.office && `${politician.office} • `}
+                            {politician.state}
+                            {politician.district &&
+                              ` - District ${politician.district}`}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex items-center gap-4">
@@ -164,15 +446,60 @@ function ComparePageContent() {
             {/* Politician B */}
             <div className="civic-card p-6">
               <div className="flex items-center gap-3 mb-6">
-                <div className="relative flex-1">
+                <div className="relative flex-1" ref={dropdownRefB}>
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="text"
                     placeholder="Search second politician..."
                     value={searchB}
                     onChange={(e) => setSearchB(e.target.value)}
+                    onKeyDown={handleKeyDownB}
                     className="pl-10"
+                    role="combobox"
+                    aria-expanded={searchResultsB.length > 0}
+                    aria-controls="search-results-b"
+                    aria-activedescendant={
+                      activeIndexB >= 0 ? `result-b-${activeIndexB}` : undefined
+                    }
                   />
+                  {loadingB && (
+                    <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground animate-spin" />
+                  )}
+                  {/* Search Results Dropdown */}
+                  {searchResultsB.length > 0 && (
+                    <div
+                      id="search-results-b"
+                      className="absolute top-full left-0 right-0 mt-2 bg-card border border-border rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto"
+                      role="listbox"
+                    >
+                      {searchResultsB.map((politician, index) => (
+                        <button
+                          key={politician.id}
+                          id={`result-b-${index}`}
+                          onClick={() => handleSelectPoliticianB(politician)}
+                          className={`w-full text-left px-4 py-3 transition-colors border-b border-border last:border-b-0 ${
+                            index === activeIndexB
+                              ? "bg-muted"
+                              : "hover:bg-muted"
+                          }`}
+                          role="option"
+                          aria-selected={index === activeIndexB}
+                          tabIndex={-1}
+                        >
+                          <div className="font-medium text-foreground">
+                            {politician.name}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {politician.party && `${politician.party} • `}
+                            {politician.office && `${politician.office} • `}
+                            {politician.state}
+                            {politician.district &&
+                              ` - District ${politician.district}`}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex items-center gap-4">
@@ -257,32 +584,24 @@ function ComparePageContent() {
                     </p>
                     <div className="flex items-center justify-between text-sm text-muted-foreground">
                       <span>{statement.date}</span>
-                      <span className="flex items-center gap-1">
-                        {statement.source}
-                        <ExternalLink className="h-3 w-3" />
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Politician B Statements */}
-              <div className="space-y-4">
-                <h3 className="font-semibold text-foreground">
-                  {politicianB.name}
-                </h3>
-                {politicianB.statements.map((statement, index) => (
-                  <div key={index} className="civic-card p-6">
-                    <Quote className="h-6 w-6 text-accent mb-3" />
-                    <p className="text-foreground mb-4 leading-relaxed">
-                      &quot;{statement.text}&quot;
-                    </p>
-                    <div className="flex items-center justify-between text-sm text-muted-foreground">
-                      <span>{statement.date}</span>
-                      <span className="flex items-center gap-1">
-                        {statement.source}
-                        <ExternalLink className="h-3 w-3" />
-                      </span>
+                      {"url" in statement || "sourceUrl" in statement ? (
+                        <a
+                          href={
+                            (statement as { url?: string; sourceUrl?: string })
+                              .url ||
+                            (statement as { url?: string; sourceUrl?: string })
+                              .sourceUrl
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 hover:text-foreground transition-colors"
+                        >
+                          {statement.source}
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      ) : (
+                        <span>{statement.source}</span>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -296,9 +615,5 @@ function ComparePageContent() {
 }
 
 export default function ComparePage() {
-  return (
-    <Suspense fallback={<div className="py-12 text-center">Loading...</div>}>
-      <ComparePageContent />
-    </Suspense>
-  );
+  return <ComparePageContent />;
 }

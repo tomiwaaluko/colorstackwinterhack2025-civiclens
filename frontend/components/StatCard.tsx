@@ -24,7 +24,7 @@ export function StatCard({ icon: Icon, value, label, trend }: StatCardProps) {
             }`}
           >
             {trend.isPositive ? "+" : "-"}
-            {trend.value}%
+            {Math.abs(trend.value)}%
           </span>
         )}
       </div>

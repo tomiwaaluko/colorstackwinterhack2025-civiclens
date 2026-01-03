@@ -23,7 +23,15 @@ export default function StatementsList({
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return null;
-    return new Date(dateString).toLocaleDateString("en-US", {
+
+    const date = new Date(dateString);
+
+    // Validate the date is valid
+    if (isNaN(date.getTime())) {
+      return null;
+    }
+
+    return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",

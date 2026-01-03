@@ -25,7 +25,38 @@ export function VotingChart({ data }: VotingChartProps) {
       <h3 className="font-serif text-lg font-semibold text-foreground mb-6">
         Voting Record by Category
       </h3>
-      <div className="h-64">
+
+      {/* Screen reader accessible data table */}
+      <div className="sr-only">
+        <table>
+          <caption>Voting record breakdown by category</caption>
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Yes Votes</th>
+              <th>No Votes</th>
+              <th>Abstain</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((item) => (
+              <tr key={item.category}>
+                <td>{item.category}</td>
+                <td>{item.yes}</td>
+                <td>{item.no}</td>
+                <td>{item.abstain}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Visual chart for sighted users */}
+      <div
+        className="h-64"
+        role="img"
+        aria-label="Bar chart showing voting record by category with yes, no, and abstain counts"
+      >
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} layout="vertical" margin={{ left: 20 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />

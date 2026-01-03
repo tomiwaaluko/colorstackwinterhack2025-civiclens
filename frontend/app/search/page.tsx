@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { SearchBarNew } from "@/components/SearchBarNew";
 import { PoliticianCardNew } from "@/components/PoliticianCardNew";
@@ -79,6 +79,63 @@ function SearchPageContent() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState("relevance");
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+
+  const filteredPoliticians = useMemo(() => {
+    if (activeFilters.length === 0) {
+      return mockPoliticians;
+    }
+
+    // Separate filters into groups
+    const selectedPartyFilters = activeFilters.filter((filter) =>
+      ["Democrat", "Republican", "Independent"].includes(filter)
+    );
+    const selectedPositionFilters = activeFilters.filter((filter) =>
+      ["Senate", "House"].includes(filter)
+    );
+
+    return mockPoliticians.filter((politician) => {
+      // Check party filters (if any selected, must match one)
+      if (selectedPartyFilters.length > 0) {
+        const matchesParty = selectedPartyFilters.includes(politician.party);
+        if (!matchesParty) return false;
+      }
+
+      // Check position filters (if any selected, must match one)
+      if (selectedPositionFilters.length > 0) {
+        const matchesPosition = selectedPositionFilters.some((filter) => {
+          if (filter === "Senate") {
+            return politician.position.includes("Senator");
+          }
+          if (filter === "House") {
+            return politician.position.includes("Representative");
+          }
+          return false;
+        });
+        if (!matchesPosition) return false;
+      }
+
+      // Politician matches all non-empty filter groups
+      return true;
+    });
+  }, [activeFilters]);
+
+  const sortedPoliticians = useMemo(() => {
+    const sorted = [...filteredPoliticians];
+
+    switch (sortBy) {
+      case "name":
+        return sorted.sort((a, b) => a.name.localeCompare(b.name));
+      case "votes":
+        return sorted.sort((a, b) => b.verifiedVotes - a.verifiedVotes);
+      case "statements":
+        return sorted.sort(
+          (a, b) => b.verifiedStatements - a.verifiedStatements
+        );
+      case "relevance":
+      default:
+        return sorted; // Keep original order for relevance
+    }
+  }, [filteredPoliticians, sortBy]);
 
   const handleSearch = (_query: string, _zip: string) => {
     // Search functionality will be implemented with API integration
@@ -168,7 +225,10 @@ function SearchPageContent() {
 
           {/* Results Count */}
           <p className="text-sm text-muted-foreground mb-6">
-            Showing <span className="font-semibold text-foreground">6</span>{" "}
+            Showing{" "}
+            <span className="font-semibold text-foreground">
+              {sortedPoliticians.length}
+            </span>{" "}
             politicians
             {initialQuery && (
               <>
@@ -190,7 +250,7 @@ function SearchPageContent() {
                 : "flex flex-col gap-4"
             }
           >
-            {mockPoliticians.map((politician) => (
+            {sortedPoliticians.map((politician) => (
               <PoliticianCardNew key={politician.id} {...politician} />
             ))}
           </div>

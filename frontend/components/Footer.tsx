@@ -96,21 +96,25 @@ export function Footer() {
             <h4 className="font-semibold text-foreground mb-4">Connect</h4>
             <div className="flex gap-3">
               <a
-                href="#"
+                href="https://x.com/civiclens"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2.5 rounded-lg bg-muted hover:bg-primary hover:text-primary-foreground transition-colors"
                 aria-label="Twitter"
               >
                 <Twitter className="h-4 w-4" />
               </a>
               <a
-                href="#"
+                href="https://github.com/tomiwaaluko/colorstackwinterhack2025-civiclens"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2.5 rounded-lg bg-muted hover:bg-primary hover:text-primary-foreground transition-colors"
                 aria-label="GitHub"
               >
                 <Github className="h-4 w-4" />
               </a>
               <a
-                href="#"
+                href="mailto:contact@civiclens.com"
                 className="p-2.5 rounded-lg bg-muted hover:bg-primary hover:text-primary-foreground transition-colors"
                 aria-label="Email"
               >
@@ -126,18 +130,18 @@ export function Footer() {
               © {new Date().getFullYear()} CivicLens. All rights reserved.
             </p>
             <div className="flex gap-6">
-              <a
-                href="#"
+              <Link
+                href="/privacy"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 Privacy Policy
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                href="/terms"
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 Terms of Service
-              </a>
+              </Link>
             </div>
           </div>
         </div>

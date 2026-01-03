@@ -1,6 +1,6 @@
 "use client";
 
-import { Component, ReactNode } from "react";
+import { Component, ReactNode, type ErrorInfo } from "react";
 
 interface Props {
   children: ReactNode;
@@ -22,7 +22,7 @@ export default class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("Error caught by boundary:", error, errorInfo);
   }
 
@@ -43,10 +43,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                 "An unexpected error occurred while loading this component."}
             </p>
             <button
-              onClick={() => {
-                this.setState({ hasError: false, error: null });
-                window.location.reload();
-              }}
+              onClick={() => window.location.reload()}
               className="rounded-lg bg-red-600 px-6 py-2 text-white hover:bg-red-700 transition-colors"
             >
               Reload Page

@@ -37,7 +37,10 @@ export function CitationBadge({ citation, index }: CitationBadgeProps) {
         <Tooltip>
           <TooltipTrigger asChild>
             <DialogTrigger asChild>
-              <button className="citation-badge cursor-pointer hover:bg-accent/30 transition-colors">
+              <button
+                className="citation-badge cursor-pointer hover:bg-accent/30 transition-colors"
+                aria-label={`Open citation ${index ?? 1}`}
+              >
                 <span>[{index ?? 1}]</span>
               </button>
             </DialogTrigger>

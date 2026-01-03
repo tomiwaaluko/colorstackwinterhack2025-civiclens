@@ -32,6 +32,7 @@ export default function CompareView({
     null
   );
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
 
   const handleCitationClick = (citation: Citation) => {
     setSelectedCitation(citation);
@@ -73,7 +74,8 @@ export default function CompareView({
       });
       setComparison(result);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to load comparison";
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to load comparison";
       setError(errorMessage);
       setComparison(null);
     } finally {
@@ -106,18 +108,17 @@ export default function CompareView({
     );
   }
 
-  if (error && !comparison) {
-    return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-6">
-        <p className="text-red-800">{error}</p>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-8">
+      {/* Error Banner */}
+      {error && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-6">
+          <p className="text-red-800">{error}</p>
+        </div>
+      )}
+
       {/* Selection UI */}
-      {(!selectedA || !selectedB || !comparison) && (
+      {(!selectedA || !selectedB) && (
         <div className="rounded-xl border border-ink-200 bg-white p-8 shadow-sm">
           <h2 className="headline-sm mb-6 text-ink-900">
             Select Politicians to Compare
@@ -132,7 +133,7 @@ export default function CompareView({
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                   placeholder="Search by name..."
                   className="flex-1 rounded-lg border border-ink-300 px-4 py-2 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
@@ -189,6 +190,104 @@ export default function CompareView({
               </button>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Collapsible Selection Panel when comparison exists */}
+      {selectedA && selectedB && comparison && (
+        <div className="rounded-xl border border-ink-200 bg-white shadow-sm overflow-hidden">
+          <button
+            onClick={() => setIsPanelCollapsed(!isPanelCollapsed)}
+            className="w-full flex items-center justify-between p-4 hover:bg-ink-50 transition-colors"
+          >
+            <h3 className="text-sm font-medium text-ink-900">
+              Change Selection
+            </h3>
+            <svg
+              className={`h-5 w-5 text-ink-600 transition-transform ${
+                isPanelCollapsed ? "" : "rotate-180"
+              }`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+          {!isPanelCollapsed && (
+            <div className="p-6 pt-0 border-t border-ink-100">
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-ink-700 mb-2">
+                    Search for Politicians
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                      placeholder="Search by name..."
+                      className="flex-1 rounded-lg border border-ink-300 px-4 py-2 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    />
+                    <button
+                      onClick={handleSearch}
+                      className="rounded-lg bg-ink-900 px-6 py-2 font-medium text-white hover:bg-ink-800 transition-colors"
+                    >
+                      Search
+                    </button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-ink-700 mb-2">
+                      Politician A
+                    </label>
+                    <select
+                      value={selectedA}
+                      onChange={(e) => setSelectedA(e.target.value)}
+                      className="w-full rounded-lg border border-ink-300 px-4 py-2 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    >
+                      <option value="">Select...</option>
+                      {politicians.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.name} {p.office && `(${p.office})`}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-ink-700 mb-2">
+                      Politician B
+                    </label>
+                    <select
+                      value={selectedB}
+                      onChange={(e) => setSelectedB(e.target.value)}
+                      className="w-full rounded-lg border border-ink-300 px-4 py-2 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    >
+                      <option value="">Select...</option>
+                      {politicians.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.name} {p.office && `(${p.office})`}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <button
+                  onClick={handleCompare}
+                  className="w-full rounded-lg bg-amber-500 px-4 py-3 font-medium text-ink-900 hover:bg-amber-400 transition-colors"
+                >
+                  Update Comparison
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

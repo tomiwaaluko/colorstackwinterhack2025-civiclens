@@ -6,7 +6,6 @@ interface SourceLinkProps {
   citation: Citation;
   className?: string;
   onClick?: (citation: Citation) => void;
-  compact?: boolean;
 }
 
 export default function SourceLink({
@@ -57,12 +56,32 @@ export function ViewSourcesButton({
   citations,
   onCitationClick,
 }: ViewSourcesButtonProps) {
+  const hasCitations = citations && citations.length > 0;
+  const citationCount = citations?.length ?? 0;
+
+  const handleClick = () => {
+    if (hasCitations && onCitationClick && citations[0]) {
+      onCitationClick(citations[0]);
+    }
+  };
+
   return (
     <button
-      onClick={() => onCitationClick && onCitationClick(citations[0])}
-      className="text-sm font-medium text-amber-600 hover:text-amber-700 hover:underline"
+      onClick={handleClick}
+      disabled={!hasCitations}
+      aria-disabled={!hasCitations}
+      className={`text-sm font-medium transition-colors ${
+        hasCitations
+          ? "text-amber-600 hover:text-amber-700 hover:underline cursor-pointer"
+          : "text-muted-foreground cursor-not-allowed opacity-50"
+      }`}
+      aria-label={
+        hasCitations
+          ? `View ${citationCount} citation${citationCount !== 1 ? "s" : ""}`
+          : "No citations available"
+      }
     >
-      View {citations.length} Source{citations.length !== 1 ? "s" : ""}
+      View {citationCount} Source{citationCount !== 1 ? "s" : ""}
     </button>
   );
 }
