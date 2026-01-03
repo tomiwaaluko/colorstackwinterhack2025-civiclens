@@ -105,7 +105,7 @@ function ComparePageContent() {
       if (searchA.trim().length >= 2) {
         setLoadingA(true);
         try {
-          const results = await searchPoliticians(searchA, controller.signal);
+          const results = await searchPoliticians(searchA, undefined, controller.signal);
           setSearchResultsA(results.politicians);
         } catch (error) {
           if (error instanceof Error && error.name === "AbortError") {
@@ -159,7 +159,7 @@ function ComparePageContent() {
       if (searchB.trim().length >= 2) {
         setLoadingB(true);
         try {
-          const results = await searchPoliticians(searchB, controller.signal);
+          const results = await searchPoliticians(searchB, undefined, controller.signal);
           setSearchResultsB(results.politicians);
         } catch (error) {
           if (error instanceof Error && error.name === "AbortError") {
