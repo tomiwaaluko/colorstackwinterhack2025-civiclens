@@ -106,7 +106,8 @@ async function fetchApi<T>(
 
 export async function searchPoliticians(
   name?: string,
-  zip?: string
+  zip?: string,
+  signal?: AbortSignal
 ): Promise<SearchResult> {
   if (DEMO_MODE) {
     // Simulate API delay
@@ -148,7 +149,7 @@ export async function searchPoliticians(
   if (name) params.append("name", name);
   if (zip) params.append("zip", zip);
 
-  return fetchApi<SearchResult>(`/search?${params.toString()}`);
+  return fetchApi<SearchResult>(`/search?${params.toString()}`, { signal });
 }
 
 export async function getPoliticianProfile(
