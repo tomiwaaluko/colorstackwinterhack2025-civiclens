@@ -108,7 +108,7 @@ export default function SourceDrawer({
                     Relevant Excerpt
                   </h3>
                   <blockquote className="mt-2 border-l-4 border-amber-500 pl-4 italic text-ink-700">
-                    "{citation.snippet}"
+                    &quot;{citation.snippet}&quot;
                   </blockquote>
                 </div>
               )}

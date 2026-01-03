@@ -32,7 +32,7 @@ export default function Citations({
               <p className="text-xs text-ink-500 mb-2">{citation.publisher}</p>
               {citation.snippet && (
                 <p className="text-xs text-ink-600 italic line-clamp-2 border-l-2 border-amber-200 pl-2">
-                  "{citation.snippet}"
+                  &quot;{citation.snippet}&quot;
                 </p>
               )}
             </div>

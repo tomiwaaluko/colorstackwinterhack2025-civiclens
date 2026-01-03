@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { useState, Suspense } from "react";
 import { VotingChart } from "@/components/VotingChart";
 import { DonorBreakdownNew } from "@/components/DonorBreakdownNew";
 import { CitationBadge } from "@/components/CitationBadge";
@@ -84,7 +82,6 @@ const mockPoliticianB = {
 };
 
 function ComparePageContent() {
-  const searchParams = useSearchParams();
   const [searchA, setSearchA] = useState("");
   const [searchB, setSearchB] = useState("");
   const [politicianA] = useState(mockPoliticianA);

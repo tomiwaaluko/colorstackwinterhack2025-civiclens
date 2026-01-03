@@ -36,8 +36,9 @@ export default function AskPanel({ politicianIds }: AskPanelProps) {
         politician_ids: politicianIds,
       });
       setResponse(result);
-    } catch (err: any) {
-      setError(err.message || "Failed to get answer");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to get answer";
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

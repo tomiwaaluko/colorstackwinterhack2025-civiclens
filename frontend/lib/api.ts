@@ -1,5 +1,4 @@
 import type {
-  Politician,
   PoliticianProfile,
   SearchResult,
   ApiError,
@@ -9,6 +8,8 @@ import type {
   AskRequest,
   AIResponse,
   Citation,
+  Vote,
+  Donation,
 } from './types';
 
 // API base URL - defaults to localhost for development
@@ -150,24 +151,24 @@ export async function getPoliticianProfile(
 
 export async function getPoliticianVotes(
   id: string
-): Promise<{ votes: any[] }> {
+): Promise<{ votes: Vote[] }> {
   if (DEMO_MODE) {
     await new Promise((resolve) => setTimeout(resolve, 300));
     return { votes: [] };
   }
 
-  return fetchApi<{ votes: any[] }>(`/politician/${id}/votes`);
+  return fetchApi<{ votes: Vote[] }>(`/politician/${id}/votes`);
 }
 
 export async function getPoliticianDonations(
   id: string
-): Promise<{ donations: any[] }> {
+): Promise<{ donations: Donation[] }> {
   if (DEMO_MODE) {
     await new Promise((resolve) => setTimeout(resolve, 300));
     return { donations: [] };
   }
 
-  return fetchApi<{ donations: any[] }>(`/politician/${id}/donations`);
+  return fetchApi<{ donations: Donation[] }>(`/politician/${id}/donations`);
 }
 
 export async function comparePoliticians(

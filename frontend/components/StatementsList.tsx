@@ -58,7 +58,7 @@ export default function StatementsList({
 
             <div className="pl-4">
               <blockquote className="font-serif text-lg italic leading-relaxed text-ink-900">
-                "{statement.text}"
+                &quot;{statement.text}&quot;
               </blockquote>
 
               <div className="mt-4 flex flex-wrap items-center gap-4 text-sm">

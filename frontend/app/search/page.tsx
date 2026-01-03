@@ -80,8 +80,9 @@ function SearchPageContent() {
   const [sortBy, setSortBy] = useState("relevance");
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
-  const handleSearch = (query: string, zip: string) => {
-    console.log("Searching:", query, zip);
+  const handleSearch = (_query: string, _zip: string) => {
+    // Search functionality will be implemented with API integration
+    // Navigate to results or update state based on query and zip
   };
 
   const toggleFilter = (filter: string) => {

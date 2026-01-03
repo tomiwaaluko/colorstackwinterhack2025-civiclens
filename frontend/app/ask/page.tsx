@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { useState, Suspense } from "react";
 import { CitationBadge } from "@/components/CitationBadge";
 import {
   Sparkles,
@@ -71,7 +69,6 @@ const mockConversation: Message[] = [
 ];
 
 function AskPageContent() {
-  const searchParams = useSearchParams();
   const [messages, setMessages] = useState<Message[]>(mockConversation);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -189,7 +186,7 @@ function AskPageContent() {
                 What would you like to know?
               </h2>
               <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                Ask questions about politicians' voting records, donors, or
+                Ask questions about politicians&apos; voting records, donors, or
                 public statements.
               </p>
 

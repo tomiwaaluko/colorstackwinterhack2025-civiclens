@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useCallback } from "react";
 import type { ComparisonResult, Politician, Citation } from "@/lib/types";
 import { comparePoliticians, searchPoliticians } from "@/lib/api";
 import ProfileHeader from "./ProfileHeader";
@@ -22,7 +21,6 @@ export default function CompareView({
   politicianBId,
   topic,
 }: CompareViewProps) {
-  const router = useRouter();
   const [comparison, setComparison] = useState<ComparisonResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,14 +56,7 @@ export default function CompareView({
     loadPoliticians();
   }, []);
 
-  // Load comparison if both IDs are provided
-  useEffect(() => {
-    if (selectedA && selectedB) {
-      handleCompare();
-    }
-  }, [selectedA, selectedB, topic]);
-
-  const handleCompare = async () => {
+  const handleCompare = useCallback(async () => {
     if (!selectedA || !selectedB) {
       setError("Please select both politicians to compare");
       return;
@@ -81,13 +72,21 @@ export default function CompareView({
         topic,
       });
       setComparison(result);
-    } catch (err: any) {
-      setError(err.message || "Failed to load comparison");
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to load comparison";
+      setError(errorMessage);
       setComparison(null);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedA, selectedB, topic]);
+
+  // Load comparison if both IDs are provided
+  useEffect(() => {
+    if (selectedA && selectedB) {
+      handleCompare();
+    }
+  }, [selectedA, selectedB, topic, handleCompare]);
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;

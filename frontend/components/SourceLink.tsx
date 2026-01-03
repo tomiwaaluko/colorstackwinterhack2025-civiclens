@@ -13,7 +13,6 @@ export default function SourceLink({
   citation,
   className = "",
   onClick,
-  compact = false,
 }: SourceLinkProps) {
   const handleClick = (e: React.MouseEvent) => {
     if (onClick) {
