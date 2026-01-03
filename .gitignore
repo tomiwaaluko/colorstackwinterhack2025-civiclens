@@ -1,3 +1,5 @@
 # MCP configuration files (may contain sensitive tokens)
 .cursor/mcp.json
 
+# Frontend Vite folder (local only)
+frontendvite/
