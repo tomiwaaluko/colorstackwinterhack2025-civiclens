@@ -1,0 +1,45 @@
+QUESTION:
+{question}
+
+EVIDENCE:
+Each evidence block includes:
+- source_id (use this for citations)
+- source metadata
+- chunk text
+
+Only the text below may be used to answer the question.
+
+{evidence_blocks}
+
+TASK:
+Using ONLY the evidence above, produce a response that matches this JSON schema:
+
+{
+  "answer": "string",
+  "claims": [
+    {
+      "text": "string",
+      "citations": ["source_id"],
+      "confidence": "low | medium | high"
+    }
+  ],
+  "citations": [
+    {
+      "source_id": "string",
+      "url": "string | null",
+      "title": "string",
+      "publisher": "string",
+      "retrieved_at": "ISO-8601 datetime",
+      "snippet": "string"
+    }
+  ],
+  "limitations": "string | null",
+  "disclosure": "string"
+}
+
+IMPORTANT:
+- Every claim MUST have at least one citation.
+- Citation snippets MUST appear verbatim in the evidence text.
+- If evidence is weak, incomplete, or conflicting, explain this in "limitations".
+- If no evidence supports an answer, respond EXACTLY with:
+  "Insufficient data."
