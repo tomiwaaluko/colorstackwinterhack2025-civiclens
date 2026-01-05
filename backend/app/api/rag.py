@@ -1,11 +1,11 @@
-# backend/app/api/rag.py
-
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse, PlainTextResponse
 from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.database import get_db
 from app.ai.guardrails import GuardrailDecision, check_guardrails
 from app.ai.generate import GenerationError, generate_answer
 from app.ai.schemas import AIResponse, InsufficientDataResponse, RAGRequest
@@ -14,7 +14,7 @@ from app.ai.validate import ValidationError as AIValidationError, build_retrieve
 # You will implement this next (or adapt to your repo's DB/repositories pattern)
 # Expected signature:
 #   retrieve_evidence(question: str, politician_ids: list[str] | None, top_k: int) -> EvidenceBundle
-from backend.app.ai.retrieval_models import retrieve_evidence  # type: ignore
+from app.ai.retrieval import retrieve_evidence  # type: ignore
 
 
 router = APIRouter(prefix="/api/rag", tags=["rag"])
@@ -23,7 +23,7 @@ router = APIRouter(prefix="/api/rag", tags=["rag"])
 # Optional: explicit response model for OpenAPI.
 # Since you sometimes return a literal string, we handle responses manually.
 @router.post("/answer")
-async def rag_answer(payload: RAGRequest):
+async def rag_answer(payload: RAGRequest, db: AsyncSession = Depends(get_db)):
     """
     RAG endpoint:
     1) guardrails
@@ -41,6 +41,7 @@ async def rag_answer(payload: RAGRequest):
 
     # 2) Retrieval
     bundle = await retrieve_evidence(
+        db=db,
         question=question,
         politician_ids=payload.politician_ids,
         top_k=payload.top_k,
