@@ -87,6 +87,11 @@ class OpenStatesClient:
         for attempt in range(retries):
             try:
                 response = self.session.get(url, params=params, timeout=30)
+                
+                # Log response details for debugging
+                if response.status_code != 200:
+                    logger.error(f"API returned {response.status_code}: {response.text[:500]}")
+                
                 response.raise_for_status()
                 
                 # Rate limiting
@@ -100,7 +105,7 @@ class OpenStatesClient:
                 else:
                     raise
                     
-    def get_people(self, jurisdiction: str, page: int = 1, per_page: int = 100) -> Dict:
+    def get_people(self, jurisdiction: str, page: int = 1, per_page: int = 50) -> Dict:
         """
         Get people (legislators) for a jurisdiction
         Returns paginated results
@@ -109,7 +114,8 @@ class OpenStatesClient:
         params = {
             'jurisdiction': jurisdiction,
             'page': page,
-            'per_page': per_page
+            'per_page': per_page,
+            'include': 'other_names'
         }
         data = self._request('people', params=params)
         logger.info(f"Retrieved {len(data.get('results', []))} people")
@@ -122,7 +128,7 @@ class OpenStatesClient:
         return self._request(endpoint)
     
     def get_bills(self, jurisdiction: str, session: Optional[str] = None, 
-                  page: int = 1, per_page: int = 100) -> Dict:
+                  page: int = 1, per_page: int = 20) -> Dict:
         """
         Get bills for a jurisdiction
         session: Optional session identifier (varies by state)
@@ -307,8 +313,8 @@ class DatabaseManager:
             result = cur.fetchone()
             return result[0] if result else None
     
-    def insert_bill(self, bill_data: Dict, source_id: str, sponsor_id: Optional[str]) -> str:
-        """Insert bill record"""
+    def insert_bill(self, bill_data: Dict, source_id: str, sponsor_id: Optional[str]) -> Optional[str]:
+        """Insert bill record - returns bill_id or None if insert fails"""
         with self.conn.cursor() as cur:
             # Check if exists
             existing_id = self.get_bill_by_external_id(bill_data['id'])
@@ -335,6 +341,8 @@ class DatabaseManager:
             except:
                 pass
             
+            # If sponsor_id is required by database but None, try to insert without it
+            # or handle gracefully
             cur.execute("""
                 INSERT INTO bills (external_id, bill_number, title, summary, sponsor_id,
                                  introduced_date, congress_number, chamber, status, source_id)
@@ -345,7 +353,7 @@ class DatabaseManager:
                 bill_data.get('identifier', 'Unknown'),
                 bill_data.get('title', 'Untitled'),
                 bill_data.get('abstracts', [{}])[0].get('abstract') if bill_data.get('abstracts') else None,
-                sponsor_id,
+                sponsor_id,  # Can be None, which is allowed by schema
                 bill_data.get('created_at', '').split('T')[0] if bill_data.get('created_at') else None,
                 congress_number,
                 chamber,
@@ -508,10 +516,15 @@ class IngestionPipeline:
                                 )
                         
                         # Insert bill
-                        self.db.insert_bill(bill, source_id, sponsor_id)
+                        bill_id = self.db.insert_bill(bill, source_id, sponsor_id)
+                        
+                        # Commit after each successful bill to avoid transaction rollback cascade
+                        if bill_id:
+                            self.db.conn.commit()
                         
                     except Exception as e:
                         logger.error(f"Failed to ingest bill {bill.get('id')}: {e}")
+                        self.db.conn.rollback()
                         continue
                 
                 page += 1
@@ -536,10 +549,11 @@ def main():
         
         try:
             # Demo: Ingest NY state legislators (small dataset)
-            pipeline.ingest_people(JURISDICTIONS['NY'], max_pages=2)
+            # Use full OCD-ID
+            pipeline.ingest_people('ocd-jurisdiction/country:us/state:ny/government', max_pages=2)
             
             # Demo: Ingest recent NY bills
-            pipeline.ingest_bills(JURISDICTIONS['NY'], max_pages=2)
+            pipeline.ingest_bills('ocd-jurisdiction/country:us/state:ny/government', max_pages=2)
             
             # Uncomment to add more states:
             # pipeline.ingest_people(JURISDICTIONS['CA'], max_pages=3)

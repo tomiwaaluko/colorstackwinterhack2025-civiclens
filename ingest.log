@@ -15,3 +15,948 @@
 2026-01-06 11:01:22,266 [INFO] === OpenStates Ingestion Pipeline Started ===
 2026-01-06 13:08:26,252 [INFO] === OpenStates Ingestion Pipeline Started ===
 2026-01-06 13:20:04,884 [INFO] === OpenStates Ingestion Pipeline Started ===
+2026-01-06 14:46:15,299 [INFO] === OpenStates Ingestion Pipeline Started ===
+2026-01-06 14:46:32,101 [INFO] === OpenStates Ingestion Pipeline Started ===
+2026-01-06 14:50:29,215 [INFO] === OpenStates Ingestion Pipeline Started ===
+2026-01-06 14:50:30,349 [INFO] === Starting people ingestion for ocd-jurisdiction/country:us/state:ny/government ===
+2026-01-06 14:50:30,349 [INFO] Fetching people for ocd-jurisdiction/country:us/state:ny/government (page 1)
+2026-01-06 14:50:31,188 [WARNING] Request failed (attempt 1/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/people?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:50:32,295 [WARNING] Request failed (attempt 2/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/people?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:50:34,398 [WARNING] Request failed (attempt 3/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/people?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:50:34,398 [ERROR] Failed to fetch page 1: 400 Client Error: Bad Request for url: https://v3.openstates.org/people?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:50:34,398 [INFO] === People ingestion complete ===
+2026-01-06 14:50:34,398 [INFO] === Starting bill ingestion for ocd-jurisdiction/country:us/state:ny/government ===
+2026-01-06 14:50:34,398 [INFO] Fetching bills for ocd-jurisdiction/country:us/state:ny/government (page 1)
+2026-01-06 14:50:34,502 [WARNING] Request failed (attempt 1/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/bills?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:50:35,879 [WARNING] Request failed (attempt 2/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/bills?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:50:37,976 [WARNING] Request failed (attempt 3/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/bills?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:50:37,977 [ERROR] Failed to fetch bills page 1: 400 Client Error: Bad Request for url: https://v3.openstates.org/bills?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:50:37,977 [INFO] === Bill ingestion complete ===
+2026-01-06 14:50:37,977 [INFO] Transaction committed
+2026-01-06 14:50:37,977 [INFO] === OpenStates Ingestion Pipeline Complete ===
+2026-01-06 14:51:06,340 [INFO] === OpenStates Ingestion Pipeline Started ===
+2026-01-06 14:51:14,619 [INFO] === Starting people ingestion for ny ===
+2026-01-06 14:51:14,620 [INFO] Fetching people for ny (page 1)
+2026-01-06 14:51:15,242 [WARNING] Request failed (attempt 1/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/people?jurisdiction=ny&page=1&per_page=100&include=other_names
+2026-01-06 14:51:16,361 [WARNING] Request failed (attempt 2/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/people?jurisdiction=ny&page=1&per_page=100&include=other_names
+2026-01-06 14:51:18,458 [WARNING] Request failed (attempt 3/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/people?jurisdiction=ny&page=1&per_page=100&include=other_names
+2026-01-06 14:51:18,459 [ERROR] Failed to fetch page 1: 400 Client Error: Bad Request for url: https://v3.openstates.org/people?jurisdiction=ny&page=1&per_page=100&include=other_names
+2026-01-06 14:51:18,459 [INFO] === People ingestion complete ===
+2026-01-06 14:51:18,459 [INFO] === Starting bill ingestion for ny ===
+2026-01-06 14:51:18,459 [INFO] Fetching bills for ny (page 1)
+2026-01-06 14:51:18,561 [WARNING] Request failed (attempt 1/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/bills?jurisdiction=ny&page=1&per_page=100
+2026-01-06 14:51:19,668 [WARNING] Request failed (attempt 2/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/bills?jurisdiction=ny&page=1&per_page=100
+2026-01-06 14:51:21,782 [WARNING] Request failed (attempt 3/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/bills?jurisdiction=ny&page=1&per_page=100
+2026-01-06 14:51:21,783 [ERROR] Failed to fetch bills page 1: 400 Client Error: Bad Request for url: https://v3.openstates.org/bills?jurisdiction=ny&page=1&per_page=100
+2026-01-06 14:51:21,783 [INFO] === Bill ingestion complete ===
+2026-01-06 14:51:21,783 [INFO] Transaction committed
+2026-01-06 14:51:21,783 [INFO] === OpenStates Ingestion Pipeline Complete ===
+2026-01-06 14:54:34,022 [INFO] === OpenStates Ingestion Pipeline Started ===
+2026-01-06 14:54:35,074 [INFO] === Starting people ingestion for ocd-jurisdiction/country:us/state:ny/government ===
+2026-01-06 14:54:35,074 [INFO] Fetching people for ocd-jurisdiction/country:us/state:ny/government (page 1)
+2026-01-06 14:54:35,857 [ERROR] API returned 400: {"detail":"invalid per_page, must be in [1, 50]"}
+2026-01-06 14:54:35,858 [WARNING] Request failed (attempt 1/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/people?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100&include=other_names
+2026-01-06 14:54:36,967 [ERROR] API returned 400: {"detail":"invalid per_page, must be in [1, 50]"}
+2026-01-06 14:54:36,967 [WARNING] Request failed (attempt 2/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/people?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100&include=other_names
+2026-01-06 14:54:39,068 [ERROR] API returned 400: {"detail":"invalid per_page, must be in [1, 50]"}
+2026-01-06 14:54:39,068 [WARNING] Request failed (attempt 3/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/people?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100&include=other_names
+2026-01-06 14:54:39,068 [ERROR] Failed to fetch page 1: 400 Client Error: Bad Request for url: https://v3.openstates.org/people?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100&include=other_names
+2026-01-06 14:54:39,068 [INFO] === People ingestion complete ===
+2026-01-06 14:54:39,068 [INFO] === Starting bill ingestion for ocd-jurisdiction/country:us/state:ny/government ===
+2026-01-06 14:54:39,069 [INFO] Fetching bills for ocd-jurisdiction/country:us/state:ny/government (page 1)
+2026-01-06 14:54:39,178 [ERROR] API returned 400: {"detail":"invalid per_page, must be in [1, 20]"}
+2026-01-06 14:54:39,178 [WARNING] Request failed (attempt 1/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/bills?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:54:40,274 [ERROR] API returned 400: {"detail":"invalid per_page, must be in [1, 20]"}
+2026-01-06 14:54:40,274 [WARNING] Request failed (attempt 2/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/bills?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:54:42,463 [ERROR] API returned 400: {"detail":"invalid per_page, must be in [1, 20]"}
+2026-01-06 14:54:42,463 [WARNING] Request failed (attempt 3/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/bills?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:54:42,463 [ERROR] Failed to fetch bills page 1: 400 Client Error: Bad Request for url: https://v3.openstates.org/bills?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:54:42,464 [INFO] === Bill ingestion complete ===
+2026-01-06 14:54:42,464 [INFO] Transaction committed
+2026-01-06 14:54:42,464 [INFO] === OpenStates Ingestion Pipeline Complete ===
+2026-01-06 14:55:13,254 [INFO] === OpenStates Ingestion Pipeline Started ===
+2026-01-06 14:55:14,304 [INFO] === Starting people ingestion for ocd-jurisdiction/country:us/state:ny/government ===
+2026-01-06 14:55:14,305 [INFO] Fetching people for ocd-jurisdiction/country:us/state:ny/government (page 1)
+2026-01-06 14:55:15,717 [INFO] Retrieved 50 people
+2026-01-06 14:55:16,371 [INFO] Created politician ocd-person/dff234fa-8563-4028-982e-c0a221d99fd9 -> 1
+2026-01-06 14:55:16,677 [INFO] Created office record for 1
+2026-01-06 14:55:17,153 [INFO] Created politician ocd-person/c197076b-7dde-4f90-b04f-352053fbab94 -> 2
+2026-01-06 14:55:17,474 [INFO] Created office record for 2
+2026-01-06 14:55:17,946 [INFO] Created politician ocd-person/69640dce-9d99-45a3-83b5-cbdc1dc2f2e5 -> 3
+2026-01-06 14:55:18,261 [INFO] Created office record for 3
+2026-01-06 14:55:18,721 [INFO] Created politician ocd-person/9c986c4c-5371-4b77-b095-5a7283a93729 -> 4
+2026-01-06 14:55:19,044 [INFO] Created office record for 4
+2026-01-06 14:55:19,559 [INFO] Created politician ocd-person/9dd382bd-0f4f-4a99-ad58-679e26114f70 -> 5
+2026-01-06 14:55:19,876 [INFO] Created office record for 5
+2026-01-06 14:55:20,359 [INFO] Created politician ocd-person/2196fbda-e731-4e6b-a221-7bf5e25b8b95 -> 6
+2026-01-06 14:55:20,681 [INFO] Created office record for 6
+2026-01-06 14:55:21,162 [INFO] Created politician ocd-person/3647609d-4772-4afe-a2c0-1f628a6c11ec -> 7
+2026-01-06 14:55:21,475 [INFO] Created office record for 7
+2026-01-06 14:55:21,959 [INFO] Created politician ocd-person/f0f08f55-cf1f-477c-a5f8-a7f2382e5fa8 -> 8
+2026-01-06 14:55:22,258 [INFO] Created office record for 8
+2026-01-06 14:55:22,752 [INFO] Created politician ocd-person/b46dbcbc-500c-4d28-ac9b-cf2a7291e79f -> 9
+2026-01-06 14:55:23,057 [INFO] Created office record for 9
+2026-01-06 14:55:23,522 [INFO] Created politician ocd-person/5f3e7bcf-9e43-423b-946b-982cc6ecc154 -> 10
+2026-01-06 14:55:23,827 [INFO] Created office record for 10
+2026-01-06 14:55:24,302 [INFO] Created politician ocd-person/ae1f415b-958c-4a4c-805b-626e6eca5fe3 -> 11
+2026-01-06 14:55:24,623 [INFO] Created office record for 11
+2026-01-06 14:55:25,100 [INFO] Created politician ocd-person/2a9aad09-337f-4fd0-8e87-70afd78ac8cc -> 12
+2026-01-06 14:55:25,411 [INFO] Created office record for 12
+2026-01-06 14:55:25,923 [INFO] Created politician ocd-person/8dd98240-93c9-486a-b6c6-3a794b232090 -> 13
+2026-01-06 14:55:26,335 [INFO] Created office record for 13
+2026-01-06 14:55:26,804 [INFO] Created politician ocd-person/ba5fb3f1-a049-45a1-abd7-77b132e789d6 -> 14
+2026-01-06 14:55:27,122 [INFO] Created office record for 14
+2026-01-06 14:55:27,581 [INFO] Created politician ocd-person/461e374c-cde4-4865-9fec-141502275a8b -> 15
+2026-01-06 14:55:27,899 [INFO] Created office record for 15
+2026-01-06 14:55:28,369 [INFO] Created politician ocd-person/0193e8ea-3830-45af-86e7-34427396a7b4 -> 16
+2026-01-06 14:55:28,679 [INFO] Created office record for 16
+2026-01-06 14:55:29,153 [INFO] Created politician ocd-person/b4820549-d7f0-4f0f-abef-74d3b1515ed9 -> 17
+2026-01-06 14:55:29,470 [INFO] Created office record for 17
+2026-01-06 14:55:29,947 [INFO] Created politician ocd-person/edde17c2-c810-4ec8-97c3-4cc0ea2e32d0 -> 18
+2026-01-06 14:55:30,270 [INFO] Created office record for 18
+2026-01-06 14:55:30,744 [INFO] Created politician ocd-person/b1371ded-fa50-44d8-8fad-a8532b98406a -> 19
+2026-01-06 14:55:31,066 [INFO] Created office record for 19
+2026-01-06 14:55:31,539 [INFO] Created politician ocd-person/38ed0365-1654-4a2d-bb23-4428736df57f -> 20
+2026-01-06 14:55:31,843 [INFO] Created office record for 20
+2026-01-06 14:55:32,320 [INFO] Created politician ocd-person/46209ced-aa04-4316-8a17-97fb02e83320 -> 21
+2026-01-06 14:55:32,644 [INFO] Created office record for 21
+2026-01-06 14:55:33,125 [INFO] Created politician ocd-person/b03e8fcb-e9e1-4096-9483-654b3383341b -> 22
+2026-01-06 14:55:33,443 [INFO] Created office record for 22
+2026-01-06 14:55:33,921 [INFO] Created politician ocd-person/0507a521-7806-4d5c-ac7d-e50599bb32a6 -> 23
+2026-01-06 14:55:34,224 [INFO] Created office record for 23
+2026-01-06 14:55:34,685 [INFO] Created politician ocd-person/8285be34-48a9-4bbe-b231-f8e5f40df301 -> 24
+2026-01-06 14:55:34,997 [INFO] Created office record for 24
+2026-01-06 14:55:35,483 [INFO] Created politician ocd-person/1be1802e-14ac-4fc2-afc2-e8087257ea34 -> 25
+2026-01-06 14:55:35,799 [INFO] Created office record for 25
+2026-01-06 14:55:36,288 [INFO] Created politician ocd-person/5fed799f-9800-457a-9c39-e19d8735c74f -> 26
+2026-01-06 14:55:36,603 [INFO] Created office record for 26
+2026-01-06 14:55:37,103 [INFO] Created politician ocd-person/27a087c4-fad6-4245-b680-20aff5c3251c -> 27
+2026-01-06 14:55:37,422 [INFO] Created office record for 27
+2026-01-06 14:55:37,908 [INFO] Created politician ocd-person/934d4a02-a27c-4682-a31f-5a8372ceaaf9 -> 28
+2026-01-06 14:55:38,217 [INFO] Created office record for 28
+2026-01-06 14:55:38,709 [INFO] Created politician ocd-person/2830bc0a-4507-4710-8c4f-17b3ac5d414b -> 29
+2026-01-06 14:55:39,029 [INFO] Created office record for 29
+2026-01-06 14:55:39,506 [INFO] Created politician ocd-person/2ef71a27-afab-49e4-9c52-d3954352242f -> 30
+2026-01-06 14:55:39,820 [INFO] Created office record for 30
+2026-01-06 14:55:40,309 [INFO] Created politician ocd-person/ad93da57-8a9a-4dc0-bc2c-2488c0331d16 -> 31
+2026-01-06 14:55:40,618 [INFO] Created office record for 31
+2026-01-06 14:55:41,105 [INFO] Created politician ocd-person/2049da3a-132c-47b4-b53d-c28b574fff63 -> 32
+2026-01-06 14:55:41,415 [INFO] Created office record for 32
+2026-01-06 14:55:41,884 [INFO] Created politician ocd-person/6d6f344e-39b8-401f-807e-c88924fb2793 -> 33
+2026-01-06 14:55:42,196 [INFO] Created office record for 33
+2026-01-06 14:55:42,701 [INFO] Created politician ocd-person/864e417d-df2e-4207-83e4-98450555f48a -> 34
+2026-01-06 14:55:43,016 [INFO] Created office record for 34
+2026-01-06 14:55:43,503 [INFO] Created politician ocd-person/2a9ffeeb-e46e-4d98-8376-b07310112672 -> 35
+2026-01-06 14:55:43,817 [INFO] Created office record for 35
+2026-01-06 14:55:44,284 [INFO] Created politician ocd-person/5390ebc9-7fbe-4be9-91c4-b28b59f7fd2f -> 36
+2026-01-06 14:55:44,581 [INFO] Created office record for 36
+2026-01-06 14:55:45,069 [INFO] Created politician ocd-person/3bb6eebd-d57b-4592-bc52-9ce338df9ccf -> 37
+2026-01-06 14:55:45,375 [INFO] Created office record for 37
+2026-01-06 14:55:45,863 [INFO] Created politician ocd-person/35febe88-13a1-4611-b0e3-2088c719db24 -> 38
+2026-01-06 14:55:46,185 [INFO] Created office record for 38
+2026-01-06 14:55:46,663 [INFO] Created politician ocd-person/fe66bda1-2564-4f24-8798-0cd8993a0f12 -> 39
+2026-01-06 14:55:46,975 [INFO] Created office record for 39
+2026-01-06 14:55:47,441 [INFO] Created politician ocd-person/a73679bf-ac98-4319-95b8-d226bc9aba77 -> 40
+2026-01-06 14:55:47,757 [INFO] Created office record for 40
+2026-01-06 14:55:48,235 [INFO] Created politician ocd-person/58b03f1c-af64-4079-8c24-e76dd0028166 -> 41
+2026-01-06 14:55:48,525 [INFO] Created office record for 41
+2026-01-06 14:55:49,004 [INFO] Created politician ocd-person/4af5cab3-9d9c-4d27-8eda-d39dcaa74bd0 -> 42
+2026-01-06 14:55:49,317 [INFO] Created office record for 42
+2026-01-06 14:55:49,804 [INFO] Created politician ocd-person/9147362c-8b83-49ff-8fab-4d48a77eebc9 -> 43
+2026-01-06 14:55:50,123 [INFO] Created office record for 43
+2026-01-06 14:55:50,603 [INFO] Created politician ocd-person/b8a0fb1e-422b-44b7-846e-82d2998a0bf5 -> 44
+2026-01-06 14:55:50,918 [INFO] Created office record for 44
+2026-01-06 14:55:51,392 [INFO] Created politician ocd-person/c5c492e5-7c34-4b6f-862e-185248e89f18 -> 45
+2026-01-06 14:55:51,697 [INFO] Created office record for 45
+2026-01-06 14:55:52,185 [INFO] Created politician ocd-person/7638e8d0-2a84-4325-bcfd-7a2e8e604077 -> 46
+2026-01-06 14:55:52,497 [INFO] Created office record for 46
+2026-01-06 14:55:52,985 [INFO] Created politician ocd-person/7bb8c8bc-0238-4fd2-8dff-e5f2b2aaa92a -> 47
+2026-01-06 14:55:53,297 [INFO] Created office record for 47
+2026-01-06 14:55:53,781 [INFO] Created politician ocd-person/3069edfe-7ff7-4a14-8223-f23b294b3a04 -> 48
+2026-01-06 14:55:54,103 [INFO] Created office record for 48
+2026-01-06 14:55:54,565 [INFO] Created politician ocd-person/2e502adc-4b0e-46fa-b5d4-0d2f7696db49 -> 49
+2026-01-06 14:55:54,874 [INFO] Created office record for 49
+2026-01-06 14:55:55,345 [INFO] Created politician ocd-person/67c280c8-c9a5-4eff-93de-480570d6a414 -> 50
+2026-01-06 14:55:55,658 [INFO] Created office record for 50
+2026-01-06 14:55:55,658 [INFO] Fetching people for ocd-jurisdiction/country:us/state:ny/government (page 2)
+2026-01-06 14:55:56,354 [INFO] Retrieved 50 people
+2026-01-06 14:55:56,843 [INFO] Created politician ocd-person/9f3ae1c5-651b-4cc8-a1ce-9e94c414a220 -> 51
+2026-01-06 14:55:57,157 [INFO] Created office record for 51
+2026-01-06 14:55:57,664 [INFO] Created politician ocd-person/df0c2fdc-3cf4-4c89-849a-b62ac2d7d2d4 -> 52
+2026-01-06 14:55:57,975 [INFO] Created office record for 52
+2026-01-06 14:55:58,461 [INFO] Created politician ocd-person/8ff653e0-5aa6-4692-ac54-25ed36e32f97 -> 53
+2026-01-06 14:55:58,789 [INFO] Created office record for 53
+2026-01-06 14:55:59,264 [INFO] Created politician ocd-person/5a9c40ed-69dc-4004-b34a-cc943428f8b1 -> 54
+2026-01-06 14:55:59,584 [INFO] Created office record for 54
+2026-01-06 14:56:00,163 [INFO] Created politician ocd-person/34f326e1-6e7e-40b2-9ece-10856986cb1b -> 55
+2026-01-06 14:56:00,486 [INFO] Created office record for 55
+2026-01-06 14:56:00,963 [INFO] Created politician ocd-person/da883f7a-698b-49d6-8519-11bab87823cf -> 56
+2026-01-06 14:56:01,278 [INFO] Created office record for 56
+2026-01-06 14:56:01,761 [INFO] Created politician ocd-person/d6939215-ec08-437b-beea-3b9898d0f61b -> 57
+2026-01-06 14:56:02,061 [INFO] Created office record for 57
+2026-01-06 14:56:02,541 [INFO] Created politician ocd-person/70d249e7-22a2-4536-892f-a61aa22723e4 -> 58
+2026-01-06 14:56:02,863 [INFO] Created office record for 58
+2026-01-06 14:56:03,347 [INFO] Created politician ocd-person/b7e93c8c-9a4b-4678-8d6a-effce9a76938 -> 59
+2026-01-06 14:56:03,660 [INFO] Created office record for 59
+2026-01-06 14:56:04,143 [INFO] Created politician ocd-person/42d68829-d969-44d1-9e22-042a6e787dc5 -> 60
+2026-01-06 14:56:04,458 [INFO] Created office record for 60
+2026-01-06 14:56:04,930 [INFO] Created politician ocd-person/5764a626-de74-4d88-bc53-b43b523aa75c -> 61
+2026-01-06 14:56:05,240 [INFO] Created office record for 61
+2026-01-06 14:56:05,724 [INFO] Created politician ocd-person/81456b86-152f-4764-a489-dade7cc572c6 -> 62
+2026-01-06 14:56:06,037 [INFO] Created office record for 62
+2026-01-06 14:56:06,523 [INFO] Created politician ocd-person/4af19dc2-41c7-4b7e-b271-b23e20e1ccb1 -> 63
+2026-01-06 14:56:06,839 [INFO] Created office record for 63
+2026-01-06 14:56:07,322 [INFO] Created politician ocd-person/489a01e1-6a0f-4907-bc00-110020e2f27d -> 64
+2026-01-06 14:56:07,638 [INFO] Created office record for 64
+2026-01-06 14:56:08,192 [INFO] Created politician ocd-person/0a053bbf-e97b-44aa-a38f-83ad7f9682ac -> 65
+2026-01-06 14:56:08,520 [INFO] Created office record for 65
+2026-01-06 14:56:09,003 [INFO] Created politician ocd-person/be7ad489-073e-476e-82a0-992ca0569b99 -> 66
+2026-01-06 14:56:09,320 [INFO] Created office record for 66
+2026-01-06 14:56:09,789 [INFO] Created politician ocd-person/722e778a-7824-49fb-bb44-ba1da8bab675 -> 67
+2026-01-06 14:56:10,100 [INFO] Created office record for 67
+2026-01-06 14:56:10,574 [INFO] Created politician ocd-person/676247d1-048f-45de-b265-34069edb2be0 -> 68
+2026-01-06 14:56:10,902 [INFO] Created office record for 68
+2026-01-06 14:56:11,389 [INFO] Created politician ocd-person/18830756-58c1-4fd1-b1b0-d16041b10e12 -> 69
+2026-01-06 14:56:11,699 [INFO] Created office record for 69
+2026-01-06 14:56:12,184 [INFO] Created politician ocd-person/068528ac-bc5e-449f-a4df-4541f8c09415 -> 70
+2026-01-06 14:56:12,497 [INFO] Created office record for 70
+2026-01-06 14:56:12,981 [INFO] Created politician ocd-person/a23e140f-4beb-43d5-b850-198ff81a75f3 -> 71
+2026-01-06 14:56:13,304 [INFO] Created office record for 71
+2026-01-06 14:56:13,797 [INFO] Created politician ocd-person/eaf455e1-358d-4de0-ac5d-3d8c400eb4e3 -> 72
+2026-01-06 14:56:14,106 [INFO] Created office record for 72
+2026-01-06 14:56:14,584 [INFO] Created politician ocd-person/e053b536-631c-47a7-a3af-adb30dab37de -> 73
+2026-01-06 14:56:14,899 [INFO] Created office record for 73
+2026-01-06 14:56:15,384 [INFO] Created politician ocd-person/7f031836-0a9e-46d2-bcab-7cc6a14848df -> 74
+2026-01-06 14:56:15,700 [INFO] Created office record for 74
+2026-01-06 14:56:16,173 [INFO] Created politician ocd-person/67047d73-acc1-4d6f-b580-fbeee33cc1f8 -> 75
+2026-01-06 14:56:16,499 [INFO] Created office record for 75
+2026-01-06 14:56:16,967 [INFO] Created politician ocd-person/b03d69c0-0ea1-4524-86e6-c6b20797a2eb -> 76
+2026-01-06 14:56:17,579 [INFO] Created office record for 76
+2026-01-06 14:56:18,063 [INFO] Created politician ocd-person/aa1af232-61bb-427c-b30e-81169c18d15d -> 77
+2026-01-06 14:56:18,382 [INFO] Created office record for 77
+2026-01-06 14:56:18,884 [INFO] Created politician ocd-person/6872ad9e-fcba-426f-a9ef-b4495dba17f5 -> 78
+2026-01-06 14:56:19,191 [INFO] Created office record for 78
+2026-01-06 14:56:19,848 [INFO] Created politician ocd-person/e00ee209-a6a5-4ca1-8ac6-f403e1cbcca2 -> 79
+2026-01-06 14:56:20,165 [INFO] Created office record for 79
+2026-01-06 14:56:20,620 [INFO] Created politician ocd-person/c1f048f2-6e1d-4e1b-b161-d97e2f16c1f8 -> 80
+2026-01-06 14:56:20,938 [INFO] Created office record for 80
+2026-01-06 14:56:21,425 [INFO] Created politician ocd-person/603a62e0-5ca7-4259-b071-db52bc9f2569 -> 81
+2026-01-06 14:56:21,745 [INFO] Created office record for 81
+2026-01-06 14:56:22,223 [INFO] Created politician ocd-person/4910460d-6cb9-4f35-8459-19e5a4de579e -> 82
+2026-01-06 14:56:22,543 [INFO] Created office record for 82
+2026-01-06 14:56:23,025 [INFO] Created politician ocd-person/ff604a07-1aaf-4e61-b070-dd478f42cea5 -> 83
+2026-01-06 14:56:23,347 [INFO] Created office record for 83
+2026-01-06 14:56:23,828 [INFO] Created politician ocd-person/f6394f20-1953-434b-a2bb-2d255d4fafbe -> 84
+2026-01-06 14:56:24,136 [INFO] Created office record for 84
+2026-01-06 14:56:24,625 [INFO] Created politician ocd-person/029fb490-649e-4dbf-b7fc-6cf46ea433ff -> 85
+2026-01-06 14:56:24,942 [INFO] Created office record for 85
+2026-01-06 14:56:25,415 [INFO] Created politician ocd-person/6d73b968-c1db-434e-9876-de2fdff30d89 -> 86
+2026-01-06 14:56:25,718 [INFO] Created office record for 86
+2026-01-06 14:56:26,204 [INFO] Created politician ocd-person/5a115673-aa3c-4518-94bc-b2a5dadeb8af -> 87
+2026-01-06 14:56:26,530 [INFO] Created office record for 87
+2026-01-06 14:56:27,642 [INFO] Created politician ocd-person/a0b3e01c-d323-4624-a0da-6a1e2b0dfb31 -> 88
+2026-01-06 14:56:27,954 [INFO] Created office record for 88
+2026-01-06 14:56:28,444 [INFO] Created politician ocd-person/84b5ed8b-c048-4d62-ab8f-17d217605301 -> 89
+2026-01-06 14:56:28,757 [INFO] Created office record for 89
+2026-01-06 14:56:29,255 [INFO] Created politician ocd-person/975453b1-113a-40e9-8036-53e714a47b66 -> 90
+2026-01-06 14:56:29,583 [INFO] Created office record for 90
+2026-01-06 14:56:30,046 [INFO] Created politician ocd-person/21da6116-bec3-44a4-9e0b-a68eef91222d -> 91
+2026-01-06 14:56:30,368 [INFO] Created office record for 91
+2026-01-06 14:56:30,842 [INFO] Created politician ocd-person/983d7603-0ccc-4995-8afe-2ece30a487c7 -> 92
+2026-01-06 14:56:31,160 [INFO] Created office record for 92
+2026-01-06 14:56:31,623 [INFO] Created politician ocd-person/f3a41618-3c28-4bab-9a56-ef49c9cafcec -> 93
+2026-01-06 14:56:31,934 [INFO] Created office record for 93
+2026-01-06 14:56:32,401 [INFO] Created politician ocd-person/cc6881df-b386-488d-bbc1-71e71b808306 -> 94
+2026-01-06 14:56:32,722 [INFO] Created office record for 94
+2026-01-06 14:56:33,209 [INFO] Created politician ocd-person/691f0b4b-a2b3-47d6-b5ba-6bf503340e10 -> 95
+2026-01-06 14:56:33,520 [INFO] Created office record for 95
+2026-01-06 14:56:34,003 [INFO] Created politician ocd-person/738fe4f1-dfee-40c6-9f00-f793ea369dbc -> 96
+2026-01-06 14:56:34,304 [INFO] Created office record for 96
+2026-01-06 14:56:34,785 [INFO] Created politician ocd-person/45837ecf-38a2-41cb-9de1-eae175a32dfe -> 97
+2026-01-06 14:56:35,078 [INFO] Created office record for 97
+2026-01-06 14:56:35,564 [INFO] Created politician ocd-person/21b7fbbb-6f39-4251-884d-3d4a146a0874 -> 98
+2026-01-06 14:56:35,879 [INFO] Created office record for 98
+2026-01-06 14:56:36,365 [INFO] Created politician ocd-person/eee14916-d196-4857-a64a-b6e952db7a53 -> 99
+2026-01-06 14:56:36,686 [INFO] Created office record for 99
+2026-01-06 14:56:37,168 [INFO] Created politician ocd-person/0ce05d4e-e231-4d3e-8ba5-179499230adc -> 100
+2026-01-06 14:56:37,479 [INFO] Created office record for 100
+2026-01-06 14:56:37,639 [INFO] === People ingestion complete ===
+2026-01-06 14:56:37,640 [INFO] === Starting bill ingestion for ocd-jurisdiction/country:us/state:ny/government ===
+2026-01-06 14:56:37,640 [INFO] Fetching bills for ocd-jurisdiction/country:us/state:ny/government (page 1)
+2026-01-06 14:56:39,126 [INFO] Retrieved 20 bills
+2026-01-06 14:56:39,788 [ERROR] Failed to ingest bill ocd-bill/aff9fe38-01a8-4807-8208-32f5ba796e9a: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (996608e9-5124-4d1b-997c-2d48b930b3ce, ocd-bill/aff9fe38-01a8-4807-8208-32f5ba796e9a, S 685, Authorizes existing building projects to continue when the fossi..., null, null, 2025-01-03, 20252026, senate, introduced, 8ce6685b-5b40-4c06-aaf4-0367ebfe22b2, 2026-01-06 19:56:43.139752+00).
+
+2026-01-06 14:56:39,946 [ERROR] Failed to ingest bill ocd-bill/a9060298-9004-4286-b598-7e814c184a93: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:40,103 [ERROR] Failed to ingest bill ocd-bill/e64cb4fc-3172-4fc0-83e2-78c55216725c: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:40,264 [ERROR] Failed to ingest bill ocd-bill/ac73bf21-b685-43cf-938e-17c237dfca78: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:40,436 [ERROR] Failed to ingest bill ocd-bill/92b63e18-8569-464f-beb7-f1f2ff24f198: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:40,591 [ERROR] Failed to ingest bill ocd-bill/25cf772c-fe66-4dc3-9c8a-db5f2cf92aff: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:40,744 [ERROR] Failed to ingest bill ocd-bill/9618314d-6887-4dca-acac-459651eb8faa: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:40,908 [ERROR] Failed to ingest bill ocd-bill/45c22521-8723-47ca-b513-8c4c22bb35cb: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:41,064 [ERROR] Failed to ingest bill ocd-bill/8e3c5360-fa70-478f-8193-6eec7fddfbbd: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:41,224 [ERROR] Failed to ingest bill ocd-bill/06a2a99b-dc82-45a2-b790-c328c1672b7e: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:41,392 [ERROR] Failed to ingest bill ocd-bill/b18dbb26-5e2b-418f-95d2-0dd78ce28902: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:41,547 [ERROR] Failed to ingest bill ocd-bill/6818f1b6-54e3-42b8-b39f-d9437f4022c9: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:41,705 [ERROR] Failed to ingest bill ocd-bill/d5663888-55ec-4a44-934b-933d71634ec1: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:41,855 [ERROR] Failed to ingest bill ocd-bill/fb179b62-5e78-497a-b36b-ce76d91c284b: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:42,014 [ERROR] Failed to ingest bill ocd-bill/44bb8a12-5fb2-4a87-895c-078052f2b67c: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:42,162 [ERROR] Failed to ingest bill ocd-bill/21a5f314-169f-4fa2-86b4-30940371aa34: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:42,946 [ERROR] Failed to ingest bill ocd-bill/8efd8c35-f3a1-40d6-93b7-d53ca146e5ca: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:43,104 [ERROR] Failed to ingest bill ocd-bill/616d3f15-1feb-4cf3-81ed-741bb01272c0: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:43,263 [ERROR] Failed to ingest bill ocd-bill/2e51d39a-4b61-40e2-80c6-26b4965e7503: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:43,429 [ERROR] Failed to ingest bill ocd-bill/544497c7-b321-4836-a081-f7fa31d57656: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:43,429 [INFO] Fetching bills for ocd-jurisdiction/country:us/state:ny/government (page 2)
+2026-01-06 14:56:44,571 [INFO] Retrieved 20 bills
+2026-01-06 14:56:44,732 [ERROR] Failed to ingest bill ocd-bill/0a253dd9-30f1-4a37-a8ee-b967739b0f42: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:44,886 [ERROR] Failed to ingest bill ocd-bill/c195dc7e-95ab-4e05-b1e1-1b3d55e65398: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:45,044 [ERROR] Failed to ingest bill ocd-bill/5d46d108-2b12-4b93-8275-7336a6bbe410: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:45,203 [ERROR] Failed to ingest bill ocd-bill/367ba4f8-bfe5-4ddb-8d8c-fc7a91709a1e: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:45,371 [ERROR] Failed to ingest bill ocd-bill/61a98bce-bce3-42d2-9f05-ce3304175ce4: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:45,529 [ERROR] Failed to ingest bill ocd-bill/2575ad4f-f1f3-4897-af74-3a6a2ede1431: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:45,694 [ERROR] Failed to ingest bill ocd-bill/dd647031-222a-43cd-b4e5-55b66c14f35b: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:45,865 [ERROR] Failed to ingest bill ocd-bill/2d8cc04d-a6ee-4a74-9d00-928dbba5500c: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:46,025 [ERROR] Failed to ingest bill ocd-bill/613be569-14c8-4544-b6f4-8f7d9470275b: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:46,192 [ERROR] Failed to ingest bill ocd-bill/b2a9986e-14d6-451b-893b-8461b4d3d251: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:46,345 [ERROR] Failed to ingest bill ocd-bill/92896b4c-ca2d-48c7-86be-cceae2507eeb: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:46,503 [ERROR] Failed to ingest bill ocd-bill/30468e7d-0528-4929-ae1d-af6a562423f5: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:46,667 [ERROR] Failed to ingest bill ocd-bill/3f9594ba-8c9a-4968-a163-626fe712d54f: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:46,824 [ERROR] Failed to ingest bill ocd-bill/45b56a36-d6a3-4239-97cb-2183ff6e2a2e: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:46,983 [ERROR] Failed to ingest bill ocd-bill/0cb9b89a-66db-4761-87eb-3cc30a79a6ac: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:47,145 [ERROR] Failed to ingest bill ocd-bill/5d9a6982-45a4-4cec-830f-95300ebfdb8a: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:47,306 [ERROR] Failed to ingest bill ocd-bill/eed3505c-0d36-467f-98a9-19fe57ffab60: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:47,464 [ERROR] Failed to ingest bill ocd-bill/dc3f7d90-07de-44b2-8c48-97dac1fb6d96: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:47,632 [ERROR] Failed to ingest bill ocd-bill/5eb30df5-6b26-4872-958f-3909c1385a47: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:47,794 [ERROR] Failed to ingest bill ocd-bill/ff344209-544c-4c5f-8bf0-706427f9dad5: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-06 14:56:47,962 [INFO] === Bill ingestion complete ===
+2026-01-06 14:56:47,962 [INFO] Transaction committed
+2026-01-06 14:56:47,962 [INFO] === OpenStates Ingestion Pipeline Complete ===
+2026-01-06 14:59:53,011 [INFO] === OpenStates Ingestion Pipeline Started ===
+2026-01-06 14:59:54,051 [INFO] === Starting people ingestion for ocd-jurisdiction/country:us/state:ny/government ===
+2026-01-06 14:59:54,052 [INFO] Fetching people for ocd-jurisdiction/country:us/state:ny/government (page 1)
+2026-01-06 14:59:55,535 [INFO] Retrieved 50 people
+2026-01-06 14:59:56,173 [INFO] Updated politician ocd-person/dff234fa-8563-4028-982e-c0a221d99fd9
+2026-01-06 14:59:56,486 [INFO] Created office record for 1
+2026-01-06 14:59:56,945 [INFO] Updated politician ocd-person/c197076b-7dde-4f90-b04f-352053fbab94
+2026-01-06 14:59:57,265 [INFO] Created office record for 2
+2026-01-06 14:59:57,755 [INFO] Updated politician ocd-person/69640dce-9d99-45a3-83b5-cbdc1dc2f2e5
+2026-01-06 14:59:58,065 [INFO] Created office record for 3
+2026-01-06 14:59:58,527 [INFO] Updated politician ocd-person/9c986c4c-5371-4b77-b095-5a7283a93729
+2026-01-06 14:59:58,846 [INFO] Created office record for 4
+2026-01-06 14:59:59,311 [INFO] Updated politician ocd-person/9dd382bd-0f4f-4a99-ad58-679e26114f70
+2026-01-06 14:59:59,622 [INFO] Created office record for 5
+2026-01-06 15:00:00,113 [INFO] Updated politician ocd-person/2196fbda-e731-4e6b-a221-7bf5e25b8b95
+2026-01-06 15:00:00,426 [INFO] Created office record for 6
+2026-01-06 15:00:00,901 [INFO] Updated politician ocd-person/3647609d-4772-4afe-a2c0-1f628a6c11ec
+2026-01-06 15:00:01,205 [INFO] Created office record for 7
+2026-01-06 15:00:01,690 [INFO] Updated politician ocd-person/f0f08f55-cf1f-477c-a5f8-a7f2382e5fa8
+2026-01-06 15:00:02,004 [INFO] Created office record for 8
+2026-01-06 15:00:02,488 [INFO] Updated politician ocd-person/b46dbcbc-500c-4d28-ac9b-cf2a7291e79f
+2026-01-06 15:00:02,809 [INFO] Created office record for 9
+2026-01-06 15:00:03,306 [INFO] Updated politician ocd-person/5f3e7bcf-9e43-423b-946b-982cc6ecc154
+2026-01-06 15:00:03,612 [INFO] Created office record for 10
+2026-01-06 15:00:04,082 [INFO] Updated politician ocd-person/ae1f415b-958c-4a4c-805b-626e6eca5fe3
+2026-01-06 15:00:04,388 [INFO] Created office record for 11
+2026-01-06 15:00:04,863 [INFO] Updated politician ocd-person/2a9aad09-337f-4fd0-8e87-70afd78ac8cc
+2026-01-06 15:00:05,165 [INFO] Created office record for 12
+2026-01-06 15:00:05,625 [INFO] Updated politician ocd-person/8dd98240-93c9-486a-b6c6-3a794b232090
+2026-01-06 15:00:05,929 [INFO] Created office record for 13
+2026-01-06 15:00:06,411 [INFO] Updated politician ocd-person/ba5fb3f1-a049-45a1-abd7-77b132e789d6
+2026-01-06 15:00:06,704 [INFO] Created office record for 14
+2026-01-06 15:00:07,224 [INFO] Updated politician ocd-person/461e374c-cde4-4865-9fec-141502275a8b
+2026-01-06 15:00:07,519 [INFO] Created office record for 15
+2026-01-06 15:00:07,988 [INFO] Updated politician ocd-person/0193e8ea-3830-45af-86e7-34427396a7b4
+2026-01-06 15:00:08,303 [INFO] Created office record for 16
+2026-01-06 15:00:08,783 [INFO] Updated politician ocd-person/b4820549-d7f0-4f0f-abef-74d3b1515ed9
+2026-01-06 15:00:09,091 [INFO] Created office record for 17
+2026-01-06 15:00:09,570 [INFO] Updated politician ocd-person/edde17c2-c810-4ec8-97c3-4cc0ea2e32d0
+2026-01-06 15:00:09,879 [INFO] Created office record for 18
+2026-01-06 15:00:10,347 [INFO] Updated politician ocd-person/b1371ded-fa50-44d8-8fad-a8532b98406a
+2026-01-06 15:00:10,645 [INFO] Created office record for 19
+2026-01-06 15:00:11,128 [INFO] Updated politician ocd-person/38ed0365-1654-4a2d-bb23-4428736df57f
+2026-01-06 15:00:11,445 [INFO] Created office record for 20
+2026-01-06 15:00:11,928 [INFO] Updated politician ocd-person/46209ced-aa04-4316-8a17-97fb02e83320
+2026-01-06 15:00:12,235 [INFO] Created office record for 21
+2026-01-06 15:00:12,726 [INFO] Updated politician ocd-person/b03e8fcb-e9e1-4096-9483-654b3383341b
+2026-01-06 15:00:13,032 [INFO] Created office record for 22
+2026-01-06 15:00:13,513 [INFO] Updated politician ocd-person/0507a521-7806-4d5c-ac7d-e50599bb32a6
+2026-01-06 15:00:13,915 [INFO] Created office record for 23
+2026-01-06 15:00:14,408 [INFO] Updated politician ocd-person/8285be34-48a9-4bbe-b231-f8e5f40df301
+2026-01-06 15:00:14,713 [INFO] Created office record for 24
+2026-01-06 15:00:15,192 [INFO] Updated politician ocd-person/1be1802e-14ac-4fc2-afc2-e8087257ea34
+2026-01-06 15:00:15,576 [INFO] Created office record for 25
+2026-01-06 15:00:16,032 [INFO] Updated politician ocd-person/5fed799f-9800-457a-9c39-e19d8735c74f
+2026-01-06 15:00:16,345 [INFO] Created office record for 26
+2026-01-06 15:00:16,827 [INFO] Updated politician ocd-person/27a087c4-fad6-4245-b680-20aff5c3251c
+2026-01-06 15:00:17,157 [INFO] Created office record for 27
+2026-01-06 15:00:17,631 [INFO] Updated politician ocd-person/934d4a02-a27c-4682-a31f-5a8372ceaaf9
+2026-01-06 15:00:17,932 [INFO] Created office record for 28
+2026-01-06 15:00:18,390 [INFO] Updated politician ocd-person/2830bc0a-4507-4710-8c4f-17b3ac5d414b
+2026-01-06 15:00:18,706 [INFO] Created office record for 29
+2026-01-06 15:00:19,473 [INFO] Updated politician ocd-person/2ef71a27-afab-49e4-9c52-d3954352242f
+2026-01-06 15:00:19,787 [INFO] Created office record for 30
+2026-01-06 15:00:20,265 [INFO] Updated politician ocd-person/ad93da57-8a9a-4dc0-bc2c-2488c0331d16
+2026-01-06 15:00:20,591 [INFO] Created office record for 31
+2026-01-06 15:00:21,686 [INFO] Updated politician ocd-person/2049da3a-132c-47b4-b53d-c28b574fff63
+2026-01-06 15:00:21,988 [INFO] Created office record for 32
+2026-01-06 15:00:22,828 [INFO] Updated politician ocd-person/6d6f344e-39b8-401f-807e-c88924fb2793
+2026-01-06 15:00:23,150 [INFO] Created office record for 33
+2026-01-06 15:00:23,628 [INFO] Updated politician ocd-person/864e417d-df2e-4207-83e4-98450555f48a
+2026-01-06 15:00:23,931 [INFO] Created office record for 34
+2026-01-06 15:00:24,416 [INFO] Updated politician ocd-person/2a9ffeeb-e46e-4d98-8376-b07310112672
+2026-01-06 15:00:24,726 [INFO] Created office record for 35
+2026-01-06 15:00:25,212 [INFO] Updated politician ocd-person/5390ebc9-7fbe-4be9-91c4-b28b59f7fd2f
+2026-01-06 15:00:25,514 [INFO] Created office record for 36
+2026-01-06 15:00:25,990 [INFO] Updated politician ocd-person/3bb6eebd-d57b-4592-bc52-9ce338df9ccf
+2026-01-06 15:00:26,305 [INFO] Created office record for 37
+2026-01-06 15:00:27,405 [INFO] Updated politician ocd-person/35febe88-13a1-4611-b0e3-2088c719db24
+2026-01-06 15:00:27,729 [INFO] Created office record for 38
+2026-01-06 15:00:28,188 [INFO] Updated politician ocd-person/fe66bda1-2564-4f24-8798-0cd8993a0f12
+2026-01-06 15:00:28,510 [INFO] Created office record for 39
+2026-01-06 15:00:28,987 [INFO] Updated politician ocd-person/a73679bf-ac98-4319-95b8-d226bc9aba77
+2026-01-06 15:00:29,296 [INFO] Created office record for 40
+2026-01-06 15:00:29,754 [INFO] Updated politician ocd-person/58b03f1c-af64-4079-8c24-e76dd0028166
+2026-01-06 15:00:30,071 [INFO] Created office record for 41
+2026-01-06 15:00:30,536 [INFO] Updated politician ocd-person/4af5cab3-9d9c-4d27-8eda-d39dcaa74bd0
+2026-01-06 15:00:31,155 [INFO] Created office record for 42
+2026-01-06 15:00:32,250 [INFO] Updated politician ocd-person/9147362c-8b83-49ff-8fab-4d48a77eebc9
+2026-01-06 15:00:32,555 [INFO] Created office record for 43
+2026-01-06 15:00:33,029 [INFO] Updated politician ocd-person/b8a0fb1e-422b-44b7-846e-82d2998a0bf5
+2026-01-06 15:00:33,351 [INFO] Created office record for 44
+2026-01-06 15:00:33,833 [INFO] Updated politician ocd-person/c5c492e5-7c34-4b6f-862e-185248e89f18
+2026-01-06 15:00:34,148 [INFO] Created office record for 45
+2026-01-06 15:00:34,732 [INFO] Updated politician ocd-person/7638e8d0-2a84-4325-bcfd-7a2e8e604077
+2026-01-06 15:00:35,042 [INFO] Created office record for 46
+2026-01-06 15:00:35,510 [INFO] Updated politician ocd-person/7bb8c8bc-0238-4fd2-8dff-e5f2b2aaa92a
+2026-01-06 15:00:35,850 [INFO] Created office record for 47
+2026-01-06 15:00:36,336 [INFO] Updated politician ocd-person/3069edfe-7ff7-4a14-8223-f23b294b3a04
+2026-01-06 15:00:36,726 [INFO] Created office record for 48
+2026-01-06 15:00:37,191 [INFO] Updated politician ocd-person/2e502adc-4b0e-46fa-b5d4-0d2f7696db49
+2026-01-06 15:00:37,509 [INFO] Created office record for 49
+2026-01-06 15:00:37,975 [INFO] Updated politician ocd-person/67c280c8-c9a5-4eff-93de-480570d6a414
+2026-01-06 15:00:38,290 [INFO] Created office record for 50
+2026-01-06 15:00:38,290 [INFO] Fetching people for ocd-jurisdiction/country:us/state:ny/government (page 2)
+2026-01-06 15:00:39,217 [INFO] Retrieved 50 people
+2026-01-06 15:00:39,689 [INFO] Updated politician ocd-person/9f3ae1c5-651b-4cc8-a1ce-9e94c414a220
+2026-01-06 15:00:40,007 [INFO] Created office record for 51
+2026-01-06 15:00:40,488 [INFO] Updated politician ocd-person/df0c2fdc-3cf4-4c89-849a-b62ac2d7d2d4
+2026-01-06 15:00:40,806 [INFO] Created office record for 52
+2026-01-06 15:00:41,290 [INFO] Updated politician ocd-person/8ff653e0-5aa6-4692-ac54-25ed36e32f97
+2026-01-06 15:00:41,615 [INFO] Created office record for 53
+2026-01-06 15:00:42,106 [INFO] Updated politician ocd-person/5a9c40ed-69dc-4004-b34a-cc943428f8b1
+2026-01-06 15:00:42,427 [INFO] Created office record for 54
+2026-01-06 15:00:42,867 [INFO] Updated politician ocd-person/34f326e1-6e7e-40b2-9ece-10856986cb1b
+2026-01-06 15:00:43,172 [INFO] Created office record for 55
+2026-01-06 15:00:43,650 [INFO] Updated politician ocd-person/da883f7a-698b-49d6-8519-11bab87823cf
+2026-01-06 15:00:43,969 [INFO] Created office record for 56
+2026-01-06 15:00:44,469 [INFO] Updated politician ocd-person/d6939215-ec08-437b-beea-3b9898d0f61b
+2026-01-06 15:00:44,797 [INFO] Created office record for 57
+2026-01-06 15:00:45,270 [INFO] Updated politician ocd-person/70d249e7-22a2-4536-892f-a61aa22723e4
+2026-01-06 15:00:45,592 [INFO] Created office record for 58
+2026-01-06 15:00:46,047 [INFO] Updated politician ocd-person/b7e93c8c-9a4b-4678-8d6a-effce9a76938
+2026-01-06 15:00:46,366 [INFO] Created office record for 59
+2026-01-06 15:00:46,830 [INFO] Updated politician ocd-person/42d68829-d969-44d1-9e22-042a6e787dc5
+2026-01-06 15:00:47,152 [INFO] Created office record for 60
+2026-01-06 15:00:47,628 [INFO] Updated politician ocd-person/5764a626-de74-4d88-bc53-b43b523aa75c
+2026-01-06 15:00:47,952 [INFO] Created office record for 61
+2026-01-06 15:00:48,427 [INFO] Updated politician ocd-person/81456b86-152f-4764-a489-dade7cc572c6
+2026-01-06 15:00:48,752 [INFO] Created office record for 62
+2026-01-06 15:00:49,225 [INFO] Updated politician ocd-person/4af19dc2-41c7-4b7e-b271-b23e20e1ccb1
+2026-01-06 15:00:49,549 [INFO] Created office record for 63
+2026-01-06 15:00:50,028 [INFO] Updated politician ocd-person/489a01e1-6a0f-4907-bc00-110020e2f27d
+2026-01-06 15:00:50,338 [INFO] Created office record for 64
+2026-01-06 15:00:50,808 [INFO] Updated politician ocd-person/0a053bbf-e97b-44aa-a38f-83ad7f9682ac
+2026-01-06 15:00:51,135 [INFO] Created office record for 65
+2026-01-06 15:00:51,608 [INFO] Updated politician ocd-person/be7ad489-073e-476e-82a0-992ca0569b99
+2026-01-06 15:00:51,929 [INFO] Created office record for 66
+2026-01-06 15:00:52,430 [INFO] Updated politician ocd-person/722e778a-7824-49fb-bb44-ba1da8bab675
+2026-01-06 15:00:52,727 [INFO] Created office record for 67
+2026-01-06 15:00:53,234 [INFO] Updated politician ocd-person/676247d1-048f-45de-b265-34069edb2be0
+2026-01-06 15:00:53,549 [INFO] Created office record for 68
+2026-01-06 15:00:54,032 [INFO] Updated politician ocd-person/18830756-58c1-4fd1-b1b0-d16041b10e12
+2026-01-06 15:00:54,327 [INFO] Created office record for 69
+2026-01-06 15:00:54,794 [INFO] Updated politician ocd-person/068528ac-bc5e-449f-a4df-4541f8c09415
+2026-01-06 15:00:55,110 [INFO] Created office record for 70
+2026-01-06 15:00:55,572 [INFO] Updated politician ocd-person/a23e140f-4beb-43d5-b850-198ff81a75f3
+2026-01-06 15:00:55,892 [INFO] Created office record for 71
+2026-01-06 15:00:56,987 [INFO] Updated politician ocd-person/eaf455e1-358d-4de0-ac5d-3d8c400eb4e3
+2026-01-06 15:00:57,287 [INFO] Created office record for 72
+2026-01-06 15:00:58,386 [INFO] Updated politician ocd-person/e053b536-631c-47a7-a3af-adb30dab37de
+2026-01-06 15:00:58,706 [INFO] Created office record for 73
+2026-01-06 15:00:59,189 [INFO] Updated politician ocd-person/7f031836-0a9e-46d2-bcab-7cc6a14848df
+2026-01-06 15:00:59,485 [INFO] Created office record for 74
+2026-01-06 15:00:59,964 [INFO] Updated politician ocd-person/67047d73-acc1-4d6f-b580-fbeee33cc1f8
+2026-01-06 15:01:00,266 [INFO] Created office record for 75
+2026-01-06 15:01:00,726 [INFO] Updated politician ocd-person/b03d69c0-0ea1-4524-86e6-c6b20797a2eb
+2026-01-06 15:01:01,024 [INFO] Created office record for 76
+2026-01-06 15:01:01,486 [INFO] Updated politician ocd-person/aa1af232-61bb-427c-b30e-81169c18d15d
+2026-01-06 15:01:01,790 [INFO] Created office record for 77
+2026-01-06 15:01:02,250 [INFO] Updated politician ocd-person/6872ad9e-fcba-426f-a9ef-b4495dba17f5
+2026-01-06 15:01:02,568 [INFO] Created office record for 78
+2026-01-06 15:01:03,049 [INFO] Updated politician ocd-person/e00ee209-a6a5-4ca1-8ac6-f403e1cbcca2
+2026-01-06 15:01:03,348 [INFO] Created office record for 79
+2026-01-06 15:01:03,814 [INFO] Updated politician ocd-person/c1f048f2-6e1d-4e1b-b161-d97e2f16c1f8
+2026-01-06 15:01:04,122 [INFO] Created office record for 80
+2026-01-06 15:01:04,590 [INFO] Updated politician ocd-person/603a62e0-5ca7-4259-b071-db52bc9f2569
+2026-01-06 15:01:04,910 [INFO] Created office record for 81
+2026-01-06 15:01:05,392 [INFO] Updated politician ocd-person/4910460d-6cb9-4f35-8459-19e5a4de579e
+2026-01-06 15:01:05,687 [INFO] Created office record for 82
+2026-01-06 15:01:06,167 [INFO] Updated politician ocd-person/ff604a07-1aaf-4e61-b070-dd478f42cea5
+2026-01-06 15:01:06,489 [INFO] Created office record for 83
+2026-01-06 15:01:07,574 [INFO] Updated politician ocd-person/f6394f20-1953-434b-a2bb-2d255d4fafbe
+2026-01-06 15:01:08,065 [INFO] Created office record for 84
+2026-01-06 15:01:08,568 [INFO] Updated politician ocd-person/029fb490-649e-4dbf-b7fc-6cf46ea433ff
+2026-01-06 15:01:08,890 [INFO] Created office record for 85
+2026-01-06 15:01:09,365 [INFO] Updated politician ocd-person/6d73b968-c1db-434e-9876-de2fdff30d89
+2026-01-06 15:01:09,680 [INFO] Created office record for 86
+2026-01-06 15:01:10,156 [INFO] Updated politician ocd-person/5a115673-aa3c-4518-94bc-b2a5dadeb8af
+2026-01-06 15:01:10,469 [INFO] Created office record for 87
+2026-01-06 15:01:10,928 [INFO] Updated politician ocd-person/a0b3e01c-d323-4624-a0da-6a1e2b0dfb31
+2026-01-06 15:01:11,228 [INFO] Created office record for 88
+2026-01-06 15:01:11,692 [INFO] Updated politician ocd-person/84b5ed8b-c048-4d62-ab8f-17d217605301
+2026-01-06 15:01:12,012 [INFO] Created office record for 89
+2026-01-06 15:01:12,471 [INFO] Updated politician ocd-person/975453b1-113a-40e9-8036-53e714a47b66
+2026-01-06 15:01:12,778 [INFO] Created office record for 90
+2026-01-06 15:01:13,247 [INFO] Updated politician ocd-person/21da6116-bec3-44a4-9e0b-a68eef91222d
+2026-01-06 15:01:13,560 [INFO] Created office record for 91
+2026-01-06 15:01:14,029 [INFO] Updated politician ocd-person/983d7603-0ccc-4995-8afe-2ece30a487c7
+2026-01-06 15:01:14,349 [INFO] Created office record for 92
+2026-01-06 15:01:14,838 [INFO] Updated politician ocd-person/f3a41618-3c28-4bab-9a56-ef49c9cafcec
+2026-01-06 15:01:15,147 [INFO] Created office record for 93
+2026-01-06 15:01:15,915 [INFO] Updated politician ocd-person/cc6881df-b386-488d-bbc1-71e71b808306
+2026-01-06 15:01:16,231 [INFO] Created office record for 94
+2026-01-06 15:01:16,710 [INFO] Updated politician ocd-person/691f0b4b-a2b3-47d6-b5ba-6bf503340e10
+2026-01-06 15:01:17,028 [INFO] Created office record for 95
+2026-01-06 15:01:17,510 [INFO] Updated politician ocd-person/738fe4f1-dfee-40c6-9f00-f793ea369dbc
+2026-01-06 15:01:17,820 [INFO] Created office record for 96
+2026-01-06 15:01:18,282 [INFO] Updated politician ocd-person/45837ecf-38a2-41cb-9de1-eae175a32dfe
+2026-01-06 15:01:18,590 [INFO] Created office record for 97
+2026-01-06 15:01:19,064 [INFO] Updated politician ocd-person/21b7fbbb-6f39-4251-884d-3d4a146a0874
+2026-01-06 15:01:19,381 [INFO] Created office record for 98
+2026-01-06 15:01:19,849 [INFO] Updated politician ocd-person/eee14916-d196-4857-a64a-b6e952db7a53
+2026-01-06 15:01:20,184 [INFO] Created office record for 99
+2026-01-06 15:01:20,719 [INFO] Updated politician ocd-person/0ce05d4e-e231-4d3e-8ba5-179499230adc
+2026-01-06 15:01:21,023 [INFO] Created office record for 100
+2026-01-06 15:01:21,189 [INFO] === People ingestion complete ===
+2026-01-06 15:01:21,189 [INFO] === Starting bill ingestion for ocd-jurisdiction/country:us/state:ny/government ===
+2026-01-06 15:01:21,189 [INFO] Fetching bills for ocd-jurisdiction/country:us/state:ny/government (page 1)
+2026-01-06 15:01:22,549 [INFO] Retrieved 20 bills
+2026-01-06 15:01:23,195 [ERROR] Failed to ingest bill ocd-bill/aff9fe38-01a8-4807-8208-32f5ba796e9a: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (edbee1d2-96c1-47f9-939c-20ce1f259ad3, ocd-bill/aff9fe38-01a8-4807-8208-32f5ba796e9a, S 685, Authorizes existing building projects to continue when the fossi..., null, null, 2025-01-03, 20252026, senate, introduced, 8e474ae8-0436-42b6-9ba1-68ee802b3c4a, 2026-01-06 20:01:26.536458+00).
+
+2026-01-06 15:01:23,981 [ERROR] Failed to ingest bill ocd-bill/a9060298-9004-4286-b598-7e814c184a93: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (0a336249-b669-46a4-9340-73d6e8585ba3, ocd-bill/a9060298-9004-4286-b598-7e814c184a93, A 5846, Provides remedies for disrupted elections, null, null, 2025-02-24, 20252026, house, introduced, d6f372bf-2f5b-4dbd-a277-488a465da67d, 2026-01-06 20:01:27.346476+00).
+
+2026-01-06 15:01:24,749 [ERROR] Failed to ingest bill ocd-bill/e64cb4fc-3172-4fc0-83e2-78c55216725c: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (41ce8259-6b29-4c06-b393-fca1c8fcfe96, ocd-bill/e64cb4fc-3172-4fc0-83e2-78c55216725c, S 1282, Requires health insurance policies to offer full coverage for an..., null, null, 2025-01-09, 20252026, senate, introduced, 75c84613-981b-4f83-8be7-2923f4ecde0e, 2026-01-06 20:01:28.121141+00).
+
+2026-01-06 15:01:25,525 [ERROR] Failed to ingest bill ocd-bill/ac73bf21-b685-43cf-938e-17c237dfca78: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (b076f241-0cc0-4dc1-ac89-00d1e6914bac, ocd-bill/ac73bf21-b685-43cf-938e-17c237dfca78, S 3231, Relates to the qualification of voters, null, null, 2025-01-24, 20252026, senate, introduced, eeb6636e-7483-4fae-ae4d-ab94b0121045, 2026-01-06 20:01:28.886465+00).
+
+2026-01-06 15:01:26,327 [ERROR] Failed to ingest bill ocd-bill/92b63e18-8569-464f-beb7-f1f2ff24f198: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (65289bb5-9221-4667-b1e4-575372df3f26, ocd-bill/92b63e18-8569-464f-beb7-f1f2ff24f198, S 2334, Provides for coverage of screenings for elevated lead levels, null, null, 2025-01-16, 20252026, senate, introduced, 211bac18-47b5-4f96-ba7f-b676d55e7298, 2026-01-06 20:01:29.661437+00).
+
+2026-01-06 15:01:27,116 [ERROR] Failed to ingest bill ocd-bill/25cf772c-fe66-4dc3-9c8a-db5f2cf92aff: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (9e3bbe7c-4a05-4e68-bd0d-65c4ab99f158, ocd-bill/25cf772c-fe66-4dc3-9c8a-db5f2cf92aff, S 3654, Requires health insurers to provide coverage for speech therapy ..., null, null, 2025-01-29, 20252026, senate, introduced, a6b5e407-455a-4322-b207-b3d24bae6012, 2026-01-06 20:01:30.461592+00).
+
+2026-01-06 15:01:27,913 [ERROR] Failed to ingest bill ocd-bill/9618314d-6887-4dca-acac-459651eb8faa: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (b14adf13-adb8-4aa5-8863-383859c9eb07, ocd-bill/9618314d-6887-4dca-acac-459651eb8faa, S 1759, Requires the New York state cancer services program to provide v..., null, null, 2025-01-13, 20252026, senate, introduced, 4d748df3-1bf0-4d03-99b4-2dfd6301e32c, 2026-01-06 20:01:31.266488+00).
+
+2026-01-06 15:01:28,693 [ERROR] Failed to ingest bill ocd-bill/45c22521-8723-47ca-b513-8c4c22bb35cb: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (ec6f542e-3270-4161-afba-2dbb4ed57575, ocd-bill/45c22521-8723-47ca-b513-8c4c22bb35cb, A 492, Establishes the statewide childcare workforce living wage fund; ..., null, null, 2025-01-06, 20252026, house, introduced, 9e12f828-c0a3-4d3e-bf11-c5e990dbf9e4, 2026-01-06 20:01:32.061477+00).
+
+2026-01-06 15:01:29,480 [ERROR] Failed to ingest bill ocd-bill/8e3c5360-fa70-478f-8193-6eec7fddfbbd: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (9130b320-4bff-4469-9c73-0cfc867ae6bb, ocd-bill/8e3c5360-fa70-478f-8193-6eec7fddfbbd, A 3954, Enacts the student voter empowerment act, null, null, 2025-01-30, 20252026, house, introduced, caeeefb2-96f9-4849-8b6a-05a3cb08e0d5, 2026-01-06 20:01:32.82614+00).
+
+2026-01-06 15:01:30,239 [ERROR] Failed to ingest bill ocd-bill/06a2a99b-dc82-45a2-b790-c328c1672b7e: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (185a497f-822a-47a5-afc5-44d87360a58e, ocd-bill/06a2a99b-dc82-45a2-b790-c328c1672b7e, S 5228, Directs the office of children and family services to establish ..., null, null, 2025-02-20, 20252026, senate, introduced, 0eaf0b10-adea-47e8-b2c0-7e69eb5df309, 2026-01-06 20:01:33.611352+00).
+
+2026-01-06 15:01:31,013 [ERROR] Failed to ingest bill ocd-bill/b18dbb26-5e2b-418f-95d2-0dd78ce28902: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (cdfb8abe-4681-44c4-9dad-6e28d179c578, ocd-bill/b18dbb26-5e2b-418f-95d2-0dd78ce28902, S 1287, Establishes the rare disease advisory council, null, null, 2025-01-09, 20252026, senate, introduced, 88615bdf-0cae-4c27-bee3-a43df53e39c1, 2026-01-06 20:01:34.366339+00).
+
+2026-01-06 15:01:31,810 [ERROR] Failed to ingest bill ocd-bill/6818f1b6-54e3-42b8-b39f-d9437f4022c9: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (8f66c0c8-a565-459d-9893-116632a461e7, ocd-bill/6818f1b6-54e3-42b8-b39f-d9437f4022c9, S 587, Establishes a tax deduction for cash tips received, null, null, 2025-01-03, 20252026, senate, introduced, dd92e8e6-ac75-4898-aab3-d7b767978f80, 2026-01-06 20:01:35.161191+00).
+
+2026-01-06 15:01:32,593 [ERROR] Failed to ingest bill ocd-bill/d5663888-55ec-4a44-934b-933d71634ec1: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (92fc70a5-71f1-4260-993b-5c62c9f0a57d, ocd-bill/d5663888-55ec-4a44-934b-933d71634ec1, S 2681, Directs the superintendent of state police develop a critical in..., null, null, 2025-01-22, 20252026, senate, introduced, 012c2186-dc4c-4a4f-bdf0-708d0d4d923a, 2026-01-06 20:01:35.96152+00).
+
+2026-01-06 15:01:33,373 [ERROR] Failed to ingest bill ocd-bill/fb179b62-5e78-497a-b36b-ce76d91c284b: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (ac8bf420-343b-4fec-96d4-336f71b9d102, ocd-bill/fb179b62-5e78-497a-b36b-ce76d91c284b, S 4735, Relates to protecting students, faculty, and staff from immigrat..., null, null, 2025-02-12, 20252026, senate, introduced, b0b2ddc1-8ebb-460f-82d5-2ae2ee25b630, 2026-01-06 20:01:36.721639+00).
+
+2026-01-06 15:01:34,175 [ERROR] Failed to ingest bill ocd-bill/44bb8a12-5fb2-4a87-895c-078052f2b67c: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (1c2440e9-ee7d-463f-8cc3-7249d0d334a9, ocd-bill/44bb8a12-5fb2-4a87-895c-078052f2b67c, S 935, Relates to authorizing and directing the metropolitan transporta..., null, null, 2025-01-07, 20252026, senate, introduced, 5fbd0164-80fc-485b-b667-202a2bbaf5c0, 2026-01-06 20:01:37.52141+00).
+
+2026-01-06 15:01:34,982 [ERROR] Failed to ingest bill ocd-bill/21a5f314-169f-4fa2-86b4-30940371aa34: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (07c61617-c920-4a90-8707-6e5c79a6bec8, ocd-bill/21a5f314-169f-4fa2-86b4-30940371aa34, S 3397, Enacts the faith-based affordable housing act, null, null, 2025-01-27, 20252026, senate, introduced, 5264e2ae-2920-4ae2-aba4-f92a3eb28e9e, 2026-01-06 20:01:38.326364+00).
+
+2026-01-06 15:01:35,783 [ERROR] Failed to ingest bill ocd-bill/8efd8c35-f3a1-40d6-93b7-d53ca146e5ca: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (21b66465-e564-4b65-af11-e63705bfdb61, ocd-bill/8efd8c35-f3a1-40d6-93b7-d53ca146e5ca, A 946, Prohibits landlords, lessors, sub-lessors and grantors from dema..., null, null, 2025-01-07, 20252026, house, introduced, a71cc7e4-3f0a-41fc-b88b-7c9c7d0065fd, 2026-01-06 20:01:39.136611+00).
+
+2026-01-06 15:01:36,593 [ERROR] Failed to ingest bill ocd-bill/616d3f15-1feb-4cf3-81ed-741bb01272c0: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (51eaf3fd-92a8-4926-b698-15f1fb4a183c, ocd-bill/616d3f15-1feb-4cf3-81ed-741bb01272c0, S 6230, Authorizes camp employees to administer medications and treatmen..., null, null, 2025-03-07, 20252026, senate, introduced, 82a72c2e-a45c-4c4e-a089-1ac69767ceeb, 2026-01-06 20:01:39.922267+00).
+
+2026-01-06 15:01:37,359 [ERROR] Failed to ingest bill ocd-bill/2e51d39a-4b61-40e2-80c6-26b4965e7503: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (b3058ab3-85e4-4ddc-9bc9-b87e42f2a3a6, ocd-bill/2e51d39a-4b61-40e2-80c6-26b4965e7503, A 1083, Prohibits the creation of fake electronic communication service ..., null, null, 2025-01-08, 20252026, house, introduced, bbe807bd-7776-4937-ba2a-a9b910020d4a, 2026-01-06 20:01:40.741569+00).
+
+2026-01-06 15:01:38,164 [ERROR] Failed to ingest bill ocd-bill/544497c7-b321-4836-a081-f7fa31d57656: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (385cf27a-13be-456a-961f-2a0bd68fa3b3, ocd-bill/544497c7-b321-4836-a081-f7fa31d57656, S 8597, Prohibits children from being denied access to a free public edu..., null, null, 2025-12-04, 20252026, senate, introduced, 43846050-14a8-46c6-a35b-bd3d19e6403a, 2026-01-06 20:01:41.50146+00).
+
+2026-01-06 15:01:38,319 [INFO] Fetching bills for ocd-jurisdiction/country:us/state:ny/government (page 2)
+2026-01-06 15:01:39,848 [INFO] Retrieved 20 bills
+2026-01-06 15:01:41,573 [ERROR] Failed to ingest bill ocd-bill/0a253dd9-30f1-4a37-a8ee-b967739b0f42: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (fb79249c-c3f5-4cab-9071-596af558df08, ocd-bill/0a253dd9-30f1-4a37-a8ee-b967739b0f42, J 1305, Congratulating Sergeant Anthony Catalano upon the occasion of ce..., null, null, 2026-01-06, 20252026, senate, introduced, eac7b57a-b28e-42bc-b268-9190db8ac7b7, 2026-01-06 20:01:43.841341+00).
+
+2026-01-06 15:01:42,366 [ERROR] Failed to ingest bill ocd-bill/c195dc7e-95ab-4e05-b1e1-1b3d55e65398: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (78e01920-4c46-4ebc-a100-364bb191fe4d, ocd-bill/c195dc7e-95ab-4e05-b1e1-1b3d55e65398, S 6155, Allows for a modest increase in annual income to not disqualify ..., null, null, 2025-03-05, 20252026, senate, introduced, 43f0a31c-d99d-4e3b-8e47-820de29c4c66, 2026-01-06 20:01:45.721562+00).
+
+2026-01-06 15:01:43,155 [ERROR] Failed to ingest bill ocd-bill/5d46d108-2b12-4b93-8275-7336a6bbe410: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (89ea2382-b89d-4dd4-ac66-b8cd3cb480c6, ocd-bill/5d46d108-2b12-4b93-8275-7336a6bbe410, A 8183, Relates to requirements for certain mental health practitioners ..., null, null, 2025-05-06, 20252026, house, introduced, 96bc2592-3f35-4d39-b04a-66d1d0f97318, 2026-01-06 20:01:46.501731+00).
+
+2026-01-06 15:01:43,953 [ERROR] Failed to ingest bill ocd-bill/367ba4f8-bfe5-4ddb-8d8c-fc7a91709a1e: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (12afc1d7-4ae3-4133-b6eb-8c585ca75043, ocd-bill/367ba4f8-bfe5-4ddb-8d8c-fc7a91709a1e, A 6542, Enacts the utility shutoff protection act, null, null, 2025-03-06, 20252026, house, introduced, a6ce0ef8-646a-44b1-b229-4b84d0317671, 2026-01-06 20:01:47.30146+00).
+
+2026-01-06 15:01:44,742 [ERROR] Failed to ingest bill ocd-bill/61a98bce-bce3-42d2-9f05-ce3304175ce4: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (cd895008-5ee5-432e-a773-f710e5f79704, ocd-bill/61a98bce-bce3-42d2-9f05-ce3304175ce4, A 9373, Relates to the purchase of firearms, ammunition, and firearm acc..., null, null, 2025-12-20, 20252026, house, introduced, a5759d5d-020d-4681-b2a4-02b8cb9f326a, 2026-01-06 20:01:48.081542+00).
+
+2026-01-06 15:01:45,528 [ERROR] Failed to ingest bill ocd-bill/2575ad4f-f1f3-4897-af74-3a6a2ede1431: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (5b01fc09-871b-4ca4-a42d-879f1651f075, ocd-bill/2575ad4f-f1f3-4897-af74-3a6a2ede1431, R 1306, Directing the Temporary President to appoint a Committee of two ..., null, null, 2026-01-06, 20252026, senate, introduced, 5db21699-63c1-4b3a-9fd7-3037510bc29a, 2026-01-06 20:01:48.881301+00).
+
+2026-01-06 15:01:46,356 [ERROR] Failed to ingest bill ocd-bill/dd647031-222a-43cd-b4e5-55b66c14f35b: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (1b235c3a-2233-4471-aa86-f411330d954c, ocd-bill/dd647031-222a-43cd-b4e5-55b66c14f35b, A 9203, Relates to the right to bear and keep arms, null, null, 2025-11-04, 20252026, house, introduced, b63b9a85-0a50-4e9a-8a16-c2b4ea03ff10, 2026-01-06 20:01:49.681382+00).
+
+2026-01-06 15:01:47,156 [ERROR] Failed to ingest bill ocd-bill/2d8cc04d-a6ee-4a74-9d00-928dbba5500c: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (b9814c7d-eacc-4be6-a742-48270260886f, ocd-bill/2d8cc04d-a6ee-4a74-9d00-928dbba5500c, A 6541, Prohibits payment card networks from assessing penalties against..., null, null, 2025-03-06, 20252026, house, introduced, cb61f37a-9508-4bc2-815b-d2279c8dd847, 2026-01-06 20:01:50.501534+00).
+
+2026-01-06 15:01:47,942 [ERROR] Failed to ingest bill ocd-bill/613be569-14c8-4544-b6f4-8f7d9470275b: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (5cfe4a54-92c1-4328-90b4-8e773366463f, ocd-bill/613be569-14c8-4544-b6f4-8f7d9470275b, A 898, Allows the alteration or repeal of real property tax exemptions ..., null, null, 2025-01-07, 20252026, house, introduced, 774f4e1f-baca-4752-a17c-6dea2765587a, 2026-01-06 20:01:51.301593+00).
+
+2026-01-06 15:01:48,734 [ERROR] Failed to ingest bill ocd-bill/b2a9986e-14d6-451b-893b-8461b4d3d251: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (a0aeeb92-9dfa-4fcf-8e97-cd6aaaa072b1, ocd-bill/b2a9986e-14d6-451b-893b-8461b4d3d251, J 1303, Commending Austin Jin, Bryan Cheng, and Ellen Zhang of Great Nec..., null, null, 2026-01-06, 20252026, senate, introduced, 57332384-7bad-434c-a2f1-5b460f7397d0, 2026-01-06 20:01:52.071577+00).
+
+2026-01-06 15:01:49,533 [ERROR] Failed to ingest bill ocd-bill/92896b4c-ca2d-48c7-86be-cceae2507eeb: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (0da41c62-3b91-4cae-b874-808985d0ae0b, ocd-bill/92896b4c-ca2d-48c7-86be-cceae2507eeb, S 5405, Requires hate crime awareness curriculum or instruction for scho..., null, null, 2025-02-21, 20252026, senate, introduced, 0da1b85d-3b7f-4827-8e5b-3241f77bf52d, 2026-01-06 20:01:52.881302+00).
+
+2026-01-06 15:01:50,352 [ERROR] Failed to ingest bill ocd-bill/30468e7d-0528-4929-ae1d-af6a562423f5: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (b167904e-3ada-4e34-b2c9-235b27c3ceea, ocd-bill/30468e7d-0528-4929-ae1d-af6a562423f5, A 1058, Requires that the average annual wage and average weekly wage of..., null, null, 2025-01-08, 20252026, house, introduced, e1c9aeb7-446f-4f22-bc44-74e195502976, 2026-01-06 20:01:53.68149+00).
+
+2026-01-06 15:01:51,143 [ERROR] Failed to ingest bill ocd-bill/3f9594ba-8c9a-4968-a163-626fe712d54f: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (d96efc98-d5aa-49f7-8c30-31294b3a13b1, ocd-bill/3f9594ba-8c9a-4968-a163-626fe712d54f, A 1022, Relates to establishing the banking bill of rights, null, null, 2025-01-08, 20252026, house, introduced, 25f0d245-7c07-43f5-a201-91c3e6fa98d3, 2026-01-06 20:01:54.502596+00).
+
+2026-01-06 15:01:51,939 [ERROR] Failed to ingest bill ocd-bill/45b56a36-d6a3-4239-97cb-2183ff6e2a2e: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (e920161f-c3a1-4b69-96bb-13acd94808c1, ocd-bill/45b56a36-d6a3-4239-97cb-2183ff6e2a2e, A 4259, Relates to the hiring of consultants, null, null, 2025-01-31, 20252026, house, introduced, ec262d6a-60e6-4554-a8a0-032c7c342cea, 2026-01-06 20:01:55.281457+00).
+
+2026-01-06 15:01:52,734 [ERROR] Failed to ingest bill ocd-bill/0cb9b89a-66db-4761-87eb-3cc30a79a6ac: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (6b8aae6b-c1dd-4763-9b9e-74d57d28ac04, ocd-bill/0cb9b89a-66db-4761-87eb-3cc30a79a6ac, S 5204, Enacts the Health Care Nondiscrimination Act of 2025, null, null, 2025-02-20, 20252026, senate, introduced, 4a2eac74-2216-42d3-8ea4-0680999deef9, 2026-01-06 20:01:56.091673+00).
+
+2026-01-06 15:01:53,532 [ERROR] Failed to ingest bill ocd-bill/5d9a6982-45a4-4cec-830f-95300ebfdb8a: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (08d5dd6a-d53e-4790-9922-5511f360a095, ocd-bill/5d9a6982-45a4-4cec-830f-95300ebfdb8a, A 6101, Establishes the "Not on our dime!: Ending New York funding of Is..., null, null, 2025-02-26, 20252026, house, introduced, 1428e0b6-4aab-47d6-838b-8203232c999c, 2026-01-06 20:01:56.871387+00).
+
+2026-01-06 15:01:54,331 [ERROR] Failed to ingest bill ocd-bill/eed3505c-0d36-467f-98a9-19fe57ffab60: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (4a3e8726-71e8-4380-b853-151febfbf09f, ocd-bill/eed3505c-0d36-467f-98a9-19fe57ffab60, A 9122, Relates to certain motor vehicle license plates; repealer, null, null, 2025-09-27, 20252026, house, introduced, d849249f-2310-4880-8a3c-6ace584bb324, 2026-01-06 20:01:57.681196+00).
+
+2026-01-06 15:01:55,095 [ERROR] Failed to ingest bill ocd-bill/dc3f7d90-07de-44b2-8c48-97dac1fb6d96: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (f69f724e-6b0e-45b6-b0d5-9ef98d3eecc0, ocd-bill/dc3f7d90-07de-44b2-8c48-97dac1fb6d96, A 3353, Authorizes the sale of consumer fireworks in the state, null, null, 2025-01-27, 20252026, house, introduced, d59b2e65-9a3a-43c2-90d0-9d478b1845dc, 2026-01-06 20:01:58.471863+00).
+
+2026-01-06 15:01:55,877 [ERROR] Failed to ingest bill ocd-bill/5eb30df5-6b26-4872-958f-3909c1385a47: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (3a9d5c23-c787-48e8-8526-44480e92a3d9, ocd-bill/5eb30df5-6b26-4872-958f-3909c1385a47, A 9431, Authorizes the use of an electronic signature on documents submi..., null, null, 2026-01-06, 20252026, house, introduced, c4d73eed-b054-446e-b8b5-55ae1c91be64, 2026-01-06 20:01:59.231433+00).
+
+2026-01-06 15:01:56,677 [ERROR] Failed to ingest bill ocd-bill/ff344209-544c-4c5f-8bf0-706427f9dad5: null value in column "sponsor_id" of relation "bills" violates not-null constraint
+DETAIL:  Failing row contains (6291fcaf-f571-438d-b451-8a40c327a7c0, ocd-bill/ff344209-544c-4c5f-8bf0-706427f9dad5, A 801, Expedites MTA capital project construction by establishing a pro..., null, null, 2025-01-06, 20252026, house, introduced, c6b2a8a0-4a7c-4c06-9b76-a6bb5eaa7c51, 2026-01-06 20:02:00.021465+00).
+
+2026-01-06 15:01:56,830 [INFO] === Bill ingestion complete ===
+2026-01-06 15:01:56,831 [INFO] Transaction committed
+2026-01-06 15:01:56,831 [INFO] === OpenStates Ingestion Pipeline Complete ===
+2026-01-06 15:02:42,448 [INFO] === OpenStates Ingestion Pipeline Started ===
+2026-01-06 15:02:43,405 [INFO] === Starting people ingestion for ocd-jurisdiction/country:us/state:ny/government ===
+2026-01-06 15:02:43,405 [INFO] Fetching people for ocd-jurisdiction/country:us/state:ny/government (page 1)
+2026-01-06 15:02:44,829 [INFO] Retrieved 50 people
+2026-01-06 15:02:45,482 [INFO] Updated politician ocd-person/dff234fa-8563-4028-982e-c0a221d99fd9
+2026-01-06 15:02:45,794 [INFO] Created office record for 1
+2026-01-06 15:02:46,292 [INFO] Updated politician ocd-person/c197076b-7dde-4f90-b04f-352053fbab94
+2026-01-06 15:02:46,614 [INFO] Created office record for 2
+2026-01-06 15:02:47,093 [INFO] Updated politician ocd-person/69640dce-9d99-45a3-83b5-cbdc1dc2f2e5
+2026-01-06 15:02:47,411 [INFO] Created office record for 3
+2026-01-06 15:02:47,853 [INFO] Updated politician ocd-person/9c986c4c-5371-4b77-b095-5a7283a93729
+2026-01-06 15:02:48,167 [INFO] Created office record for 4
+2026-01-06 15:02:48,649 [INFO] Updated politician ocd-person/9dd382bd-0f4f-4a99-ad58-679e26114f70
+2026-01-06 15:02:48,972 [INFO] Created office record for 5
+2026-01-06 15:02:49,451 [INFO] Updated politician ocd-person/2196fbda-e731-4e6b-a221-7bf5e25b8b95
+2026-01-06 15:02:49,774 [INFO] Created office record for 6
+2026-01-06 15:02:50,251 [INFO] Updated politician ocd-person/3647609d-4772-4afe-a2c0-1f628a6c11ec
+2026-01-06 15:02:50,571 [INFO] Created office record for 7
+2026-01-06 15:02:51,051 [INFO] Updated politician ocd-person/f0f08f55-cf1f-477c-a5f8-a7f2382e5fa8
+2026-01-06 15:02:51,353 [INFO] Created office record for 8
+2026-01-06 15:02:51,835 [INFO] Updated politician ocd-person/b46dbcbc-500c-4d28-ac9b-cf2a7291e79f
+2026-01-06 15:02:52,153 [INFO] Created office record for 9
+2026-01-06 15:02:52,632 [INFO] Updated politician ocd-person/5f3e7bcf-9e43-423b-946b-982cc6ecc154
+2026-01-06 15:02:52,956 [INFO] Created office record for 10
+2026-01-06 15:02:53,433 [INFO] Updated politician ocd-person/ae1f415b-958c-4a4c-805b-626e6eca5fe3
+2026-01-06 15:02:53,751 [INFO] Created office record for 11
+2026-01-06 15:02:54,215 [INFO] Updated politician ocd-person/2a9aad09-337f-4fd0-8e87-70afd78ac8cc
+2026-01-06 15:02:54,518 [INFO] Created office record for 12
+2026-01-06 15:02:54,994 [INFO] Updated politician ocd-person/8dd98240-93c9-486a-b6c6-3a794b232090
+2026-01-06 15:02:55,319 [INFO] Created office record for 13
+2026-01-06 15:02:55,791 [INFO] Updated politician ocd-person/ba5fb3f1-a049-45a1-abd7-77b132e789d6
+2026-01-06 15:02:56,111 [INFO] Created office record for 14
+2026-01-06 15:02:56,594 [INFO] Updated politician ocd-person/461e374c-cde4-4865-9fec-141502275a8b
+2026-01-06 15:02:56,912 [INFO] Created office record for 15
+2026-01-06 15:02:57,394 [INFO] Updated politician ocd-person/0193e8ea-3830-45af-86e7-34427396a7b4
+2026-01-06 15:02:57,712 [INFO] Created office record for 16
+2026-01-06 15:02:58,194 [INFO] Updated politician ocd-person/b4820549-d7f0-4f0f-abef-74d3b1515ed9
+2026-01-06 15:02:58,493 [INFO] Created office record for 17
+2026-01-06 15:02:58,955 [INFO] Updated politician ocd-person/edde17c2-c810-4ec8-97c3-4cc0ea2e32d0
+2026-01-06 15:02:59,276 [INFO] Created office record for 18
+2026-01-06 15:02:59,750 [INFO] Updated politician ocd-person/b1371ded-fa50-44d8-8fad-a8532b98406a
+2026-01-06 15:03:00,074 [INFO] Created office record for 19
+2026-01-06 15:03:00,549 [INFO] Updated politician ocd-person/38ed0365-1654-4a2d-bb23-4428736df57f
+2026-01-06 15:03:00,853 [INFO] Created office record for 20
+2026-01-06 15:03:01,338 [INFO] Updated politician ocd-person/46209ced-aa04-4316-8a17-97fb02e83320
+2026-01-06 15:03:01,646 [INFO] Created office record for 21
+2026-01-06 15:03:02,108 [INFO] Updated politician ocd-person/b03e8fcb-e9e1-4096-9483-654b3383341b
+2026-01-06 15:03:02,417 [INFO] Created office record for 22
+2026-01-06 15:03:02,895 [INFO] Updated politician ocd-person/0507a521-7806-4d5c-ac7d-e50599bb32a6
+2026-01-06 15:03:03,211 [INFO] Created office record for 23
+2026-01-06 15:03:03,692 [INFO] Updated politician ocd-person/8285be34-48a9-4bbe-b231-f8e5f40df301
+2026-01-06 15:03:04,013 [INFO] Created office record for 24
+2026-01-06 15:03:04,491 [INFO] Updated politician ocd-person/1be1802e-14ac-4fc2-afc2-e8087257ea34
+2026-01-06 15:03:04,791 [INFO] Created office record for 25
+2026-01-06 15:03:05,253 [INFO] Updated politician ocd-person/5fed799f-9800-457a-9c39-e19d8735c74f
+2026-01-06 15:03:05,559 [INFO] Created office record for 26
+2026-01-06 15:03:06,032 [INFO] Updated politician ocd-person/27a087c4-fad6-4245-b680-20aff5c3251c
+2026-01-06 15:03:06,349 [INFO] Created office record for 27
+2026-01-06 15:03:06,812 [INFO] Updated politician ocd-person/934d4a02-a27c-4682-a31f-5a8372ceaaf9
+2026-01-06 15:03:07,112 [INFO] Created office record for 28
+2026-01-06 15:03:07,593 [INFO] Updated politician ocd-person/2830bc0a-4507-4710-8c4f-17b3ac5d414b
+2026-01-06 15:03:07,909 [INFO] Created office record for 29
+2026-01-06 15:03:08,356 [INFO] Updated politician ocd-person/2ef71a27-afab-49e4-9c52-d3954352242f
+2026-01-06 15:03:08,670 [INFO] Created office record for 30
+2026-01-06 15:03:09,181 [INFO] Updated politician ocd-person/ad93da57-8a9a-4dc0-bc2c-2488c0331d16
+2026-01-06 15:03:09,484 [INFO] Created office record for 31
+2026-01-06 15:03:09,954 [INFO] Updated politician ocd-person/2049da3a-132c-47b4-b53d-c28b574fff63
+2026-01-06 15:03:10,251 [INFO] Created office record for 32
+2026-01-06 15:03:10,810 [INFO] Updated politician ocd-person/6d6f344e-39b8-401f-807e-c88924fb2793
+2026-01-06 15:03:11,120 [INFO] Created office record for 33
+2026-01-06 15:03:11,584 [INFO] Updated politician ocd-person/864e417d-df2e-4207-83e4-98450555f48a
+2026-01-06 15:03:11,891 [INFO] Created office record for 34
+2026-01-06 15:03:12,370 [INFO] Updated politician ocd-person/2a9ffeeb-e46e-4d98-8376-b07310112672
+2026-01-06 15:03:12,698 [INFO] Created office record for 35
+2026-01-06 15:03:13,791 [INFO] Updated politician ocd-person/5390ebc9-7fbe-4be9-91c4-b28b59f7fd2f
+2026-01-06 15:03:14,112 [INFO] Created office record for 36
+2026-01-06 15:03:14,552 [INFO] Updated politician ocd-person/3bb6eebd-d57b-4592-bc52-9ce338df9ccf
+2026-01-06 15:03:14,868 [INFO] Created office record for 37
+2026-01-06 15:03:15,342 [INFO] Updated politician ocd-person/35febe88-13a1-4611-b0e3-2088c719db24
+2026-01-06 15:03:15,651 [INFO] Created office record for 38
+2026-01-06 15:03:16,137 [INFO] Updated politician ocd-person/fe66bda1-2564-4f24-8798-0cd8993a0f12
+2026-01-06 15:03:16,437 [INFO] Created office record for 39
+2026-01-06 15:03:16,936 [INFO] Updated politician ocd-person/a73679bf-ac98-4319-95b8-d226bc9aba77
+2026-01-06 15:03:17,259 [INFO] Created office record for 40
+2026-01-06 15:03:17,732 [INFO] Updated politician ocd-person/58b03f1c-af64-4079-8c24-e76dd0028166
+2026-01-06 15:03:18,051 [INFO] Created office record for 41
+2026-01-06 15:03:18,532 [INFO] Updated politician ocd-person/4af5cab3-9d9c-4d27-8eda-d39dcaa74bd0
+2026-01-06 15:03:18,850 [INFO] Created office record for 42
+2026-01-06 15:03:19,321 [INFO] Updated politician ocd-person/9147362c-8b83-49ff-8fab-4d48a77eebc9
+2026-01-06 15:03:19,638 [INFO] Created office record for 43
+2026-01-06 15:03:20,117 [INFO] Updated politician ocd-person/b8a0fb1e-422b-44b7-846e-82d2998a0bf5
+2026-01-06 15:03:20,417 [INFO] Created office record for 44
+2026-01-06 15:03:20,889 [INFO] Updated politician ocd-person/c5c492e5-7c34-4b6f-862e-185248e89f18
+2026-01-06 15:03:21,193 [INFO] Created office record for 45
+2026-01-06 15:03:21,678 [INFO] Updated politician ocd-person/7638e8d0-2a84-4325-bcfd-7a2e8e604077
+2026-01-06 15:03:21,995 [INFO] Created office record for 46
+2026-01-06 15:03:22,474 [INFO] Updated politician ocd-person/7bb8c8bc-0238-4fd2-8dff-e5f2b2aaa92a
+2026-01-06 15:03:22,795 [INFO] Created office record for 47
+2026-01-06 15:03:23,253 [INFO] Updated politician ocd-person/3069edfe-7ff7-4a14-8223-f23b294b3a04
+2026-01-06 15:03:23,572 [INFO] Created office record for 48
+2026-01-06 15:03:24,058 [INFO] Updated politician ocd-person/2e502adc-4b0e-46fa-b5d4-0d2f7696db49
+2026-01-06 15:03:24,378 [INFO] Created office record for 49
+2026-01-06 15:03:24,844 [INFO] Updated politician ocd-person/67c280c8-c9a5-4eff-93de-480570d6a414
+2026-01-06 15:03:25,158 [INFO] Created office record for 50
+2026-01-06 15:03:25,158 [INFO] Fetching people for ocd-jurisdiction/country:us/state:ny/government (page 2)
+2026-01-06 15:03:25,871 [INFO] Retrieved 50 people
+2026-01-06 15:03:26,355 [INFO] Updated politician ocd-person/9f3ae1c5-651b-4cc8-a1ce-9e94c414a220
+2026-01-06 15:03:26,695 [INFO] Created office record for 51
+2026-01-06 15:03:27,148 [INFO] Updated politician ocd-person/df0c2fdc-3cf4-4c89-849a-b62ac2d7d2d4
+2026-01-06 15:03:27,455 [INFO] Created office record for 52
+2026-01-06 15:03:27,936 [INFO] Updated politician ocd-person/8ff653e0-5aa6-4692-ac54-25ed36e32f97
+2026-01-06 15:03:28,296 [INFO] Created office record for 53
+2026-01-06 15:03:28,772 [INFO] Updated politician ocd-person/5a9c40ed-69dc-4004-b34a-cc943428f8b1
+2026-01-06 15:03:29,093 [INFO] Created office record for 54
+2026-01-06 15:03:29,579 [INFO] Updated politician ocd-person/34f326e1-6e7e-40b2-9ece-10856986cb1b
+2026-01-06 15:03:29,903 [INFO] Created office record for 55
+2026-01-06 15:03:30,373 [INFO] Updated politician ocd-person/da883f7a-698b-49d6-8519-11bab87823cf
+2026-01-06 15:03:30,693 [INFO] Created office record for 56
+2026-01-06 15:03:31,150 [INFO] Updated politician ocd-person/d6939215-ec08-437b-beea-3b9898d0f61b
+2026-01-06 15:03:31,452 [INFO] Created office record for 57
+2026-01-06 15:03:31,923 [INFO] Updated politician ocd-person/70d249e7-22a2-4536-892f-a61aa22723e4
+2026-01-06 15:03:32,231 [INFO] Created office record for 58
+2026-01-06 15:03:32,710 [INFO] Updated politician ocd-person/b7e93c8c-9a4b-4678-8d6a-effce9a76938
+2026-01-06 15:03:33,022 [INFO] Created office record for 59
+2026-01-06 15:03:33,500 [INFO] Updated politician ocd-person/42d68829-d969-44d1-9e22-042a6e787dc5
+2026-01-06 15:03:33,815 [INFO] Created office record for 60
+2026-01-06 15:03:34,288 [INFO] Updated politician ocd-person/5764a626-de74-4d88-bc53-b43b523aa75c
+2026-01-06 15:03:34,614 [INFO] Created office record for 61
+2026-01-06 15:03:35,093 [INFO] Updated politician ocd-person/81456b86-152f-4764-a489-dade7cc572c6
+2026-01-06 15:03:35,408 [INFO] Created office record for 62
+2026-01-06 15:03:35,893 [INFO] Updated politician ocd-person/4af19dc2-41c7-4b7e-b271-b23e20e1ccb1
+2026-01-06 15:03:36,214 [INFO] Created office record for 63
+2026-01-06 15:03:36,691 [INFO] Updated politician ocd-person/489a01e1-6a0f-4907-bc00-110020e2f27d
+2026-01-06 15:03:37,019 [INFO] Created office record for 64
+2026-01-06 15:03:37,493 [INFO] Updated politician ocd-person/0a053bbf-e97b-44aa-a38f-83ad7f9682ac
+2026-01-06 15:03:37,817 [INFO] Created office record for 65
+2026-01-06 15:03:38,305 [INFO] Updated politician ocd-person/be7ad489-073e-476e-82a0-992ca0569b99
+2026-01-06 15:03:38,638 [INFO] Created office record for 66
+2026-01-06 15:03:39,116 [INFO] Updated politician ocd-person/722e778a-7824-49fb-bb44-ba1da8bab675
+2026-01-06 15:03:39,428 [INFO] Created office record for 67
+2026-01-06 15:03:39,891 [INFO] Updated politician ocd-person/676247d1-048f-45de-b265-34069edb2be0
+2026-01-06 15:03:40,218 [INFO] Created office record for 68
+2026-01-06 15:03:40,683 [INFO] Updated politician ocd-person/18830756-58c1-4fd1-b1b0-d16041b10e12
+2026-01-06 15:03:41,012 [INFO] Created office record for 69
+2026-01-06 15:03:41,492 [INFO] Updated politician ocd-person/068528ac-bc5e-449f-a4df-4541f8c09415
+2026-01-06 15:03:41,815 [INFO] Created office record for 70
+2026-01-06 15:03:42,315 [INFO] Updated politician ocd-person/a23e140f-4beb-43d5-b850-198ff81a75f3
+2026-01-06 15:03:42,627 [INFO] Created office record for 71
+2026-01-06 15:03:43,126 [INFO] Updated politician ocd-person/eaf455e1-358d-4de0-ac5d-3d8c400eb4e3
+2026-01-06 15:03:43,435 [INFO] Created office record for 72
+2026-01-06 15:03:43,918 [INFO] Updated politician ocd-person/e053b536-631c-47a7-a3af-adb30dab37de
+2026-01-06 15:03:44,233 [INFO] Created office record for 73
+2026-01-06 15:03:44,717 [INFO] Updated politician ocd-person/7f031836-0a9e-46d2-bcab-7cc6a14848df
+2026-01-06 15:03:45,037 [INFO] Created office record for 74
+2026-01-06 15:03:45,513 [INFO] Updated politician ocd-person/67047d73-acc1-4d6f-b580-fbeee33cc1f8
+2026-01-06 15:03:45,834 [INFO] Created office record for 75
+2026-01-06 15:03:46,313 [INFO] Updated politician ocd-person/b03d69c0-0ea1-4524-86e6-c6b20797a2eb
+2026-01-06 15:03:46,639 [INFO] Created office record for 76
+2026-01-06 15:03:47,113 [INFO] Updated politician ocd-person/aa1af232-61bb-427c-b30e-81169c18d15d
+2026-01-06 15:03:47,434 [INFO] Created office record for 77
+2026-01-06 15:03:47,909 [INFO] Updated politician ocd-person/6872ad9e-fcba-426f-a9ef-b4495dba17f5
+2026-01-06 15:03:48,234 [INFO] Created office record for 78
+2026-01-06 15:03:48,914 [INFO] Updated politician ocd-person/e00ee209-a6a5-4ca1-8ac6-f403e1cbcca2
+2026-01-06 15:03:49,213 [INFO] Created office record for 79
+2026-01-06 15:03:49,714 [INFO] Updated politician ocd-person/c1f048f2-6e1d-4e1b-b161-d97e2f16c1f8
+2026-01-06 15:03:50,030 [INFO] Created office record for 80
+2026-01-06 15:03:50,515 [INFO] Updated politician ocd-person/603a62e0-5ca7-4259-b071-db52bc9f2569
+2026-01-06 15:03:50,824 [INFO] Created office record for 81
+2026-01-06 15:03:51,295 [INFO] Updated politician ocd-person/4910460d-6cb9-4f35-8459-19e5a4de579e
+2026-01-06 15:03:51,613 [INFO] Created office record for 82
+2026-01-06 15:03:52,099 [INFO] Updated politician ocd-person/ff604a07-1aaf-4e61-b070-dd478f42cea5
+2026-01-06 15:03:52,415 [INFO] Created office record for 83
+2026-01-06 15:03:52,944 [INFO] Updated politician ocd-person/f6394f20-1953-434b-a2bb-2d255d4fafbe
+2026-01-06 15:03:53,251 [INFO] Created office record for 84
+2026-01-06 15:03:53,712 [INFO] Updated politician ocd-person/029fb490-649e-4dbf-b7fc-6cf46ea433ff
+2026-01-06 15:03:54,034 [INFO] Created office record for 85
+2026-01-06 15:03:54,526 [INFO] Updated politician ocd-person/6d73b968-c1db-434e-9876-de2fdff30d89
+2026-01-06 15:03:54,843 [INFO] Created office record for 86
+2026-01-06 15:03:55,621 [INFO] Updated politician ocd-person/5a115673-aa3c-4518-94bc-b2a5dadeb8af
+2026-01-06 15:03:55,935 [INFO] Created office record for 87
+2026-01-06 15:03:56,414 [INFO] Updated politician ocd-person/a0b3e01c-d323-4624-a0da-6a1e2b0dfb31
+2026-01-06 15:03:56,739 [INFO] Created office record for 88
+2026-01-06 15:03:57,835 [INFO] Updated politician ocd-person/84b5ed8b-c048-4d62-ab8f-17d217605301
+2026-01-06 15:03:58,153 [INFO] Created office record for 89
+2026-01-06 15:03:58,633 [INFO] Updated politician ocd-person/975453b1-113a-40e9-8036-53e714a47b66
+2026-01-06 15:03:58,954 [INFO] Created office record for 90
+2026-01-06 15:03:59,440 [INFO] Updated politician ocd-person/21da6116-bec3-44a4-9e0b-a68eef91222d
+2026-01-06 15:03:59,753 [INFO] Created office record for 91
+2026-01-06 15:04:00,242 [INFO] Updated politician ocd-person/983d7603-0ccc-4995-8afe-2ece30a487c7
+2026-01-06 15:04:00,561 [INFO] Created office record for 92
+2026-01-06 15:04:01,038 [INFO] Updated politician ocd-person/f3a41618-3c28-4bab-9a56-ef49c9cafcec
+2026-01-06 15:04:01,359 [INFO] Created office record for 93
+2026-01-06 15:04:01,834 [INFO] Updated politician ocd-person/cc6881df-b386-488d-bbc1-71e71b808306
+2026-01-06 15:04:02,153 [INFO] Created office record for 94
+2026-01-06 15:04:02,639 [INFO] Updated politician ocd-person/691f0b4b-a2b3-47d6-b5ba-6bf503340e10
+2026-01-06 15:04:02,948 [INFO] Created office record for 95
+2026-01-06 15:04:03,419 [INFO] Updated politician ocd-person/738fe4f1-dfee-40c6-9f00-f793ea369dbc
+2026-01-06 15:04:03,735 [INFO] Created office record for 96
+2026-01-06 15:04:04,201 [INFO] Updated politician ocd-person/45837ecf-38a2-41cb-9de1-eae175a32dfe
+2026-01-06 15:04:04,515 [INFO] Created office record for 97
+2026-01-06 15:04:04,992 [INFO] Updated politician ocd-person/21b7fbbb-6f39-4251-884d-3d4a146a0874
+2026-01-06 15:04:05,317 [INFO] Created office record for 98
+2026-01-06 15:04:05,798 [INFO] Updated politician ocd-person/eee14916-d196-4857-a64a-b6e952db7a53
+2026-01-06 15:04:06,119 [INFO] Created office record for 99
+2026-01-06 15:04:06,594 [INFO] Updated politician ocd-person/0ce05d4e-e231-4d3e-8ba5-179499230adc
+2026-01-06 15:04:06,912 [INFO] Created office record for 100
+2026-01-06 15:04:07,055 [INFO] === People ingestion complete ===
+2026-01-06 15:04:07,055 [INFO] === Starting bill ingestion for ocd-jurisdiction/country:us/state:ny/government ===
+2026-01-06 15:04:07,055 [INFO] Fetching bills for ocd-jurisdiction/country:us/state:ny/government (page 1)
+2026-01-06 15:04:09,435 [INFO] Retrieved 20 bills
+2026-01-06 15:04:10,061 [INFO] Created bill ocd-bill/aff9fe38-01a8-4807-8208-32f5ba796e9a -> f33d05ea-4aff-498e-9667-159cf2a83ece
+2026-01-06 15:04:11,497 [INFO] Created bill ocd-bill/a9060298-9004-4286-b598-7e814c184a93 -> a6a1bcfd-3d14-4f15-aabf-04c07b173283
+2026-01-06 15:04:12,285 [INFO] Created bill ocd-bill/e64cb4fc-3172-4fc0-83e2-78c55216725c -> ec26cbeb-b955-4143-aa70-bd62efd3489d
+2026-01-06 15:04:13,294 [INFO] Created bill ocd-bill/ac73bf21-b685-43cf-938e-17c237dfca78 -> ef2d5b63-46d2-4409-a2fc-dbbf5636ae5d
+2026-01-06 15:04:14,180 [INFO] Created bill ocd-bill/92b63e18-8569-464f-beb7-f1f2ff24f198 -> e831c56a-117a-4f80-9461-b808a704ddc1
+2026-01-06 15:04:15,080 [INFO] Created bill ocd-bill/25cf772c-fe66-4dc3-9c8a-db5f2cf92aff -> c196db48-77ed-4b14-88a6-30f9f663eb15
+2026-01-06 15:04:15,961 [INFO] Created bill ocd-bill/9618314d-6887-4dca-acac-459651eb8faa -> 9375b06b-99fd-4d9b-aa65-6c48061a0451
+2026-01-06 15:04:16,820 [INFO] Created bill ocd-bill/45c22521-8723-47ca-b513-8c4c22bb35cb -> fe620501-5822-46e0-a8da-0d806560f865
+2026-01-06 15:04:17,599 [INFO] Created bill ocd-bill/8e3c5360-fa70-478f-8193-6eec7fddfbbd -> 53b4d41a-627b-4b3b-b0d5-7178d055fcf1
+2026-01-06 15:04:18,399 [INFO] Created bill ocd-bill/06a2a99b-dc82-45a2-b790-c328c1672b7e -> ade444b6-6b52-48ef-8d09-50bf5b6c1a6b
+2026-01-06 15:04:19,199 [INFO] Created bill ocd-bill/b18dbb26-5e2b-418f-95d2-0dd78ce28902 -> 292c27e4-6088-41b4-8a85-dcb459582cf9
+2026-01-06 15:04:19,982 [INFO] Created bill ocd-bill/6818f1b6-54e3-42b8-b39f-d9437f4022c9 -> 657ad535-1983-445d-8c80-18df07a5c27f
+2026-01-06 15:04:20,782 [INFO] Created bill ocd-bill/d5663888-55ec-4a44-934b-933d71634ec1 -> 3fc24745-c615-450c-8669-ef7acea34007
+2026-01-06 15:04:21,575 [INFO] Created bill ocd-bill/fb179b62-5e78-497a-b36b-ce76d91c284b -> 85ee7364-4fc7-438f-8e8d-6316f1ddf299
+2026-01-06 15:04:22,358 [INFO] Created bill ocd-bill/44bb8a12-5fb2-4a87-895c-078052f2b67c -> 58acf794-05bd-424e-b19f-1bd9bd6ee3d0
+2026-01-06 15:04:23,138 [INFO] Created bill ocd-bill/21a5f314-169f-4fa2-86b4-30940371aa34 -> d47bd197-67ce-4053-89c7-830a75e601a3
+2026-01-06 15:04:23,946 [INFO] Created bill ocd-bill/8efd8c35-f3a1-40d6-93b7-d53ca146e5ca -> b12cfa5f-ba8b-4638-b7c6-6b0e4cd7196f
+2026-01-06 15:04:24,719 [INFO] Created bill ocd-bill/616d3f15-1feb-4cf3-81ed-741bb01272c0 -> 425c84ce-12d5-4bc6-a261-095fb3abda21
+2026-01-06 15:04:25,497 [INFO] Created bill ocd-bill/2e51d39a-4b61-40e2-80c6-26b4965e7503 -> 63c97a1b-297b-4b41-a333-1277e786e7f3
+2026-01-06 15:04:26,257 [INFO] Created bill ocd-bill/544497c7-b321-4836-a081-f7fa31d57656 -> 17affd63-7a46-46eb-b89c-53be22d02a18
+2026-01-06 15:04:26,417 [INFO] Fetching bills for ocd-jurisdiction/country:us/state:ny/government (page 2)
+2026-01-06 15:04:27,868 [INFO] Retrieved 20 bills
+2026-01-06 15:04:28,501 [INFO] Created bill ocd-bill/0a253dd9-30f1-4a37-a8ee-b967739b0f42 -> 530678ef-9b36-46ca-90c0-47ee2369eb5b
+2026-01-06 15:04:29,304 [INFO] Created bill ocd-bill/c195dc7e-95ab-4e05-b1e1-1b3d55e65398 -> 60ca2a1e-7547-459f-b753-0ce789f9a715
+2026-01-06 15:04:30,100 [INFO] Created bill ocd-bill/5d46d108-2b12-4b93-8275-7336a6bbe410 -> 4d90397c-3dd1-4732-8429-a0c0d4843a47
+2026-01-06 15:04:30,902 [INFO] Created bill ocd-bill/367ba4f8-bfe5-4ddb-8d8c-fc7a91709a1e -> 3aaa9f86-24b8-453d-acee-59fb1cc27ce7
+2026-01-06 15:04:31,682 [INFO] Created bill ocd-bill/61a98bce-bce3-42d2-9f05-ce3304175ce4 -> 504a4af5-0f9c-4f5b-a457-5e23909da7a8
+2026-01-06 15:04:32,484 [INFO] Created bill ocd-bill/2575ad4f-f1f3-4897-af74-3a6a2ede1431 -> 5dd8d2c0-9272-4b5b-b7f1-a09a243743e5
+2026-01-06 15:04:33,279 [INFO] Created bill ocd-bill/dd647031-222a-43cd-b4e5-55b66c14f35b -> 875706cf-8e49-4604-b8fe-111d8eee1198
+2026-01-06 15:04:34,084 [INFO] Created bill ocd-bill/2d8cc04d-a6ee-4a74-9d00-928dbba5500c -> b3e85330-12fd-41de-9664-4c284f1ebd13
+2026-01-06 15:04:34,851 [INFO] Created bill ocd-bill/613be569-14c8-4544-b6f4-8f7d9470275b -> 470f1219-086b-4965-99ae-ec4c533c7910
+2026-01-06 15:04:35,668 [INFO] Created bill ocd-bill/b2a9986e-14d6-451b-893b-8461b4d3d251 -> 03fc09b7-f559-4247-a1bf-669daa27086b
+2026-01-06 15:04:36,441 [INFO] Created bill ocd-bill/92896b4c-ca2d-48c7-86be-cceae2507eeb -> ddf29019-ea55-4c20-a2f5-f4cf1d58a3ed
+2026-01-06 15:04:37,264 [INFO] Created bill ocd-bill/30468e7d-0528-4929-ae1d-af6a562423f5 -> f4764b89-45a0-4fad-85d7-d01315835571
+2026-01-06 15:04:38,056 [INFO] Created bill ocd-bill/3f9594ba-8c9a-4968-a163-626fe712d54f -> d9514d83-9d74-447b-aaec-648a336e660d
+2026-01-06 15:04:38,846 [INFO] Created bill ocd-bill/45b56a36-d6a3-4239-97cb-2183ff6e2a2e -> 49bdebc6-b3cb-440f-807f-1f17dd1d0794
+2026-01-06 15:04:39,618 [INFO] Created bill ocd-bill/0cb9b89a-66db-4761-87eb-3cc30a79a6ac -> fa911097-d1d4-4bb9-adb6-e9df783dd8f2
+2026-01-06 15:04:41,039 [INFO] Created bill ocd-bill/5d9a6982-45a4-4cec-830f-95300ebfdb8a -> 0ec959e3-b9b3-4aeb-a363-150ef166ad5d
+2026-01-06 15:04:41,857 [INFO] Created bill ocd-bill/eed3505c-0d36-467f-98a9-19fe57ffab60 -> 35be28ee-a0e0-4407-af52-570ee3531a94
+2026-01-06 15:04:42,665 [INFO] Created bill ocd-bill/dc3f7d90-07de-44b2-8c48-97dac1fb6d96 -> 6917524c-a600-4951-b65f-a914ee42f1a9
+2026-01-06 15:04:43,459 [INFO] Created bill ocd-bill/5eb30df5-6b26-4872-958f-3909c1385a47 -> 665bd347-ae78-44aa-9b1d-26e442943bc6
+2026-01-06 15:04:44,266 [INFO] Created bill ocd-bill/ff344209-544c-4c5f-8bf0-706427f9dad5 -> 2e2d5899-3225-4d63-a93d-83fdf13be797
+2026-01-06 15:04:44,418 [INFO] === Bill ingestion complete ===
+2026-01-06 15:04:44,419 [INFO] Transaction committed
+2026-01-06 15:04:44,419 [INFO] === OpenStates Ingestion Pipeline Complete ===
