@@ -7,17 +7,25 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sess
 from sqlalchemy.orm import declarative_base
 
 # Get database URL from environment variable
-# For now, using SQLite for simplicity. For production, use PostgreSQL with pgvector
+# IMPORTANT: For synchronous psycopg2 (used by PoliticianRepo), use:
+#   DATABASE_URL=postgresql://user:password@localhost/civic_lens
+# For async operations, it will automatically use asyncpg
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./civic_lens.db")
 
-# For PostgreSQL with pgvector, use:
-# DATABASE_URL = "postgresql+asyncpg://user:password@localhost/civic_lens"
+# The PoliticianRepo uses synchronous psycopg2 and expects a standard PostgreSQL URL
+# The AsyncSession below is for future RAG/AI operations that may need async
 
+# Convert postgresql:// to postgresql+asyncpg:// for async operations
+async_database_url = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1) if DATABASE_URL.startswith("postgresql://") else DATABASE_URL
+
+# Create async engine
 engine = create_async_engine(
-    DATABASE_URL,
-    echo=False,  # Set to True for SQL query logging during development
+    async_database_url,
+    echo=False,
+    future=True
 )
 
+# Create session factory
 AsyncSessionLocal = async_sessionmaker(
     engine,
     class_=AsyncSession,
