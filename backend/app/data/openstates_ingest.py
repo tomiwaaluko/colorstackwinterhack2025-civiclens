@@ -163,8 +163,19 @@ class DatabaseManager:
     """Database connection and operations manager"""
     
     def __init__(self, connection_string: str):
-        self.conn = psycopg2.connect(connection_string)
-        self.conn.autocommit = False
+        try:
+            self.conn = psycopg2.connect(connection_string, connect_timeout=10)
+            self.conn.autocommit = False
+        except psycopg2.OperationalError as e:
+            error_msg = str(e)
+            if "could not translate host name" in error_msg.lower() or "getaddrinfo failed" in error_msg.lower():
+                logger.error(f"DNS resolution failed for database host. Error: {e}")
+                logger.error("Troubleshooting:")
+                logger.error("  1. Check your internet connection")
+                logger.error("  2. Verify the DATABASE_URL hostname is correct")
+                logger.error("  3. Check if your Supabase project is active (not paused)")
+                logger.error("  4. Try: nslookup <hostname> to verify DNS resolution")
+            raise
         
     def __enter__(self):
         return self

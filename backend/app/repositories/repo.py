@@ -30,8 +30,20 @@ class PoliticianRepo:
         
         # Test connection
         try:
-            conn = psycopg2.connect(self.db_url)
+            conn = psycopg2.connect(self.db_url, connect_timeout=10)
             conn.close()
+        except psycopg2.OperationalError as e:
+            error_msg = str(e)
+            if "could not translate host name" in error_msg.lower():
+                raise RuntimeError(
+                    f"Failed to connect to database: {e}\n\n"
+                    "TROUBLESHOOTING:\n"
+                    "1. Check if your Supabase project is PAUSED - go to Supabase dashboard and resume it\n"
+                    "2. Verify DATABASE_URL is correct in your .env file\n"
+                    "3. Check your internet connection\n"
+                    "4. Try: nslookup <hostname> to verify DNS resolution"
+                )
+            raise RuntimeError(f"Failed to connect to database: {e}")
         except psycopg2.Error as e:
             raise RuntimeError(f"Failed to connect to database: {e}")
         

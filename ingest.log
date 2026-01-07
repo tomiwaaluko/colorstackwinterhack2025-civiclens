@@ -15,6 +15,7 @@
 2026-01-06 11:01:22,266 [INFO] === OpenStates Ingestion Pipeline Started ===
 2026-01-06 13:08:26,252 [INFO] === OpenStates Ingestion Pipeline Started ===
 2026-01-06 13:20:04,884 [INFO] === OpenStates Ingestion Pipeline Started ===
+<<<<<<< Updated upstream
 2026-01-06 14:46:15,299 [INFO] === OpenStates Ingestion Pipeline Started ===
 2026-01-06 14:46:32,101 [INFO] === OpenStates Ingestion Pipeline Started ===
 2026-01-06 14:50:29,215 [INFO] === OpenStates Ingestion Pipeline Started ===
@@ -960,3 +961,47 @@ DETAIL:  Failing row contains (6291fcaf-f571-438d-b451-8a40c327a7c0, ocd-bill/ff
 2026-01-06 15:04:44,418 [INFO] === Bill ingestion complete ===
 2026-01-06 15:04:44,419 [INFO] Transaction committed
 2026-01-06 15:04:44,419 [INFO] === OpenStates Ingestion Pipeline Complete ===
+=======
+2026-01-06 13:40:23,285 [INFO] === OpenStates Ingestion Pipeline Started ===
+2026-01-06 14:00:20,282 [INFO] === OpenStates Ingestion Pipeline Started ===
+2026-01-06 14:00:20,313 [ERROR] DNS resolution failed for database host. Error: could not translate host name "db.obshubyjhhmamtuzkfqr.supabase.co" to address: Name or service not known
+
+2026-01-06 14:00:20,313 [ERROR] Troubleshooting:
+2026-01-06 14:00:20,313 [ERROR]   1. Check your internet connection
+2026-01-06 14:00:20,313 [ERROR]   2. Verify the DATABASE_URL hostname is correct
+2026-01-06 14:00:20,313 [ERROR]   3. Check if your Supabase project is active (not paused)
+2026-01-06 14:00:20,313 [ERROR]   4. Try: nslookup <hostname> to verify DNS resolution
+2026-01-06 14:19:57,412 [INFO] === OpenStates Ingestion Pipeline Started ===
+2026-01-06 14:19:57,449 [ERROR] DNS resolution failed for database host. Error: could not translate host name "db.obshubyjhhmamtuzkfqr.supabase.co" to address: Name or service not known
+
+2026-01-06 14:19:57,449 [ERROR] Troubleshooting:
+2026-01-06 14:19:57,449 [ERROR]   1. Check your internet connection
+2026-01-06 14:19:57,449 [ERROR]   2. Verify the DATABASE_URL hostname is correct
+2026-01-06 14:19:57,449 [ERROR]   3. Check if your Supabase project is active (not paused)
+2026-01-06 14:19:57,449 [ERROR]   4. Try: nslookup <hostname> to verify DNS resolution
+2026-01-06 14:20:03,627 [INFO] === OpenStates Ingestion Pipeline Started ===
+2026-01-06 14:20:03,647 [ERROR] DNS resolution failed for database host. Error: could not translate host name "db.obshubyjhhmamtuzkfqr.supabase.co" to address: Name or service not known
+
+2026-01-06 14:20:03,648 [ERROR] Troubleshooting:
+2026-01-06 14:20:03,648 [ERROR]   1. Check your internet connection
+2026-01-06 14:20:03,648 [ERROR]   2. Verify the DATABASE_URL hostname is correct
+2026-01-06 14:20:03,648 [ERROR]   3. Check if your Supabase project is active (not paused)
+2026-01-06 14:20:03,648 [ERROR]   4. Try: nslookup <hostname> to verify DNS resolution
+2026-01-06 14:52:26,879 [INFO] === OpenStates Ingestion Pipeline Started ===
+2026-01-06 14:52:27,627 [INFO] === Starting people ingestion for ocd-jurisdiction/country:us/state:ny/government ===
+2026-01-06 14:52:27,627 [INFO] Fetching people for ocd-jurisdiction/country:us/state:ny/government (page 1)
+2026-01-06 14:52:28,762 [WARNING] Request failed (attempt 1/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/people?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:52:29,882 [WARNING] Request failed (attempt 2/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/people?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:52:32,031 [WARNING] Request failed (attempt 3/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/people?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:52:32,031 [ERROR] Failed to fetch page 1: 400 Client Error: Bad Request for url: https://v3.openstates.org/people?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:52:32,032 [INFO] === People ingestion complete ===
+2026-01-06 14:52:32,032 [INFO] === Starting bill ingestion for ocd-jurisdiction/country:us/state:ny/government ===
+2026-01-06 14:52:32,032 [INFO] Fetching bills for ocd-jurisdiction/country:us/state:ny/government (page 1)
+2026-01-06 14:52:32,136 [WARNING] Request failed (attempt 1/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/bills?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:52:33,259 [WARNING] Request failed (attempt 2/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/bills?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:52:35,410 [WARNING] Request failed (attempt 3/3): 400 Client Error: Bad Request for url: https://v3.openstates.org/bills?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:52:35,411 [ERROR] Failed to fetch bills page 1: 400 Client Error: Bad Request for url: https://v3.openstates.org/bills?jurisdiction=ocd-jurisdiction%2Fcountry%3Aus%2Fstate%3Any%2Fgovernment&page=1&per_page=100
+2026-01-06 14:52:35,411 [INFO] === Bill ingestion complete ===
+2026-01-06 14:52:35,411 [INFO] Transaction committed
+2026-01-06 14:52:35,413 [INFO] === OpenStates Ingestion Pipeline Complete ===
+>>>>>>> Stashed changes

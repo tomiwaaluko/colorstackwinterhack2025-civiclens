@@ -14,6 +14,21 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./civic_lens.db")
 
 # The PoliticianRepo uses synchronous psycopg2 and expects a standard PostgreSQL URL
 # The AsyncSession below is for future RAG/AI operations that may need async
+
+# Convert postgresql:// to postgresql+asyncpg:// for async operations
+async_database_url = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1) if DATABASE_URL.startswith("postgresql://") else DATABASE_URL
+
+# Create async engine
+engine = create_async_engine(
+    async_database_url,
+    echo=False,
+    future=True
+)
+
+# Create session factory
+AsyncSessionLocal = async_sessionmaker(
+    engine,
+    class_=AsyncSession,
     expire_on_commit=False,
 )
 
