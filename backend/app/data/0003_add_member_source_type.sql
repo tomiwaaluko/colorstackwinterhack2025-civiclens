@@ -1,6 +1,6 @@
 -- Migration: 0003_add_member_source_type.sql
--- Description: Add 'member' to allowed source_type values for Congress.gov ingestion
--- Requires: PostgreSQL 14+
+-- Description: Add source_type values: member, profile, press_release, social_media
+-- Note: The ANY (ARRAY[...]) syntax is supported by PostgreSQL 9.1+
 
 -- ============================================================================
 -- UPDATE SOURCE_TYPE CHECK CONSTRAINT
@@ -22,4 +22,3 @@ ALTER TABLE sources ADD CONSTRAINT sources_source_type_check
 --   - profile: Alternative name for member profiles (NEW)
 --   - press_release: Official press releases (NEW)
 --   - social_media: Social media posts (NEW)
-

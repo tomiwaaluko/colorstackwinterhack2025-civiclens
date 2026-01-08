@@ -511,9 +511,10 @@ class DatabaseManager:
             district_number = member_data.get('district')
             if chamber == 'house' or chamber == 'house of representatives':
                 position = 'Representative'
+                # Keep district_number as-is for Representatives
             elif chamber == 'senate':
                 position = 'Senator'
-                district_number = None
+                district_number = None  # Senators don't have districts
             else:
                 # Try to infer from other fields
                 terms = member_data.get('terms', {}).get('item', [])
@@ -521,14 +522,18 @@ class DatabaseManager:
                     latest_chamber = terms[-1].get('chamber', '').lower() if terms else ''
                     if 'house' in latest_chamber:
                         position = 'Representative'
+                        # Keep district_number as-is for Representatives
                     elif 'senate' in latest_chamber:
                         position = 'Senator'
-                        district_number = None
+                        district_number = None  # Senators don't have districts
                     else:
                         position = 'Representative'  # Default to Rep if unknown
+                        # Keep district_number if provided, otherwise None is fine
                 else:
                     position = 'Representative'  # Default
-                district_number = None
+                    # No terms data and unknown chamber, set district to None only if not provided
+                    if district_number is None:
+                        district_number = None  # Already None, explicit for clarity
             
             # Check if exists
             existing_id = self.find_politician_by_name(name, state_code, party)
@@ -562,8 +567,8 @@ class DatabaseManager:
             result = cur.fetchone()
             return result[0] if result else None
     
-    def insert_bill(self, bill_data: Dict, source_id: int, sponsor_id: Optional[int] = None) -> int:
-        """Insert bill record"""
+    def insert_bill(self, bill_data: Dict, source_id: int, sponsor_id: Optional[int] = None) -> Optional[int]:
+        """Insert bill record. Returns bill ID or None if bill_number is missing."""
         with self.conn.cursor() as cur:
             # Format bill number (e.g., "HR 1234" or "S. 567")
             bill_type = bill_data.get('type', '').upper()
@@ -572,7 +577,7 @@ class DatabaseManager:
             
             if not bill_number:
                 logger.warning(f"Bill missing number: {bill_data.get('title', 'Unknown')}")
-                return None
+                raise ValueError(f"Bill missing required bill_number: {bill_data.get('title', 'Unknown')}")
             
             # Check if exists
             existing_id = self.get_bill_by_number(bill_number)
@@ -778,9 +783,19 @@ class IngestionPipeline:
                             sponsor_state = sponsor.get('state')
                             sponsor_id = self.db.find_politician_by_name(sponsor_name, sponsor_state)
                         
-                        # Insert bill
+                        # Insert bill (may raise ValueError if bill_number is missing)
                         bill_id = self.db.insert_bill(bill, source_id, sponsor_id)
-                        success_count += 1
+                        if bill_id is not None:
+                            success_count += 1
+                        else:
+                            error_count += 1
+                            logger.warning(f"insert_bill returned None for bill {bill_number}")
+                        
+                    except ValueError as val_err:
+                        # Missing bill_number or other validation error
+                        error_count += 1
+                        logger.warning(f"Validation error for bill: {val_err}")
+                        continue
                         
                     except (psycopg2.OperationalError, psycopg2.InterfaceError) as conn_err:
                         error_count += 1
@@ -896,8 +911,18 @@ class IngestionPipeline:
             
             logger.info(f"Processed {len(positions)} votes")
             
+            # Commit the transaction after successfully processing all votes
+            self.db.commit()
+            logger.info(f"=== Vote ingestion for roll call {roll_call} committed ===")
+            
         except Exception as e:
             logger.error(f"Failed to ingest votes for roll call {roll_call}: {e}")
+            # Rollback to avoid partial transactions
+            try:
+                self.db.rollback()
+                logger.info("Transaction rolled back")
+            except Exception as rollback_err:
+                logger.error(f"Rollback failed: {rollback_err}")
             raise
 
 
@@ -912,7 +937,7 @@ def main():
     parser.add_argument('--members-only', action='store_true', help='Only ingest members')
     parser.add_argument('--bills-only', action='store_true', help='Only ingest bills')
     parser.add_argument('--bill-type', choices=['hr', 's', 'hjres', 'sjres', 'hconres', 'sconres', 'hres', 'sres'],
-                       default='hr', help='Bill type (default: hr)')
+                       default=None, help='Bill type (default: hr for house, s for senate)')
     parser.add_argument('--max-pages', type=int, default=3, help='Max pages of bills to fetch')
     
     args = parser.parse_args()
@@ -933,9 +958,12 @@ def main():
             if not args.members_only:
                 # Ingest bills
                 for chamber in (['house', 'senate'] if args.chamber == 'both' else [args.chamber]):
-                    bill_type = 'hr' if chamber == 'house' else 's'
-                    if args.chamber != 'both':
+                    # If user specified a bill_type, use it for all chambers
+                    # Otherwise, use the default per-chamber type
+                    if args.bill_type:
                         bill_type = args.bill_type
+                    else:
+                        bill_type = 'hr' if chamber == 'house' else 's'
                     pipeline.ingest_bills(args.congress, chamber, bill_type, args.max_pages)
                     
         except Exception as e:

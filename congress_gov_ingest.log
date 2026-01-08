@@ -14170,3 +14170,1091 @@ DETAIL:  Failing row contains (1250, Moylan, James C., Republican, GU, null, Rep
 2026-01-08 03:52:50,807 [INFO] Updated politician Shaheen, Jeanne (126)
 2026-01-08 03:52:51,304 [INFO] Updated politician Schmitt, Eric (127)
 2026-01-08 03:52:51,626 [ERROR] Transaction rolled back due to error
+2026-01-08 04:06:04,171 [INFO] === Congress.gov Ingestion Pipeline Started ===
+2026-01-08 04:06:05,299 [INFO] Database connection established
+2026-01-08 04:06:05,299 [INFO] === Starting members ingestion for both, Congress 118 ===
+2026-01-08 04:06:05,300 [INFO] Fetching house members for Congress 118
+2026-01-08 04:07:10,992 [INFO] Retrieved 2600 house members
+2026-01-08 04:07:10,992 [INFO] Fetching senate members for Congress 118
+2026-01-08 04:07:55,548 [INFO] Retrieved 2600 senate members
+2026-01-08 04:07:55,549 [INFO] Found 5200 members
+2026-01-08 04:07:56,421 [INFO] Updated politician LaMalfa, Doug (89)
+2026-01-08 04:07:56,957 [INFO] Updated politician Greene, Marjorie Taylor (90)
+2026-01-08 04:07:57,442 [INFO] Updated politician Zimmer, Dick (91)
+2026-01-08 04:07:57,939 [INFO] Updated politician Schulze, Richard T. (92)
+2026-01-08 04:07:58,420 [INFO] Updated politician Campbell, Ben Nighthorse (93)
+2026-01-08 04:07:58,973 [INFO] Updated politician Rulli, Michael A. (94)
+2026-01-08 04:07:59,456 [INFO] Updated politician Justice, James C. (95)
+2026-01-08 04:07:59,990 [INFO] Updated politician Dunn, Neal P. (96)
+2026-01-08 04:08:00,476 [INFO] Updated politician Norton, Eleanor Holmes (97)
+2026-01-08 04:08:00,987 [INFO] Updated politician DeLauro, Rosa L. (98)
+2026-01-08 04:08:01,479 [INFO] Updated politician Waters, Maxine (99)
+2026-01-08 04:08:01,995 [INFO] Updated politician Pelosi, Nancy (100)
+2026-01-08 04:08:02,496 [INFO] Updated politician Van Epps, Matt (101)
+2026-01-08 04:08:02,975 [INFO] Updated politician Sherrill, Mikie (102)
+2026-01-08 04:08:03,477 [INFO] Updated politician Grijalva, Adelita S. (103)
+2026-01-08 04:08:03,979 [INFO] Updated politician Crawford, Eric A. "Rick" (104)
+2026-01-08 04:08:04,519 [INFO] Updated politician Cheney, Dick (105)
+2026-01-08 04:08:05,023 [INFO] Updated politician Stallings, Richard H. (106)
+2026-01-08 04:08:05,536 [INFO] Updated politician Kilpatrick, Carolyn C. (107)
+2026-01-08 04:08:06,048 [INFO] Updated politician Young, Todd (108)
+2026-01-08 04:08:06,537 [INFO] Updated politician Wyden, Ron (109)
+2026-01-08 04:08:07,017 [INFO] Updated politician Warren, Elizabeth (110)
+2026-01-08 04:08:07,517 [INFO] Updated politician Whitehouse, Sheldon (111)
+2026-01-08 04:08:08,018 [INFO] Updated politician Welch, Peter (112)
+2026-01-08 04:08:08,496 [INFO] Updated politician Wicker, Roger F. (113)
+2026-01-08 04:08:09,019 [INFO] Updated politician Warnock, Raphael G. (114)
+2026-01-08 04:08:09,521 [INFO] Updated politician Tuberville, Tommy (115)
+2026-01-08 04:08:10,016 [INFO] Updated politician Warner, Mark R. (116)
+2026-01-08 04:08:10,497 [INFO] Updated politician Van Hollen, Chris (117)
+2026-01-08 04:08:10,996 [INFO] Updated politician Smith, Tina (118)
+2026-01-08 04:08:11,475 [INFO] Updated politician Tillis, Thomas (119)
+2026-01-08 04:08:11,958 [INFO] Updated politician Sullivan, Dan (120)
+2026-01-08 04:08:12,500 [INFO] Updated politician Thune, John (121)
+2026-01-08 04:08:13,039 [INFO] Updated politician Sheehy, Tim (122)
+2026-01-08 04:08:13,538 [INFO] Updated politician Scott, Rick (123)
+2026-01-08 04:08:14,036 [INFO] Updated politician Slotkin, Elissa (124)
+2026-01-08 04:08:14,517 [INFO] Updated politician Scott, Tim (125)
+2026-01-08 04:08:15,011 [INFO] Updated politician Shaheen, Jeanne (126)
+2026-01-08 04:08:15,524 [INFO] Updated politician Schmitt, Eric (127)
+2026-01-08 04:08:16,014 [INFO] Updated politician Rounds, Mike (128)
+2026-01-08 04:08:16,515 [INFO] Updated politician Schatz, Brian (129)
+2026-01-08 04:08:17,015 [INFO] Updated politician Schumer, Charles E. (130)
+2026-01-08 04:08:17,496 [INFO] Updated politician Sanders, Bernard (131)
+2026-01-08 04:08:17,999 [INFO] Updated politician Schiff, Adam B. (132)
+2026-01-08 04:08:18,499 [INFO] Updated politician Ricketts, Pete (133)
+2026-01-08 04:08:18,987 [INFO] Updated politician Rosen, Jacky (134)
+2026-01-08 04:08:19,497 [INFO] Updated politician Paul, Rand (135)
+2026-01-08 04:08:19,999 [INFO] Updated politician Peters, Gary C. (136)
+2026-01-08 04:08:20,495 [INFO] Updated politician Risch, James E. (137)
+2026-01-08 04:08:20,981 [INFO] Updated politician Reed, Jack (138)
+2026-01-08 04:08:21,139 [INFO] Progress: 50/5200 members ingested
+2026-01-08 04:08:21,958 [INFO] Updated politician Padilla, Alex (139)
+2026-01-08 04:08:22,457 [INFO] Updated politician Ossoff, Jon (140)
+2026-01-08 04:08:22,942 [INFO] Updated politician Mullin, Markwayne (141)
+2026-01-08 04:08:23,458 [INFO] Updated politician Murphy, Christopher (142)
+2026-01-08 04:08:23,943 [INFO] Updated politician Murray, Patty (143)
+2026-01-08 04:08:24,417 [INFO] Updated politician Murkowski, Lisa (144)
+2026-01-08 04:08:24,916 [INFO] Updated politician Moody, Ashley (145)
+2026-01-08 04:08:25,423 [INFO] Updated politician McCormick, David (146)
+2026-01-08 04:08:26,004 [INFO] Updated politician Moreno, Bernie (147)
+2026-01-08 04:08:26,598 [INFO] Updated politician Merkley, Jeff (148)
+2026-01-08 04:08:27,108 [INFO] Updated politician Moran, Jerry (149)
+2026-01-08 04:08:27,609 [INFO] Updated politician McConnell, Mitch (150)
+2026-01-08 04:08:28,152 [INFO] Updated politician Marshall, Roger (151)
+2026-01-08 04:08:28,703 [INFO] Updated politician Klobuchar, Amy (152)
+2026-01-08 04:08:29,234 [INFO] Updated politician Lee, Mike (153)
+2026-01-08 04:08:29,743 [INFO] Updated politician Lankford, James (154)
+2026-01-08 04:08:30,270 [INFO] Updated politician Lummis, Cynthia M. (155)
+2026-01-08 04:08:30,755 [INFO] Updated politician Luján, Ben Ray (156)
+2026-01-08 04:08:31,311 [INFO] Updated politician Markey, Edward J. (157)
+2026-01-08 04:08:31,862 [INFO] Updated politician Kelly, Mark (158)
+2026-01-08 04:08:32,422 [INFO] Updated politician Kim, Andy (159)
+2026-01-08 04:08:32,946 [INFO] Updated politician Kennedy, John (160)
+2026-01-08 04:08:33,460 [INFO] Updated politician King, Angus S., Jr. (161)
+2026-01-08 04:08:34,041 [INFO] Updated politician Kaine, Tim (162)
+2026-01-08 04:08:34,614 [INFO] Updated politician Johnson, Ron (163)
+2026-01-08 04:08:35,128 [INFO] Updated politician Husted, Jon (164)
+2026-01-08 04:08:35,656 [INFO] Updated politician Hickenlooper, John W. (165)
+2026-01-08 04:08:36,189 [INFO] Updated politician Hawley, Josh (166)
+2026-01-08 04:08:36,761 [INFO] Updated politician Hyde-Smith, Cindy (167)
+2026-01-08 04:08:37,275 [INFO] Updated politician Hoeven, John (168)
+2026-01-08 04:08:37,848 [INFO] Updated politician Hirono, Mazie K. (169)
+2026-01-08 04:08:38,389 [INFO] Updated politician Heinrich, Martin (170)
+2026-01-08 04:08:38,919 [INFO] Updated politician Hagerty, Bill (171)
+2026-01-08 04:08:39,457 [INFO] Updated politician Hassan, Margaret Wood (172)
+2026-01-08 04:08:39,972 [INFO] Updated politician Gallego, Ruben (173)
+2026-01-08 04:08:40,510 [INFO] Updated politician Gillibrand, Kirsten E. (174)
+2026-01-08 04:08:41,028 [INFO] Updated politician Grassley, Chuck (175)
+2026-01-08 04:08:41,537 [INFO] Updated politician Graham, Lindsey (176)
+2026-01-08 04:08:42,077 [INFO] Updated politician Fetterman, John (177)
+2026-01-08 04:08:42,560 [INFO] Updated politician Curtis, John R. (178)
+2026-01-08 04:08:43,056 [INFO] Updated politician Ernst, Joni (179)
+2026-01-08 04:08:43,546 [INFO] Updated politician Fischer, Deb (180)
+2026-01-08 04:08:44,059 [INFO] Updated politician Cruz, Ted (181)
+2026-01-08 04:08:44,557 [INFO] Updated politician Daines, Steve (182)
+2026-01-08 04:08:45,054 [INFO] Updated politician Duckworth, Tammy (183)
+2026-01-08 04:08:45,577 [INFO] Updated politician Durbin, Richard J. (184)
+2026-01-08 04:08:46,056 [INFO] Updated politician Cortez Masto, Catherine (185)
+2026-01-08 04:08:46,582 [INFO] Updated politician Cramer, Kevin (186)
+2026-01-08 04:08:47,079 [INFO] Updated politician Cotton, Tom (187)
+2026-01-08 04:08:47,599 [INFO] Updated politician Coons, Christopher A. (188)
+2026-01-08 04:08:47,759 [INFO] Progress: 100/5200 members ingested
+2026-01-08 04:08:48,778 [INFO] Created politician Collins, Susan M. -> 1292
+2026-01-08 04:08:49,439 [INFO] Created politician Cornyn, John -> 1293
+2026-01-08 04:08:50,097 [INFO] Created politician Crapo, Mike -> 1294
+2026-01-08 04:08:50,756 [INFO] Created politician Britt, Katie Boyd -> 1295
+2026-01-08 04:08:51,395 [INFO] Created politician Budd, Ted -> 1296
+2026-01-08 04:08:52,056 [INFO] Created politician Booker, Cory A. -> 1297
+2026-01-08 04:08:52,717 [INFO] Created politician Cassidy, Bill -> 1298
+2026-01-08 04:08:53,358 [INFO] Created politician Boozman, John -> 1299
+2026-01-08 04:08:54,056 [INFO] Created politician Capito, Shelley Moore -> 1300
+2026-01-08 04:08:54,701 [INFO] Created politician Cantwell, Maria -> 1301
+2026-01-08 04:08:55,339 [INFO] Created politician Banks, Jim -> 1302
+2026-01-08 04:08:55,997 [INFO] Created politician Blunt Rochester, Lisa -> 1303
+2026-01-08 04:08:56,636 [INFO] Created politician Blumenthal, Richard -> 1304
+2026-01-08 04:08:57,316 [INFO] Created politician Barrasso, John -> 1305
+2026-01-08 04:08:57,997 [INFO] Created politician Bennet, Michael F. -> 1306
+2026-01-08 04:08:58,698 [INFO] Created politician Baldwin, Tammy -> 1307
+2026-01-08 04:08:59,335 [INFO] Created politician Blackburn, Marsha -> 1308
+2026-01-08 04:08:59,982 [INFO] Created politician Alsobrooks, Angela D. -> 1309
+2026-01-08 04:09:00,658 [INFO] Created politician Whitesides, George -> 1310
+2026-01-08 04:09:01,400 [INFO] Created politician Fine, Randy -> 1311
+2026-01-08 04:09:02,078 [INFO] Created politician Patronis, Jimmy -> 1312
+2026-01-08 04:09:02,757 [INFO] Created politician Vindman, Eugene Simon -> 1313
+2026-01-08 04:09:03,415 [INFO] Created politician Taylor, David J. -> 1314
+2026-01-08 04:09:04,063 [INFO] Created politician Subramanyam, Suhas -> 1315
+2026-01-08 04:09:04,739 [INFO] Created politician Shreve, Jefferson -> 1316
+2026-01-08 04:09:05,455 [INFO] Created politician Schmidt, Derek -> 1317
+2026-01-08 04:09:06,098 [INFO] Created politician Riley, Josh -> 1318
+2026-01-08 04:09:06,796 [INFO] Created politician Pou, Nellie -> 1319
+2026-01-08 04:09:07,439 [INFO] Created politician Olszewski, Johnny -> 1320
+2026-01-08 04:09:08,080 [INFO] Created politician McDowell, Addison P. -> 1321
+2026-01-08 04:09:08,714 [INFO] Created politician McGuire, John J. -> 1322
+2026-01-08 04:09:09,356 [INFO] Created politician McDonald Rivet, Kristen -> 1323
+2026-01-08 04:09:10,001 [INFO] Created politician Moore, Tim -> 1324
+2026-01-08 04:09:10,638 [INFO] Created politician Moore, Riley M. -> 1325
+2026-01-08 04:09:11,300 [INFO] Created politician Messmer, Mark B. -> 1326
+2026-01-08 04:09:11,946 [INFO] Created politician McClain Delaney, April -> 1327
+2026-01-08 04:09:12,616 [INFO] Created politician Mannion, John W. -> 1328
+2026-01-08 04:09:13,267 [INFO] Created politician Mackenzie, Ryan -> 1329
+2026-01-08 04:09:13,915 [INFO] Created politician Latimer, George -> 1330
+2026-01-08 04:09:14,582 [INFO] Created politician Knott, Brad -> 1331
+2026-01-08 04:09:15,256 [INFO] Created politician Kennedy, Mike -> 1332
+2026-01-08 04:09:15,941 [INFO] Created politician Johnson, Julie -> 1333
+2026-01-08 04:09:16,627 [ERROR] Failed to ingest member H001103: new row for relation "politicians" violates check constraint "chk_politicians_state_code_valid"
+DETAIL:  Failing row contains (1334, Hernández, Pablo Jose, Democrat, PR, null, Representative, null, null, 2026-01-08 09:08:47.02639+00, 2026-01-08 09:08:47.02639+00).
+
+2026-01-08 04:09:17,419 [INFO] Updated politician Harris, Mark (232)
+2026-01-08 04:09:17,898 [INFO] Updated politician Harrigan, Pat (233)
+2026-01-08 04:09:18,376 [INFO] Updated politician Goodlander, Maggie (234)
+2026-01-08 04:09:18,864 [INFO] Updated politician Gill, Brandon (235)
+2026-01-08 04:09:19,357 [INFO] Updated politician Gillen, Laura (236)
+2026-01-08 04:09:19,846 [INFO] Updated politician Goldman, Craig A. (237)
+2026-01-08 04:09:20,337 [INFO] Updated politician Friedman, Laura (238)
+2026-01-08 04:09:20,997 [INFO] Updated politician Fedorchak, Julie (239)
+2026-01-08 04:09:21,163 [INFO] Progress: 150/5200 members ingested
+2026-01-08 04:09:21,983 [INFO] Created politician Elfreth, Sarah -> 1335
+2026-01-08 04:09:22,618 [INFO] Created politician Dexter, Maxine -> 1336
+2026-01-08 04:09:23,279 [INFO] Created politician Downing, Troy -> 1337
+2026-01-08 04:09:23,958 [INFO] Created politician Conaway, Herbert C. -> 1338
+2026-01-08 04:09:24,636 [INFO] Created politician Bresnahan, Robert P. -> 1339
+2026-01-08 04:09:25,319 [INFO] Created politician Bynum, Janelle S. -> 1340
+2026-01-08 04:09:25,999 [INFO] Created politician Biggs, Sheri -> 1341
+2026-01-08 04:09:26,640 [INFO] Created politician Baumgartner, Michael -> 1342
+2026-01-08 04:09:27,298 [INFO] Created politician Barrett, Tom -> 1343
+2026-01-08 04:09:27,963 [INFO] Created politician McCormick, Richard -> 1344
+2026-01-08 04:09:28,597 [INFO] Created politician Stutzman, Marlin A. -> 1345
+2026-01-08 04:09:29,259 [INFO] Created politician Fields, Cleo -> 1346
+2026-01-08 04:09:29,936 [INFO] Created politician Onder, Robert F. -> 1347
+2026-01-08 04:09:30,579 [INFO] Created politician McBride, Sarah -> 1348
+2026-01-08 04:09:31,237 [INFO] Created politician Morrison, Kelly -> 1349
+2026-01-08 04:09:31,896 [ERROR] Failed to ingest member K000404: new row for relation "politicians" violates check constraint "chk_politicians_state_code_valid"
+DETAIL:  Failing row contains (1350, King-Hinds, Kimberlyn, Republican, MP, null, Representative, null, null, 2026-01-08 09:09:20.406127+00, 2026-01-08 09:09:20.406127+00).
+
+2026-01-08 04:09:32,699 [INFO] Updated politician Jack, Brian (256)
+2026-01-08 04:09:33,185 [INFO] Updated politician Haridopolos, Mike (257)
+2026-01-08 04:09:33,658 [INFO] Updated politician Figures, Shomari (258)
+2026-01-08 04:09:34,168 [INFO] Updated politician Evans, Gabe (259)
+2026-01-08 04:09:34,658 [INFO] Updated politician Crank, Jeff (260)
+2026-01-08 04:09:35,138 [INFO] Updated politician Bell, Wesley (261)
+2026-01-08 04:09:35,619 [INFO] Updated politician Wied, Tony (262)
+2026-01-08 04:09:36,099 [INFO] Updated politician McIver, LaMonica (263)
+2026-01-08 04:09:36,619 [INFO] Updated politician Fong, Vince (264)
+2026-01-08 04:09:37,097 [INFO] Updated politician Kennedy, Timothy M. (265)
+2026-01-08 04:09:37,577 [INFO] Updated politician Maloy, Celeste (266)
+2026-01-08 04:09:38,057 [INFO] Updated politician Amo, Gabe (267)
+2026-01-08 04:09:38,538 [INFO] Updated politician McClellan, Jennifer L. (268)
+2026-01-08 04:09:39,018 [INFO] Updated politician Van Orden, Derrick (269)
+2026-01-08 04:09:39,569 [INFO] Updated politician Self, Keith (270)
+2026-01-08 04:09:40,082 [INFO] Updated politician Perez, Marie Gluesenkamp (271)
+2026-01-08 04:09:40,583 [INFO] Updated politician Ogles, Andrew (272)
+2026-01-08 04:09:41,079 [INFO] Updated politician Moran, Nathaniel (273)
+2026-01-08 04:09:41,560 [INFO] Updated politician Magaziner, Seth (274)
+2026-01-08 04:09:42,045 [INFO] Updated politician Luttrell, Morgan (275)
+2026-01-08 04:09:42,538 [INFO] Updated politician Lee, Summer L. (276)
+2026-01-08 04:09:43,019 [INFO] Updated politician Kiggans, Jennifer A. (277)
+2026-01-08 04:09:43,500 [INFO] Updated politician Hunt, Wesley (278)
+2026-01-08 04:09:44,004 [INFO] Updated politician Hageman, Harriet M. (279)
+2026-01-08 04:09:44,490 [INFO] Updated politician Fry, Russell (280)
+2026-01-08 04:09:44,979 [INFO] Updated politician Deluzio, Christopher R. (281)
+2026-01-08 04:09:45,459 [INFO] Updated politician De La Cruz, Monica (282)
+2026-01-08 04:09:45,939 [INFO] Updated politician Crockett, Jasmine (283)
+2026-01-08 04:09:46,418 [INFO] Updated politician Casar, Greg (284)
+2026-01-08 04:09:46,905 [INFO] Updated politician Balint, Becca (285)
+2026-01-08 04:09:47,399 [INFO] Updated politician Moore, Barry (286)
+2026-01-08 04:09:47,878 [INFO] Updated politician Franklin, Scott (287)
+2026-01-08 04:09:48,376 [INFO] Updated politician Boebert, Lauren (288)
+2026-01-08 04:09:49,046 [INFO] Updated politician Miller, Carol D. (289)
+2026-01-08 04:09:49,558 [INFO] Updated politician McBath, Lucy (290)
+2026-01-08 04:09:49,722 [INFO] Progress: 200/5200 members ingested
+2026-01-08 04:09:50,523 [INFO] Created politician Cisneros, Gilbert Ray -> 1351
+2026-01-08 04:09:51,180 [INFO] Created politician Scanlon, Mary Gay -> 1352
+2026-01-08 04:09:51,815 [INFO] Created politician Gonzalez, Vicente -> 1353
+2026-01-08 04:09:52,458 [INFO] Created politician Suozzi, Thomas R. -> 1354
+2026-01-08 04:09:53,118 [INFO] Created politician Green, Al -> 1355
+2026-01-08 04:09:53,778 [INFO] Created politician Doggett, Lloyd -> 1356
+2026-01-08 04:09:54,442 [INFO] Created politician Vasquez, Gabe -> 1357
+2026-01-08 04:09:55,122 [INFO] Created politician Tokuda, Jill N. -> 1358
+2026-01-08 04:09:55,763 [INFO] Created politician Thanedar, Shri -> 1359
+2026-01-08 04:09:56,420 [INFO] Created politician Sykes, Emilia Strong -> 1360
+2026-01-08 04:09:57,078 [INFO] Created politician Sorensen, Eric -> 1361
+2026-01-08 04:09:57,736 [INFO] Created politician Scholten, Hillary J. -> 1362
+2026-01-08 04:09:58,379 [INFO] Created politician Salinas, Andrea -> 1363
+2026-01-08 04:09:59,067 [INFO] Created politician Ramirez, Delia C. -> 1364
+2026-01-08 04:09:59,698 [INFO] Created politician Nunn, Zachary -> 1365
+2026-01-08 04:10:00,339 [ERROR] Failed to ingest member M001219: new row for relation "politicians" violates check constraint "chk_politicians_state_code_valid"
+DETAIL:  Failing row contains (1366, Moylan, James C., Republican, GU, null, Representative, null, null, 2026-01-08 09:09:48.966387+00, 2026-01-08 09:09:48.966387+00).
+
+2026-01-08 04:10:01,138 [INFO] Updated politician Moskowitz, Jared (307)
+2026-01-08 04:10:01,619 [INFO] Updated politician Mills, Cory (308)
+2026-01-08 04:10:02,100 [INFO] Updated politician Miller, Max L. (309)
+2026-01-08 04:10:02,599 [INFO] Updated politician Menendez, Robert (310)
+2026-01-08 04:10:03,081 [INFO] Updated politician McGarvey, Morgan (311)
+2026-01-08 04:10:03,560 [INFO] Updated politician Luna, Anna Paulina (312)
+2026-01-08 04:10:04,063 [INFO] Updated politician Lee, Laurel M. (313)
+2026-01-08 04:10:04,558 [INFO] Updated politician Lawler, Michael (314)
+2026-01-08 04:10:05,041 [INFO] Updated politician Langworthy, Nicholas A. (315)
+2026-01-08 04:10:05,523 [INFO] Updated politician Landsman, Greg (316)
+2026-01-08 04:10:06,000 [INFO] Updated politician LaLota, Nick (317)
+2026-01-08 04:10:06,501 [INFO] Updated politician Kean, Thomas H. (318)
+2026-01-08 04:10:06,986 [INFO] Updated politician James, John (319)
+2026-01-08 04:10:07,478 [INFO] Updated politician Jackson, Jonathan L. (320)
+2026-01-08 04:10:07,965 [INFO] Updated politician Ivey, Glenn (321)
+2026-01-08 04:10:08,463 [INFO] Updated politician Hoyle, Val T. (322)
+2026-01-08 04:10:08,945 [INFO] Updated politician Houchin, Erin (323)
+2026-01-08 04:10:09,483 [INFO] Updated politician Goldman, Daniel S. (324)
+2026-01-08 04:10:09,959 [INFO] Updated politician Frost, Maxwell (325)
+2026-01-08 04:10:10,461 [INFO] Updated politician Foushee, Valerie P. (326)
+2026-01-08 04:10:10,961 [INFO] Updated politician Ezell, Mike (327)
+2026-01-08 04:10:11,443 [INFO] Updated politician Edwards, Chuck (328)
+2026-01-08 04:10:11,945 [INFO] Updated politician Davis, Donald G. (329)
+2026-01-08 04:10:12,418 [INFO] Updated politician Collins, Mike (330)
+2026-01-08 04:10:12,900 [INFO] Updated politician Burlison, Eric (331)
+2026-01-08 04:10:13,378 [INFO] Updated politician Budzinski, Nikki (332)
+2026-01-08 04:10:13,858 [INFO] Updated politician Brecheen, Josh (333)
+2026-01-08 04:10:14,341 [INFO] Updated politician Alford, Mark (334)
+2026-01-08 04:10:14,820 [INFO] Updated politician Ryan, Patrick (335)
+2026-01-08 04:10:15,320 [INFO] Updated politician Miller-Meeks, Mariannette (336)
+2026-01-08 04:10:15,799 [INFO] Updated politician McClain, Lisa C. (337)
+2026-01-08 04:10:16,299 [INFO] Updated politician Hinson, Ashley (338)
+2026-01-08 04:10:16,956 [INFO] Updated politician Gimenez, Carlos A. (339)
+2026-01-08 04:10:17,441 [INFO] Updated politician Tlaib, Rashida (340)
+2026-01-08 04:10:17,921 [INFO] Updated politician Tenney, Claudia (341)
+2026-01-08 04:10:18,081 [INFO] Progress: 250/5200 members ingested
+2026-01-08 04:10:18,720 [INFO] Updated politician Mast, Brian J. (342)
+2026-01-08 04:10:19,239 [INFO] Updated politician Rutherford, John H. (343)
+2026-01-08 04:10:19,723 [INFO] Updated politician LaHood, Darin (344)
+2026-01-08 04:10:20,203 [INFO] Updated politician Zinke, Ryan K. (345)
+2026-01-08 04:10:20,680 [INFO] Updated politician Dingell, Debbie (346)
+2026-01-08 04:10:21,158 [INFO] Updated politician Moolenaar, John R. (347)
+2026-01-08 04:10:21,645 [INFO] Updated politician Hudson, Richard (348)
+2026-01-08 04:10:22,121 [INFO] Updated politician Frankel, Lois (349)
+2026-01-08 04:10:22,599 [INFO] Updated politician Huizenga, Bill (350)
+2026-01-08 04:10:23,079 [INFO] Updated politician Walberg, Tim (351)
+2026-01-08 04:10:23,566 [INFO] Updated politician Nadler, Jerrold (352)
+2026-01-08 04:10:24,038 [INFO] Updated politician Wasserman Schultz, Debbie (353)
+2026-01-08 04:10:24,522 [INFO] Updated politician Diaz-Balart, Mario (354)
+2026-01-08 04:10:25,004 [INFO] Updated politician Strong, Dale W. (355)
+2026-01-08 04:10:25,502 [INFO] Updated politician Pettersen, Brittany (356)
+2026-01-08 04:10:26,001 [INFO] Updated politician Mullin, Kevin (357)
+2026-01-08 04:10:26,481 [INFO] Updated politician Kiley, Kevin (358)
+2026-01-08 04:10:26,968 [INFO] Updated politician Kamlager-Dove, Sydney (359)
+2026-01-08 04:10:27,461 [INFO] Updated politician Garcia, Robert (360)
+2026-01-08 04:10:27,960 [INFO] Updated politician Crane, Elijah (361)
+2026-01-08 04:10:28,448 [INFO] Updated politician Ciscomani, Juan (362)
+2026-01-08 04:10:28,920 [INFO] Updated politician Bean, Aaron (363)
+2026-01-08 04:10:29,400 [INFO] Updated politician Yakym, Rudy (364)
+2026-01-08 04:10:29,900 [INFO] Updated politician Finstad, Brad (365)
+2026-01-08 04:10:30,385 [INFO] Updated politician Flood, Mike (366)
+2026-01-08 04:10:30,858 [INFO] Updated politician Cherfilus-McCormick, Sheila (367)
+2026-01-08 04:10:31,338 [INFO] Updated politician Carey, Mike (368)
+2026-01-08 04:10:31,823 [INFO] Updated politician Brown, Shontel M. (369)
+2026-01-08 04:10:32,320 [INFO] Updated politician Ellzey, Jake (370)
+2026-01-08 04:10:32,821 [INFO] Updated politician Stansbury, Melanie A. (371)
+2026-01-08 04:10:33,320 [INFO] Updated politician Carter, Troy A. (372)
+2026-01-08 04:10:33,821 [INFO] Updated politician Letlow, Julia (373)
+2026-01-08 04:10:34,300 [INFO] Updated politician Obernolte, Jay (374)
+2026-01-08 04:10:34,800 [INFO] Updated politician Kim, Young (375)
+2026-01-08 04:10:35,286 [INFO] Updated politician Van Duyne, Beth (376)
+2026-01-08 04:10:35,784 [INFO] Updated politician Strickland, Marilyn (377)
+2026-01-08 04:10:36,301 [INFO] Updated politician Owens, Burgess (378)
+2026-01-08 04:10:36,802 [INFO] Updated politician Nehls, Troy E. (379)
+2026-01-08 04:10:37,280 [INFO] Updated politician Moore, Blake D. (380)
+2026-01-08 04:10:37,765 [INFO] Updated politician Jacobs, Sara (381)
+2026-01-08 04:10:38,280 [INFO] Updated politician Jackson, Ronny (382)
+2026-01-08 04:10:38,761 [INFO] Updated politician Gonzales, Tony (383)
+2026-01-08 04:10:39,243 [INFO] Updated politician Fitzgerald, Scott (384)
+2026-01-08 04:10:39,721 [INFO] Updated politician Harder, Josh (385)
+2026-01-08 04:10:40,208 [INFO] Updated politician Stanton, Greg (386)
+2026-01-08 04:10:40,722 [INFO] Updated politician Panetta, Jimmy (387)
+2026-01-08 04:10:41,205 [INFO] Updated politician Lieu, Ted (388)
+2026-01-08 04:10:41,884 [INFO] Updated politician Aguilar, Pete (389)
+2026-01-08 04:10:42,381 [INFO] Updated politician DeSaulnier, Mark (390)
+2026-01-08 04:10:42,860 [INFO] Updated politician Peters, Scott H. (391)
+2026-01-08 04:10:43,078 [INFO] Progress: 300/5200 members ingested
+2026-01-08 04:10:43,738 [INFO] Updated politician Vargas, Juan (392)
+2026-01-08 04:10:44,225 [INFO] Updated politician Takano, Mark (393)
+2026-01-08 04:10:44,766 [INFO] Updated politician Ruiz, Raul (394)
+2026-01-08 04:10:45,243 [INFO] Updated politician Valadao, David G. (395)
+2026-01-08 04:10:45,717 [INFO] Updated politician Swalwell, Eric (396)
+2026-01-08 04:10:46,207 [INFO] Updated politician Bera, Ami (397)
+2026-01-08 04:10:46,706 [INFO] Updated politician Garamendi, John (398)
+2026-01-08 04:10:47,184 [INFO] Updated politician Chu, Judy (399)
+2026-01-08 04:10:47,681 [INFO] Updated politician Schweikert, David (400)
+2026-01-08 04:10:48,200 [INFO] Updated politician Gosar, Paul A. (401)
+2026-01-08 04:10:48,726 [INFO] Updated politician McClintock, Tom (402)
+2026-01-08 04:10:49,200 [INFO] Updated politician Matsui, Doris O. (403)
+2026-01-08 04:10:49,722 [INFO] Updated politician Thompson, Mike (404)
+2026-01-08 04:10:50,200 [INFO] Updated politician Sherman, Brad (405)
+2026-01-08 04:10:50,681 [INFO] Updated politician Sessions, Pete (406)
+2026-01-08 04:10:51,214 [INFO] Updated politician Costa, Jim (407)
+2026-01-08 04:10:51,718 [INFO] Updated politician Issa, Darrell (408)
+2026-01-08 04:10:52,200 [INFO] Updated politician Calvert, Ken (409)
+2026-01-08 04:10:52,680 [INFO] Updated politician Lofgren, Zoe (410)
+2026-01-08 04:10:53,165 [INFO] Updated politician Williams, Nikema (411)
+2026-01-08 04:10:53,646 [INFO] Updated politician Torres, Ritchie (412)
+2026-01-08 04:10:54,146 [INFO] Updated politician Spartz, Victoria (413)
+2026-01-08 04:10:54,641 [INFO] Updated politician Salazar, Maria Elvira (414)
+2026-01-08 04:10:55,131 [INFO] Updated politician Ross, Deborah K. (415)
+2026-01-08 04:10:55,603 [INFO] Updated politician Pfluger, August (416)
+2026-01-08 04:10:56,091 [INFO] Updated politician Mrvan, Frank J. (417)
+2026-01-08 04:10:56,582 [INFO] Updated politician Miller, Mary E. (418)
+2026-01-08 04:10:57,060 [INFO] Updated politician Mann, Tracey (419)
+2026-01-08 04:10:57,541 [INFO] Updated politician Malliotakis, Nicole (420)
+2026-01-08 04:10:58,021 [INFO] Updated politician Mace, Nancy (421)
+2026-01-08 04:10:58,501 [INFO] Updated politician Leger Fernandez, Teresa (422)
+2026-01-08 04:10:58,981 [INFO] Updated politician Harshbarger, Diana (423)
+2026-01-08 04:10:59,463 [INFO] Updated politician Garbarino, Andrew R. (424)
+2026-01-08 04:10:59,961 [INFO] Updated politician Fischbach, Michelle (425)
+2026-01-08 04:11:00,444 [INFO] Updated politician Feenstra, Randy (426)
+2026-01-08 04:11:00,919 [INFO] Updated politician Fallon, Pat (427)
+2026-01-08 04:11:01,398 [INFO] Updated politician Donalds, Byron (428)
+2026-01-08 04:11:01,886 [INFO] Updated politician Clyde, Andrew S. (429)
+2026-01-08 04:11:02,362 [INFO] Updated politician Cammack, Kat (430)
+2026-01-08 04:11:02,849 [INFO] Updated politician Bice, Stephanie I. (431)
+2026-01-08 04:11:03,345 [INFO] Updated politician Bentz, Cliff (432)
+2026-01-08 04:11:03,827 [INFO] Updated politician Auchincloss, Jake (433)
+2026-01-08 04:11:04,322 [INFO] Updated politician Tiffany, Thomas P. (434)
+2026-01-08 04:11:04,806 [INFO] Updated politician Murphy, Gregory F. (435)
+2026-01-08 04:11:05,307 [INFO] Updated politician Golden, Jared F. (436)
+2026-01-08 04:11:05,809 [INFO] Updated politician Steil, Bryan (437)
+2026-01-08 04:11:06,302 [INFO] Updated politician Schrier, Kim (438)
+2026-01-08 04:11:06,941 [INFO] Updated politician Cline, Ben (439)
+2026-01-08 04:11:07,423 [INFO] Updated politician Garcia, Sylvia R. (440)
+2026-01-08 04:11:07,921 [INFO] Updated politician Roy, Chip (441)
+2026-01-08 04:11:08,083 [INFO] Progress: 350/5200 members ingested
+2026-01-08 04:11:08,727 [INFO] Updated politician Escobar, Veronica (442)
+2026-01-08 04:11:09,226 [INFO] Updated politician Fletcher, Lizzie (443)
+2026-01-08 04:11:09,702 [INFO] Updated politician Gooden, Lance (444)
+2026-01-08 04:11:10,185 [INFO] Updated politician Crenshaw, Dan (445)
+2026-01-08 04:11:10,672 [INFO] Updated politician Rose, John W. (446)
+2026-01-08 04:11:11,221 [INFO] Updated politician Burchett, Tim (447)
+2026-01-08 04:11:11,700 [INFO] Updated politician Johnson, Dusty (448)
+2026-01-08 04:11:12,188 [INFO] Updated politician Timmons, William R. (449)
+2026-01-08 04:11:12,706 [INFO] Updated politician Reschenthaler, Guy (450)
+2026-01-08 04:11:13,221 [INFO] Updated politician Joyce, John (451)
+2026-01-08 04:11:13,700 [INFO] Updated politician Meuser, Daniel (452)
+2026-01-08 04:11:14,183 [INFO] Updated politician Houlahan, Chrissy (453)
+2026-01-08 04:11:14,663 [INFO] Updated politician Dean, Madeleine (454)
+2026-01-08 04:11:15,165 [INFO] Updated politician Van Drew, Jefferson (455)
+2026-01-08 04:11:15,663 [INFO] Updated politician Craig, Angie (456)
+2026-01-08 04:11:16,142 [INFO] Updated politician García, Jesús G. "Chuy" (457)
+2026-01-08 04:11:16,713 [INFO] Updated politician Smucker, Lloyd (458)
+2026-01-08 04:11:17,203 [INFO] Updated politician Evans, Dwight (459)
+2026-01-08 04:11:17,701 [INFO] Updated politician Boyle, Brendan F. (460)
+2026-01-08 04:11:18,183 [INFO] Updated politician Perry, Scott (461)
+2026-01-08 04:11:18,666 [INFO] Updated politician Kelly, Mike (462)
+2026-01-08 04:11:19,164 [INFO] Updated politician Thompson, Glenn (463)
+2026-01-08 04:11:19,644 [INFO] Updated politician Mfume, Kweisi (464)
+2026-01-08 04:11:20,127 [INFO] Updated politician Walkinshaw, James R. (465)
+2026-01-08 04:11:20,600 [INFO] Updated politician Ocasio-Cortez, Alexandria (466)
+2026-01-08 04:11:21,081 [INFO] Updated politician Lee, Susie (467)
+2026-01-08 04:11:21,563 [INFO] Updated politician Pappas, Chris (468)
+2026-01-08 04:11:22,046 [INFO] Updated politician Guest, Michael (469)
+2026-01-08 04:11:22,527 [INFO] Updated politician Stauber, Pete (470)
+2026-01-08 04:11:23,025 [INFO] Updated politician Omar, Ilhan (471)
+2026-01-08 04:11:23,517 [INFO] Updated politician Stevens, Haley M. (472)
+2026-01-08 04:11:24,007 [INFO] Updated politician Pressley, Ayanna (473)
+2026-01-08 04:11:24,484 [INFO] Updated politician Trahan, Lori (474)
+2026-01-08 04:11:24,963 [INFO] Updated politician Davids, Sharice (475)
+2026-01-08 04:11:25,535 [INFO] Updated politician Baird, James R. (476)
+2026-01-08 04:11:26,055 [INFO] Updated politician Underwood, Lauren (477)
+2026-01-08 04:11:26,528 [INFO] Updated politician Casten, Sean (478)
+2026-01-08 04:11:27,007 [INFO] Updated politician Fulcher, Russ (479)
+2026-01-08 04:11:27,487 [INFO] Updated politician Steube, W. Gregory (480)
+2026-01-08 04:11:28,003 [INFO] Updated politician Hayes, Jahana (481)
+2026-01-08 04:11:28,481 [INFO] Updated politician Crow, Jason (482)
+2026-01-08 04:11:28,960 [INFO] Updated politician Neguse, Joe (483)
+2026-01-08 04:11:29,539 [INFO] Updated politician Levin, Mike (484)
+2026-01-08 04:11:30,034 [INFO] Updated politician Hern, Kevin (485)
+2026-01-08 04:11:30,563 [INFO] Updated politician Morelle, Joseph D. (486)
+2026-01-08 04:11:31,038 [INFO] Updated politician Balderson, Troy (487)
+2026-01-08 04:11:31,524 [INFO] Updated politician Cloud, Michael (488)
+2026-01-08 04:11:32,214 [INFO] Updated politician Gomez, Jimmy (489)
+2026-01-08 04:11:32,725 [INFO] Updated politician Norman, Ralph (490)
+2026-01-08 04:11:33,208 [INFO] Updated politician Estes, Ron (491)
+2026-01-08 04:11:33,366 [INFO] Progress: 400/5200 members ingested
+2026-01-08 04:11:34,184 [INFO] Created politician Jayapal, Pramila -> 1367
+2026-01-08 04:11:34,869 [INFO] Created politician Arrington, Jodey C. -> 1368
+2026-01-08 04:11:35,543 [INFO] Created politician Kustoff, David -> 1369
+2026-01-08 04:11:36,205 [INFO] Created politician Fitzpatrick, Brian K. -> 1370
+2026-01-08 04:11:36,862 [INFO] Created politician Espaillat, Adriano -> 1371
+2026-01-08 04:11:37,544 [INFO] Created politician Gottheimer, Josh -> 1372
+2026-01-08 04:11:38,215 [INFO] Created politician Bacon, Don -> 1373
+2026-01-08 04:11:38,873 [INFO] Created politician Bergman, Jack -> 1374
+2026-01-08 04:11:39,528 [INFO] Created politician Raskin, Jamie -> 1375
+2026-01-08 04:11:40,158 [INFO] Created politician Johnson, Mike -> 1376
+2026-01-08 04:11:40,803 [INFO] Created politician Higgins, Clay -> 1377
+2026-01-08 04:11:41,484 [INFO] Created politician Krishnamoorthi, Raja -> 1378
+2026-01-08 04:11:42,141 [INFO] Created politician Soto, Darren -> 1379
+2026-01-08 04:11:42,785 [INFO] Created politician Correa, J. Luis -> 1380
+2026-01-08 04:11:43,438 [INFO] Created politician Barragán, Nanette Diaz -> 1381
+2026-01-08 04:11:44,154 [INFO] Created politician Carbajal, Salud O. -> 1382
+2026-01-08 04:11:44,828 [INFO] Created politician Horsford, Steven -> 1383
+2026-01-08 04:11:45,508 [INFO] Created politician Schneider, Bradley Scott -> 1384
+2026-01-08 04:11:46,171 [INFO] Created politician Webster, Daniel -> 1385
+2026-01-08 04:11:46,847 [INFO] Created politician Case, Ed -> 1386
+2026-01-08 04:11:47,523 [INFO] Created politician Min, Dave -> 1387
+2026-01-08 04:11:48,202 [INFO] Created politician Hurd, Jeff -> 1388
+2026-01-08 04:11:48,861 [INFO] Created politician Biggs, Andy -> 1389
+2026-01-08 04:11:49,546 [INFO] Created politician Khanna, Ro -> 1390
+2026-01-08 04:11:50,202 [INFO] Created politician Comer, James -> 1391
+2026-01-08 04:11:50,861 [INFO] Created politician Davidson, Warren -> 1392
+2026-01-08 04:11:51,522 [INFO] Created politician Kelly, Trent -> 1393
+2026-01-08 04:11:52,163 [INFO] Created politician Grothman, Glenn -> 1394
+2026-01-08 04:11:52,845 [INFO] Created politician Newhouse, Dan -> 1395
+2026-01-08 04:11:53,484 [ERROR] Failed to ingest member P000610: new row for relation "politicians" violates check constraint "chk_politicians_state_code_valid"
+DETAIL:  Failing row contains (1396, Plaskett, Stacey E., Democrat, VI, null, Representative, null, null, 2026-01-08 09:11:32.606259+00, 2026-01-08 09:11:32.606259+00).
+
+2026-01-08 04:11:54,482 [INFO] Created politician Beyer, Donald S. -> 1397
+2026-01-08 04:11:55,144 [INFO] Created politician Babin, Brian -> 1398
+2026-01-08 04:11:55,784 [INFO] Created politician Stefanik, Elise M. -> 1399
+2026-01-08 04:11:56,470 [INFO] Created politician Watson Coleman, Bonnie -> 1400
+2026-01-08 04:11:57,125 [INFO] Created politician Rouzer, David -> 1401
+2026-01-08 04:11:57,801 [INFO] Created politician Emmer, Tom -> 1402
+2026-01-08 04:11:58,443 [INFO] Created politician Moulton, Seth -> 1403
+2026-01-08 04:11:59,109 [INFO] Created politician Bost, Mike -> 1404
+2026-01-08 04:11:59,818 [INFO] Created politician Allen, Rick W. -> 1405
+2026-01-08 04:12:00,520 [INFO] Created politician Loudermilk, Barry -> 1406
+2026-01-08 04:12:01,163 [INFO] Created politician Carter, Earl L. "Buddy" -> 1407
+2026-01-08 04:12:01,821 [INFO] Created politician Torres, Norma J. -> 1408
+2026-01-08 04:12:02,464 [INFO] Created politician Westerman, Bruce -> 1409
+2026-01-08 04:12:03,101 [INFO] Created politician Hill, J. French -> 1410
+2026-01-08 04:12:03,763 [ERROR] Failed to ingest member R000600: new row for relation "politicians" violates check constraint "chk_politicians_state_code_valid"
+DETAIL:  Failing row contains (1411, Radewagen, Aumua Amata Coleman, Republican, AS, null, Representative, null, null, 2026-01-08 09:11:52.886135+00, 2026-01-08 09:11:52.886135+00).
+
+2026-01-08 04:12:04,564 [INFO] Updated politician Palmer, Gary J. (537)
+2026-01-08 04:12:05,047 [INFO] Updated politician Norcross, Donald (538)
+2026-01-08 04:12:05,695 [INFO] Updated politician Adams, Alma S. (539)
+2026-01-08 04:12:06,209 [INFO] Updated politician Clark, Katherine M. (540)
+2026-01-08 04:12:06,703 [INFO] Updated politician Smith, Jason (541)
+2026-01-08 04:12:07,204 [INFO] Updated politician Barr, Andy (542)
+2026-01-08 04:12:07,707 [INFO] Updated politician Clarke, Yvette D. (543)
+2026-01-08 04:12:07,864 [INFO] Progress: 450/5200 members ingested
+2026-01-08 04:12:08,505 [INFO] Updated politician Tonko, Paul (544)
+2026-01-08 04:12:08,986 [INFO] Updated politician Kelly, Robin L. (545)
+2026-01-08 04:12:09,474 [INFO] Updated politician Meeks, Gregory W. (546)
+2026-01-08 04:12:09,962 [INFO] Updated politician Velázquez, Nydia M. (547)
+2026-01-08 04:12:10,465 [INFO] Updated politician Turner, Michael R. (548)
+2026-01-08 04:12:10,942 [INFO] Updated politician Tran, Derek (549)
+2026-01-08 04:12:11,425 [INFO] Updated politician Pocan, Mark (550)
+2026-01-08 04:12:11,904 [INFO] Updated politician Veasey, Marc A. (551)
+2026-01-08 04:12:12,406 [INFO] Updated politician Williams, Roger (552)
+2026-01-08 04:12:12,883 [INFO] Updated politician Castro, Joaquin (553)
+2026-01-08 04:12:13,384 [INFO] Updated politician Weber, Randy K. Sr. (554)
+2026-01-08 04:12:13,865 [INFO] Updated politician Joyce, David P. (555)
+2026-01-08 04:12:14,364 [INFO] Updated politician Beatty, Joyce (556)
+2026-01-08 04:12:14,863 [INFO] Updated politician Jeffries, Hakeem S. (557)
+2026-01-08 04:12:15,345 [INFO] Updated politician Meng, Grace (558)
+2026-01-08 04:12:15,820 [INFO] Updated politician Wagner, Ann (559)
+2026-01-08 04:12:16,303 [INFO] Updated politician Brownley, Julia (560)
+2026-01-08 04:12:16,802 [INFO] Updated politician Huffman, Jared (561)
+2026-01-08 04:12:17,284 [INFO] Updated politician DelBene, Suzan K. (562)
+2026-01-08 04:12:17,782 [INFO] Updated politician Massie, Thomas (563)
+2026-01-08 04:12:18,307 [INFO] Updated politician Bonamici, Suzanne (564)
+2026-01-08 04:12:18,781 [INFO] Updated politician Amodei, Mark E. (565)
+2026-01-08 04:12:19,269 [INFO] Updated politician Wittman, Robert J. (566)
+2026-01-08 04:12:19,764 [INFO] Updated politician Latta, Robert E. (567)
+2026-01-08 04:12:20,242 [INFO] Updated politician Griffith, H. Morgan (568)
+2026-01-08 04:12:20,724 [INFO] Updated politician DesJarlais, Scott (569)
+2026-01-08 04:12:21,207 [INFO] Updated politician Fleischmann, Charles J. "Chuck" (570)
+2026-01-08 04:12:21,684 [INFO] Updated politician Harris, Andy (571)
+2026-01-08 04:12:22,190 [INFO] Updated politician Keating, William R. (572)
+2026-01-08 04:12:22,689 [INFO] Updated politician Scott, Austin (573)
+2026-01-08 04:12:23,167 [INFO] Updated politician Wilson, Frederica S. (574)
+2026-01-08 04:12:23,651 [INFO] Updated politician Womack, Steve (575)
+2026-01-08 04:12:24,129 [INFO] Updated politician Sewell, Terri A. (576)
+2026-01-08 04:12:24,607 [INFO] Updated politician Cohen, Steve (577)
+2026-01-08 04:12:25,084 [INFO] Updated politician Jordan, Jim (578)
+2026-01-08 04:12:25,560 [INFO] Updated politician Buchanan, Vern (579)
+2026-01-08 04:12:26,045 [INFO] Updated politician Castor, Kathy (580)
+2026-01-08 04:12:26,528 [INFO] Updated politician Bilirakis, Gus M. (581)
+2026-01-08 04:12:27,029 [INFO] Updated politician Quigley, Mike (582)
+2026-01-08 04:12:27,502 [INFO] Updated politician Titus, Dina (583)
+2026-01-08 04:12:27,983 [INFO] Updated politician Pingree, Chellie (584)
+2026-01-08 04:12:28,464 [INFO] Updated politician Guthrie, Brett (585)
+2026-01-08 04:12:28,948 [INFO] Updated politician Himes, James A. (586)
+2026-01-08 04:12:29,449 [INFO] Updated politician Scalise, Steve (587)
+2026-01-08 04:12:29,962 [INFO] Updated politician Foster, Bill (588)
+2026-01-08 04:12:30,621 [INFO] Updated politician Carson, André (589)
+2026-01-08 04:12:31,105 [INFO] Updated politician McGovern, James P. (590)
+2026-01-08 04:12:31,605 [INFO] Updated politician Neal, Richard E. (591)
+2026-01-08 04:12:32,085 [INFO] Updated politician Moore, Gwen (592)
+2026-01-08 04:12:32,562 [INFO] Updated politician Scott, David (593)
+2026-01-08 04:12:32,727 [INFO] Progress: 500/5200 members ingested
+2026-01-08 04:12:33,362 [INFO] Updated politician Sánchez, Linda T. (594)
+2026-01-08 04:12:33,844 [INFO] Updated politician Lynch, Stephen F. (595)
+2026-01-08 04:12:34,348 [INFO] Updated politician Simon, Lateefah (596)
+2026-01-08 04:12:34,829 [INFO] Updated politician Randall, Emily (597)
+2026-01-08 04:12:35,330 [INFO] Updated politician Rivas, Luz M. (598)
+2026-01-08 04:12:35,848 [INFO] Updated politician Liccardo, Sam T. (599)
+2026-01-08 04:12:36,345 [INFO] Updated politician Hamadeh, Abraham J. (600)
+2026-01-08 04:12:36,827 [INFO] Updated politician Gray, Adam (601)
+2026-01-08 04:12:37,345 [INFO] Updated politician Begich, Nicholas J. (602)
+2026-01-08 04:12:37,843 [INFO] Updated politician Ansari, Yassamin (603)
+2026-01-08 04:12:38,325 [INFO] Updated politician Smith, Adrian (604)
+2026-01-08 04:12:38,824 [INFO] Updated politician Johnson, Henry C. "Hank" (605)
+2026-01-08 04:12:39,297 [INFO] Updated politician Courtney, Joe (606)
+2026-01-08 04:12:39,802 [INFO] Updated politician Pallone, Frank (607)
+2026-01-08 04:12:40,284 [INFO] Updated politician Simpson, Michael K. (608)
+2026-01-08 04:12:40,763 [INFO] Updated politician Schakowsky, Janice D. (609)
+2026-01-08 04:12:41,244 [INFO] Updated politician Larson, John B. (610)
+2026-01-08 04:12:41,755 [INFO] Updated politician Smith, Adam (611)
+2026-01-08 04:12:42,245 [INFO] Updated politician DeGette, Diana (612)
+2026-01-08 04:12:42,724 [INFO] Updated politician Davis, Danny K. (613)
+2026-01-08 04:12:43,202 [INFO] Updated politician Aderholt, Robert B. (614)
+2026-01-08 04:12:43,679 [INFO] Updated politician Thompson, Bennie G. (615)
+2026-01-08 04:12:44,165 [INFO] Updated politician Smith, Christopher H. (616)
+2026-01-08 04:12:44,652 [INFO] Updated politician Scott, Robert C. "Bobby" (617)
+2026-01-08 04:12:45,165 [INFO] Updated politician Rogers, Harold (618)
+2026-01-08 04:12:45,643 [INFO] Updated politician Bishop, Sanford D. (619)
+2026-01-08 04:12:46,122 [INFO] Updated politician Lucas, Frank D. (620)
+2026-01-08 04:12:46,602 [INFO] Updated politician Cuellar, Henry (621)
+2026-01-08 04:12:47,090 [INFO] Updated politician McCaul, Michael T. (622)
+2026-01-08 04:12:47,583 [INFO] Updated politician Foxx, Virginia (623)
+2026-01-08 04:12:48,066 [INFO] Updated politician Cleaver, Emanuel (624)
+2026-01-08 04:12:48,543 [INFO] Updated politician Carter, John R. (625)
+2026-01-08 04:12:49,024 [INFO] Updated politician Cole, Tom (626)
+2026-01-08 04:12:49,507 [INFO] Updated politician Rogers, Mike D. (627)
+2026-01-08 04:12:49,999 [INFO] Updated politician Wilson, Joe (628)
+2026-01-08 04:12:50,502 [INFO] Updated politician Larsen, Rick (629)
+2026-01-08 04:12:50,983 [INFO] Updated politician Graves, Sam (630)
+2026-01-08 04:12:51,465 [INFO] Updated politician McCollum, Betty (631)
+2026-01-08 04:12:51,943 [INFO] Updated politician Clyburn, James E. (632)
+2026-01-08 04:12:52,446 [INFO] Updated politician Kaptur, Marcy (633)
+2026-01-08 04:12:52,965 [INFO] Updated politician Hoyer, Steny H. (634)
+2026-01-08 04:12:53,449 [INFO] Updated politician Nolan, Richard M. (635)
+2026-01-08 04:12:53,943 [INFO] Updated politician Anthony, Beryl, Jr. (636)
+2026-01-08 04:12:54,445 [INFO] Updated politician Waltz, Michael (637)
+2026-01-08 04:12:54,925 [INFO] Updated politician Gallagher, Mike (638)
+2026-01-08 04:12:55,606 [INFO] Updated politician Gaetz, Matt (639)
+2026-01-08 04:12:56,089 [INFO] Updated politician Johnson, Bill (640)
+2026-01-08 04:12:56,583 [INFO] Updated politician Higgins, Brian (641)
+2026-01-08 04:12:57,071 [INFO] Updated politician Steiger, William A. (642)
+2026-01-08 04:12:57,547 [INFO] Updated politician Oakar, Mary Rose (643)
+2026-01-08 04:12:57,706 [INFO] Progress: 550/5200 members ingested
+2026-01-08 04:12:58,503 [INFO] Created politician Burton, John -> 1412
+2026-01-08 04:12:59,200 [INFO] Created politician Green, Mark E. -> 1413
+2026-01-08 04:12:59,886 [INFO] Created politician Cunningham, Randy (Duke) -> 1414
+2026-01-08 04:13:00,526 [INFO] Created politician Castle, Michael N. -> 1415
+2026-01-08 04:13:01,166 [INFO] Created politician Clay, William (Bill) -> 1416
+2026-01-08 04:13:01,825 [INFO] Created politician McCarthy, Carolyn -> 1417
+2026-01-08 04:13:02,476 [INFO] Created politician Williams, Pat -> 1418
+2026-01-08 04:13:03,121 [INFO] Created politician Farenthold, Blake -> 1419
+2026-01-08 04:13:03,763 [INFO] Created politician Nedzi, Lucien N. -> 1420
+2026-01-08 04:13:04,423 [INFO] Created politician Rangel, Charles B. -> 1421
+2026-01-08 04:13:05,083 [INFO] Created politician Connolly, Gerald E. -> 1422
+2026-01-08 04:13:05,745 [INFO] Created politician Bond, Christopher S. -> 1423
+2026-01-08 04:13:06,387 [INFO] Created politician McMillan, J. Alex -> 1424
+2026-01-08 04:13:07,042 [INFO] Created politician Sweeney, David McCann -> 1425
+2026-01-08 04:13:07,693 [INFO] Created politician Filner, Bob -> 1426
+2026-01-08 04:13:08,323 [INFO] Created politician Cicilline, David N. -> 1427
+2026-01-08 04:13:08,981 [INFO] Created politician McCarthy, Kevin -> 1428
+2026-01-08 04:13:09,653 [INFO] Created politician LaFalce, John J. -> 1429
+2026-01-08 04:13:10,371 [INFO] Created politician Grijalva, Raúl M. -> 1430
+2026-01-08 04:13:11,025 [INFO] Created politician Watkins, Wes -> 1431
+2026-01-08 04:13:11,666 [INFO] Created politician Johnston, J. Bennett -> 1432
+2026-01-08 04:13:12,326 [INFO] Created politician Love, Mia B. -> 1433
+2026-01-08 04:13:12,963 [INFO] Created politician Lowey, Nita M. -> 1434
+2026-01-08 04:13:13,624 [INFO] Created politician Simpson, Alan K. -> 1435
+2026-01-08 04:13:14,269 [INFO] Created politician Diaz-Balart, Lincoln -> 1436
+2026-01-08 04:13:14,927 [INFO] Created politician Turner, Sylvester -> 1437
+2026-01-08 04:13:15,610 [INFO] Created politician Byron, Beverly B. -> 1438
+2026-01-08 04:13:16,266 [INFO] Created politician Boren, David L. -> 1439
+2026-01-08 04:13:16,926 [INFO] Created politician Tucker, James G., Jr. (Jim Guy) -> 1440
+2026-01-08 04:13:17,586 [INFO] Created politician Good, Bob -> 1441
+2026-01-08 04:13:18,346 [INFO] Updated politician Menendez, Robert (310)
+2026-01-08 04:13:19,005 [INFO] Created politician Pascrell, Bill -> 1442
+2026-01-08 04:13:19,649 [INFO] Created politician Armstrong, Kelly -> 1443
+2026-01-08 04:13:20,289 [INFO] Created politician Rubio, Marco -> 1444
+2026-01-08 04:13:20,967 [INFO] Created politician Vance, J. D. -> 1445
+2026-01-08 04:13:21,611 [INFO] Created politician MacKay, Buddy -> 1446
+2026-01-08 04:13:22,264 [INFO] Created politician Williams, Brandon -> 1447
+2026-01-08 04:13:22,946 [INFO] Created politician Wild, Susan -> 1448
+2026-01-08 04:13:23,604 [INFO] Created politician Wexton, Jennifer -> 1449
+2026-01-08 04:13:24,243 [INFO] Created politician Wenstrup, Brad R. -> 1450
+2026-01-08 04:13:24,927 [INFO] Created politician Trone, David J. -> 1451
+2026-01-08 04:13:25,570 [INFO] Created politician Spanberger, Abigail Davis -> 1452
+2026-01-08 04:13:26,232 [ERROR] Failed to ingest member S001177: new row for relation "politicians" violates check constraint "chk_politicians_state_code_valid"
+DETAIL:  Failing row contains (1453, Sablan, Gregorio Kilili Camacho, Democrat, MP, null, Representative, null, null, 2026-01-08 09:12:56.945337+00, 2026-01-08 09:12:56.945337+00).
+
+2026-01-08 04:13:27,068 [INFO] Updated politician Sarbanes, John P. (686)
+2026-01-08 04:13:27,550 [INFO] Updated politician Steel, Michelle (687)
+2026-01-08 04:13:28,186 [INFO] Updated politician Ruppersberger, C. A. Dutch (688)
+2026-01-08 04:13:28,664 [INFO] Updated politician Rosendale, Matthew M. (689)
+2026-01-08 04:13:29,149 [INFO] Updated politician Peltola, Mary Sattler (690)
+2026-01-08 04:13:29,649 [INFO] Updated politician Porter, Katie (691)
+2026-01-08 04:13:30,126 [INFO] Updated politician Phillips, Dean (692)
+2026-01-08 04:13:30,606 [INFO] Updated politician Pence, Greg (693)
+2026-01-08 04:13:30,826 [INFO] Progress: 600/5200 members ingested
+2026-01-08 04:13:31,473 [INFO] Updated politician Posey, Bill (694)
+2026-01-08 04:13:31,952 [INFO] Updated politician Nickel, Wiley (695)
+2026-01-08 04:13:32,429 [INFO] Updated politician Napolitano, Grace F. (696)
+2026-01-08 04:13:32,910 [INFO] Updated politician Molinaro, Marcus J. (697)
+2026-01-08 04:13:33,437 [INFO] Updated politician Mooney, Alexander X. (698)
+2026-01-08 04:13:33,966 [INFO] Updated politician McMorris Rodgers, Cathy (699)
+2026-01-08 04:13:34,464 [INFO] Updated politician McHenry, Patrick T. (700)
+2026-01-08 04:13:34,950 [INFO] Updated politician Manning, Kathy E. (701)
+2026-01-08 04:13:35,453 [INFO] Updated politician Lee Carter, Erica (702)
+2026-01-08 04:13:35,948 [INFO] Updated politician Lopez, Greg (703)
+2026-01-08 04:13:36,423 [INFO] Updated politician Lesko, Debbie (704)
+2026-01-08 04:13:36,905 [INFO] Updated politician Luetkemeyer, Blaine (705)
+2026-01-08 04:13:37,393 [INFO] Updated politician Lamborn, Doug (706)
+2026-01-08 04:13:37,871 [INFO] Updated politician Lee, Barbara (707)
+2026-01-08 04:13:38,370 [INFO] Updated politician LaTurner, Jake (708)
+2026-01-08 04:13:38,849 [INFO] Updated politician Kuster, Ann M. (709)
+2026-01-08 04:13:39,353 [INFO] Updated politician Kilmer, Derek (710)
+2026-01-08 04:13:39,827 [INFO] Updated politician Kildee, Daniel T. (711)
+2026-01-08 04:13:40,331 [INFO] Updated politician Graves, Garret (712)
+2026-01-08 04:13:40,807 [INFO] Updated politician Granger, Kay (713)
+2026-01-08 04:13:41,286 [INFO] Updated politician Garcia, Mike (714)
+2026-01-08 04:13:41,773 [INFO] Updated politician Ferguson, A. Drew (715)
+2026-01-08 04:13:42,278 [INFO] Updated politician Eshoo, Anna G. (716)
+2026-01-08 04:13:42,798 [INFO] Updated politician Duarte, John S. (717)
+2026-01-08 04:13:43,334 [INFO] Updated politician D'Esposito, Anthony (718)
+2026-01-08 04:13:43,842 [INFO] Updated politician Duncan, Jeff (719)
+2026-01-08 04:13:44,329 [INFO] Updated politician Chavez-DeRemer, Lori (720)
+2026-01-08 04:13:44,809 [INFO] Updated politician Caraveo, Yadira (721)
+2026-01-08 04:13:45,335 [INFO] Updated politician Cárdenas, Tony (722)
+2026-01-08 04:13:45,865 [INFO] Updated politician Cartwright, Matt (723)
+2026-01-08 04:13:46,392 [INFO] Updated politician Carl, Jerry L. (724)
+2026-01-08 04:13:46,906 [INFO] Updated politician Bishop, Dan (725)
+2026-01-08 04:13:47,438 [INFO] Updated politician Bucshon, Larry (726)
+2026-01-08 04:13:47,927 [INFO] Updated politician Burgess, Michael C. (727)
+2026-01-08 04:13:48,492 [INFO] Updated politician Bush, Cori (728)
+2026-01-08 04:13:48,965 [INFO] Updated politician Bowman, Jamaal (729)
+2026-01-08 04:13:49,448 [INFO] Updated politician Blumenauer, Earl (730)
+2026-01-08 04:13:49,949 [INFO] Updated politician Allred, Colin Z. (731)
+2026-01-08 04:13:50,425 [INFO] Updated politician Casey, Robert P., Jr. (732)
+2026-01-08 04:13:50,909 [INFO] Updated politician Tester, Jon (733)
+2026-01-08 04:13:51,410 [INFO] Updated politician Sinema, Kyrsten (734)
+2026-01-08 04:13:51,908 [INFO] Updated politician Stabenow, Debbie (735)
+2026-01-08 04:13:52,391 [INFO] Updated politician Romney, Mitt (736)
+2026-01-08 04:13:52,933 [INFO] Updated politician Manchin, Joe, III (737)
+2026-01-08 04:13:53,563 [INFO] Updated politician Carper, Thomas R. (738)
+2026-01-08 04:13:54,047 [INFO] Updated politician Cardin, Benjamin L. (739)
+2026-01-08 04:13:54,577 [INFO] Updated politician Braun, Mike (740)
+2026-01-08 04:13:55,068 [INFO] Updated politician Brown, Sherrod (741)
+2026-01-08 04:13:55,543 [INFO] Updated politician Helmy, George S. (742)
+2026-01-08 04:13:56,049 [INFO] Updated politician Butler, Laphonza R. (743)
+2026-01-08 04:13:56,208 [INFO] Progress: 650/5200 members ingested
+2026-01-08 04:13:57,007 [INFO] Created politician Santos, George -> 1454
+2026-01-08 04:13:57,659 [INFO] Created politician Jackson, Jeff -> 1455
+2026-01-08 04:13:58,316 [ERROR] Failed to ingest member G000582: new row for relation "politicians" violates check constraint "chk_politicians_state_code_valid"
+DETAIL:  Failing row contains (1456, González-Colón, Jenniffer, Republican, PR, null, Representative, null, null, 2026-01-08 09:13:55.444503+00, 2026-01-08 09:13:55.444503+00).
+
+2026-01-08 04:13:59,125 [INFO] Updated politician Sasse, Ben (1014)
+2026-01-08 04:13:59,606 [INFO] Updated politician Buck, Ken (1015)
+2026-01-08 04:14:00,087 [INFO] Updated politician Stewart, Chris (1016)
+2026-01-08 04:14:00,563 [INFO] Updated politician Payne, Donald M. (1017)
+2026-01-08 04:14:01,042 [INFO] Updated politician Feinstein, Dianne (1018)
+2026-01-08 04:14:01,536 [INFO] Updated politician Jackson Lee, Sheila (1019)
+2026-01-08 04:14:02,031 [INFO] Updated politician Blackburn, Ben (1020)
+2026-01-08 04:14:02,503 [INFO] Updated politician Keys, Martha E. (1021)
+2026-01-08 04:14:02,992 [INFO] Updated politician Spratt, John M., Jr. (1022)
+2026-01-08 04:14:03,463 [INFO] Updated politician Leach, James A. (1023)
+2026-01-08 04:14:03,945 [INFO] Updated politician Patterson, Jerry M. (1024)
+2026-01-08 04:14:04,430 [INFO] Updated politician Ireland, Andrew P. (1025)
+2026-01-08 04:14:04,971 [INFO] Updated politician Hobson, David L. (1026)
+2026-01-08 04:14:05,448 [INFO] Updated politician Johnson, Tim (1027)
+2026-01-08 04:14:05,925 [INFO] Updated politician Curson, David Alan (1028)
+2026-01-08 04:14:06,408 [INFO] Updated politician Evans, Daniel J. (1029)
+2026-01-08 04:14:06,891 [INFO] Updated politician Sasser, Jim (1030)
+2026-01-08 04:14:07,384 [INFO] Updated politician Carr, Bob (1031)
+2026-01-08 04:14:07,862 [INFO] Updated politician Nowak, Henry (1032)
+2026-01-08 04:14:08,364 [INFO] Updated politician Symms, Steven D. (1033)
+2026-01-08 04:14:08,851 [INFO] Updated politician Robinson, Tommy F. (1034)
+2026-01-08 04:14:09,386 [INFO] Updated politician Inhofe, James M. (1035)
+2026-01-08 04:14:09,864 [INFO] Updated politician Nethercutt, George R., Jr. (1036)
+2026-01-08 04:14:10,355 [INFO] Updated politician Hutchinson, John G. (1037)
+2026-01-08 04:14:10,845 [INFO] Updated politician Cannon, Chris (1038)
+2026-01-08 04:14:11,327 [INFO] Updated politician McCloskey, Paul N., Jr. (1039)
+2026-01-08 04:14:11,805 [INFO] Updated politician Pryor, David H. (1040)
+2026-01-08 04:14:12,291 [INFO] Updated politician Murphy, Austin J. (1041)
+2026-01-08 04:14:12,790 [INFO] Updated politician Graham, Bob (1042)
+2026-01-08 04:14:13,268 [INFO] Updated politician Gunter, Bill (1043)
+2026-01-08 04:14:13,746 [INFO] Updated politician Brennan, Joseph E. (1044)
+2026-01-08 04:14:14,226 [INFO] Updated politician Delahunt, Bill (1045)
+2026-01-08 04:14:14,704 [INFO] Updated politician Lieberman, Joseph I. (1046)
+2026-01-08 04:14:15,187 [INFO] Updated politician Everett, Terry (1047)
+2026-01-08 04:14:15,701 [INFO] Updated politician McEachin, A. Donald (1048)
+2026-01-08 04:14:16,188 [INFO] Updated politician Carnahan, Jean (1049)
+2026-01-08 04:14:16,667 [INFO] Updated politician Mottl, Ronald M. (1050)
+2026-01-08 04:14:17,186 [INFO] Updated politician Riggs, Frank (1051)
+2026-01-08 04:14:17,665 [INFO] Updated politician Johnson, Eddie Bernice (1052)
+2026-01-08 04:14:18,172 [INFO] Updated politician Kohl, Herb (1053)
+2026-01-08 04:14:18,656 [INFO] Updated politician Hayes, Philip H. (1054)
+2026-01-08 04:14:19,306 [INFO] Updated politician Klein, Herbert C. (1055)
+2026-01-08 04:14:19,787 [INFO] Updated politician Johnson, James P. (Jim) (1056)
+2026-01-08 04:14:20,270 [INFO] Updated politician Bliley, Tom (1057)
+2026-01-08 04:14:20,747 [INFO] Updated politician Waldon, Alton R., Jr. (1058)
+2026-01-08 04:14:21,225 [INFO] Updated politician Durenberger, Dave (1059)
+2026-01-08 04:14:21,707 [INFO] Updated politician Clark, Dick (1060)
+2026-01-08 04:14:22,231 [INFO] Updated politician Erdahl, Arlen (1061)
+2026-01-08 04:14:22,387 [INFO] Progress: 700/5200 members ingested
+2026-01-08 04:14:23,205 [INFO] Created politician Weber, Ed -> 1457
+2026-01-08 04:14:23,845 [INFO] Created politician Faircloth, Lauch -> 1458
+2026-01-08 04:14:24,508 [INFO] Created politician Richardson, Bill -> 1459
+2026-01-08 04:14:25,147 [INFO] Created politician Sundquist, Don -> 1460
+2026-01-08 04:14:25,809 [INFO] Created politician Quie, Albert H. -> 1461
+2026-01-08 04:14:26,446 [INFO] Created politician Buckley, James L. -> 1462
+2026-01-08 04:14:27,086 [INFO] Created politician Weicker, Lowell P., Jr. -> 1463
+2026-01-08 04:14:27,774 [INFO] Created politician Bonker, Don -> 1464
+2026-01-08 04:14:28,427 [INFO] Created politician Sawyer, Tom -> 1465
+2026-01-08 04:14:29,067 [INFO] Created politician Berry, Marion -> 1466
+2026-01-08 04:14:29,710 [INFO] Created politician Stenholm, Charles W. -> 1467
+2026-01-08 04:14:30,345 [INFO] Created politician Shuster, Bud -> 1468
+2026-01-08 04:14:31,006 [INFO] Created politician Sarasin, Ronald A. -> 1469
+2026-01-08 04:14:31,669 [INFO] Created politician Bafalis, L. A. (Skip) -> 1470
+2026-01-08 04:14:32,345 [INFO] Created politician Jenrette, John W., Jr. -> 1471
+2026-01-08 04:14:33,003 [INFO] Created politician Schroeder, Patricia -> 1472
+2026-01-08 04:14:33,755 [INFO] Created politician Donnelly, Brian J. -> 1473
+2026-01-08 04:14:34,407 [INFO] Created politician Broyhill, James T. -> 1474
+2026-01-08 04:14:35,068 [INFO] Created politician Olver, John W. -> 1475
+2026-01-08 04:14:35,707 [INFO] Created politician Abourezk, James -> 1476
+2026-01-08 04:14:36,368 [INFO] Created politician Newman, Marie -> 1477
+2026-01-08 04:14:37,009 [INFO] Created politician Meijer, Peter -> 1478
+2026-01-08 04:14:37,670 [INFO] Created politician Kahele, Kaiali'i -> 1479
+2026-01-08 04:14:38,312 [INFO] Created politician Jones, Mondaire -> 1480
+2026-01-08 04:14:38,948 [INFO] Created politician Herrell, Yvette -> 1481
+2026-01-08 04:14:39,587 [INFO] Created politician Cawthorn, Madison -> 1482
+2026-01-08 04:14:40,249 [INFO] Created politician Bourdeaux, Carolyn -> 1483
+2026-01-08 04:14:40,909 [INFO] Created politician Jacobs, Chris -> 1484
+2026-01-08 04:14:41,570 [INFO] Created politician Keller, Fred -> 1485
+2026-01-08 04:14:42,228 [INFO] Created politician Luria, Elaine G. -> 1486
+2026-01-08 04:14:42,867 [INFO] Created politician Taylor, Van -> 1487
+2026-01-08 04:14:43,528 [INFO] Created politician Gonzalez, Anthony -> 1488
+2026-01-08 04:14:44,184 [INFO] Created politician Malinowski, Tom -> 1489
+2026-01-08 04:14:44,828 [INFO] Created politician Axne, Cynthia -> 1490
+2026-01-08 04:14:45,476 [ERROR] Failed to ingest member S001204: new row for relation "politicians" violates check constraint "chk_politicians_state_code_valid"
+DETAIL:  Failing row contains (1491, San Nicolas, Michael F. Q., Democrat, GU, null, Representative, null, null, 2026-01-08 09:14:21.624505+00, 2026-01-08 09:14:21.624505+00).
+
+2026-01-08 04:14:46,333 [INFO] Updated politician Lamb, Conor (1097)
+2026-01-08 04:14:46,851 [INFO] Updated politician Cheney, Liz (1098)
+2026-01-08 04:14:47,353 [INFO] Updated politician Brown, Anthony G. (1099)
+2026-01-08 04:14:47,828 [INFO] Updated politician Hollingsworth, Trey (1100)
+2026-01-08 04:14:48,309 [INFO] Updated politician Demings, Val Butler (1101)
+2026-01-08 04:14:48,788 [INFO] Updated politician Murphy, Stephanie N. (1102)
+2026-01-08 04:14:49,269 [INFO] Updated politician Lawson, Al, Jr. (1103)
+2026-01-08 04:14:49,747 [INFO] Updated politician O'Halleran, Tom (1104)
+2026-01-08 04:14:50,394 [INFO] Updated politician Katko, John (1105)
+2026-01-08 04:14:50,889 [INFO] Updated politician Rice, Kathleen M. (1106)
+2026-01-08 04:14:51,387 [INFO] Updated politician Zeldin, Lee M. (1107)
+2026-01-08 04:14:51,866 [INFO] Updated politician Lawrence, Brenda L. (1108)
+2026-01-08 04:14:52,351 [INFO] Updated politician Hice, Jody B. (1109)
+2026-01-08 04:14:52,867 [INFO] Updated politician Rice, Tom (1110)
+2026-01-08 04:14:53,347 [INFO] Updated politician Maloney, Sean Patrick (1111)
+2026-01-08 04:14:53,845 [INFO] Updated politician Walorski, Jackie (1112)
+2026-01-08 04:14:54,008 [INFO] Progress: 750/5200 members ingested
+2026-01-08 04:14:54,669 [INFO] Updated politician Bustos, Cheri (1113)
+2026-01-08 04:14:55,154 [INFO] Updated politician Davis, Rodney (1114)
+2026-01-08 04:14:55,645 [INFO] Updated politician Lowenthal, Alan S. (1115)
+2026-01-08 04:14:56,175 [INFO] Updated politician Speier, Jackie (1116)
+2026-01-08 04:14:56,650 [INFO] Updated politician Sires, Albio (1117)
+2026-01-08 04:14:57,131 [INFO] Updated politician Reed, Tom (1118)
+2026-01-08 04:14:57,627 [INFO] Updated politician McKinley, David B. (1119)
+2026-01-08 04:14:58,108 [INFO] Updated politician Herrera Beutler, Jaime (1120)
+2026-01-08 04:14:58,589 [INFO] Updated politician Gibbs, Bob (1121)
+2026-01-08 04:14:59,065 [INFO] Updated politician Palazzo, Steven M. (1122)
+2026-01-08 04:14:59,551 [INFO] Updated politician Long, Billy (1123)
+2026-01-08 04:15:00,032 [INFO] Updated politician Hartzler, Vicky (1124)
+2026-01-08 04:15:00,531 [INFO] Updated politician Kinzinger, Adam (1125)
+2026-01-08 04:15:01,049 [INFO] Updated politician Bass, Karen (1126)
+2026-01-08 04:15:01,530 [INFO] Updated politician Brooks, Mo (1127)
+2026-01-08 04:15:02,027 [INFO] Updated politician Yarmuth, John A. (1128)
+2026-01-08 04:15:02,507 [INFO] Updated politician Perlmutter, Ed (1129)
+2026-01-08 04:15:03,010 [INFO] Updated politician McNerney, Jerry (1130)
+2026-01-08 04:15:03,510 [INFO] Updated politician Schrader, Kurt (1131)
+2026-01-08 04:15:03,988 [INFO] Updated politician Kirkpatrick, Ann (1132)
+2026-01-08 04:15:04,495 [INFO] Updated politician Ravenel, Arthur, Jr. (1133)
+2026-01-08 04:15:05,014 [INFO] Updated politician Price, David E. (1134)
+2026-01-08 04:15:05,489 [INFO] Updated politician Portman, Rob (1135)
+2026-01-08 04:15:05,990 [INFO] Updated politician Toomey, Patrick (1136)
+2026-01-08 04:15:06,471 [INFO] Updated politician Kind, Ron (1137)
+2026-01-08 04:15:06,968 [INFO] Updated politician Brady, Kevin (1138)
+2026-01-08 04:15:07,538 [INFO] Updated politician Blunt, Roy (1139)
+2026-01-08 04:15:08,087 [INFO] Updated politician Young, Don (1140)
+2026-01-08 04:15:08,570 [INFO] Updated politician Upton, Fred (1141)
+2026-01-08 04:15:09,048 [INFO] Updated politician Shumway, Norman D. (1142)
+2026-01-08 04:15:09,532 [INFO] Updated politician Shelby, Richard C. (1143)
+2026-01-08 04:15:10,041 [INFO] Updated politician Rush, Bobby L. (1144)
+2026-01-08 04:15:10,528 [INFO] Updated politician Roybal-Allard, Lucille (1145)
+2026-01-08 04:15:11,009 [INFO] Updated politician Maloney, Carolyn B. (1146)
+2026-01-08 04:15:11,509 [INFO] Updated politician Leahy, Patrick J. (1147)
+2026-01-08 04:15:11,991 [INFO] Updated politician Cotton, Norris (1148)
+2026-01-08 04:15:12,487 [INFO] Updated politician Cook, Marlow W. (1149)
+2026-01-08 04:15:12,968 [INFO] Updated politician Gohmert, Louie (1150)
+2026-01-08 04:15:13,450 [INFO] Updated politician Butterfield, G. K. (1151)
+2026-01-08 04:15:13,988 [INFO] Updated politician Ryan, Tim (1152)
+2026-01-08 04:15:14,830 [INFO] Updated politician Langevin, James R. (1153)
+2026-01-08 04:15:15,306 [INFO] Updated politician Cooper, Jim (1154)
+2026-01-08 04:15:15,948 [INFO] Updated politician Chabot, Steve (1155)
+2026-01-08 04:15:16,430 [INFO] Updated politician Burr, Richard (1156)
+2026-01-08 04:15:16,918 [INFO] Updated politician Doyle, Michael F. (1157)
+2026-01-08 04:15:17,414 [INFO] Updated politician DeFazio, Peter A. (1158)
+2026-01-08 04:15:17,931 [INFO] Updated politician Levitas, Elliott H. (1159)
+2026-01-08 04:15:18,429 [INFO] Updated politician Kolbe, Jim (1160)
+2026-01-08 04:15:18,909 [INFO] Updated politician Hubbard, Carroll, Jr. (1161)
+2026-01-08 04:15:19,389 [INFO] Updated politician Hillis, Elwood H. (1162)
+2026-01-08 04:15:19,550 [INFO] Progress: 800/5200 members ingested
+2026-01-08 04:15:20,349 [INFO] Created politician Levin, Andy -> 1492
+2026-01-08 04:15:21,012 [INFO] Created politician Sempolinski, Joseph -> 1493
+2026-01-08 04:15:21,713 [INFO] Created politician Flores, Mayra -> 1494
+2026-01-08 04:15:22,369 [INFO] Created politician Conway, Connie -> 1495
+2026-01-08 04:15:23,071 [INFO] Created politician Loeffler, Kelly -> 1496
+2026-01-08 04:15:23,731 [INFO] Created politician Wright, Ron -> 1497
+2026-01-08 04:15:24,369 [INFO] Created politician Delgado, Antonio -> 1498
+2026-01-08 04:15:25,010 [INFO] Created politician Haaland, Debra A. -> 1499
+2026-01-08 04:15:25,685 [INFO] Created politician Hagedorn, Jim -> 1500
+2026-01-08 04:15:26,331 [INFO] Created politician Crist, Charlie -> 1501
+2026-01-08 04:15:26,989 [INFO] Created politician Harris, Kamala D. -> 1502
+2026-01-08 04:15:27,630 [INFO] Created politician Vela, Filemon -> 1503
+2026-01-08 04:15:28,297 [INFO] Created politician Deutch, Theodore E. -> 1504
+2026-01-08 04:15:28,928 [INFO] Created politician Stivers, Steve -> 1505
+2026-01-08 04:15:29,614 [INFO] Created politician Richmond, Cedric L. -> 1506
+2026-01-08 04:15:30,291 [INFO] Created politician Fudge, Marcia L. -> 1507
+2026-01-08 04:15:30,955 [INFO] Created politician Fortenberry, Jeff -> 1508
+2026-01-08 04:15:31,622 [INFO] Created politician Nunes, Devin -> 1509
+2026-01-08 04:15:32,289 [INFO] Created politician Hastings, Alcee L. -> 1510
+2026-01-08 04:15:32,931 [INFO] Created politician Hall, Kwanza -> 1511
+2026-01-08 04:15:33,591 [INFO] Created politician Goodling, George A. -> 1512
+2026-01-08 04:15:34,252 [INFO] Created politician Riggleman, Denver -> 1513
+2026-01-08 04:15:34,909 [INFO] Created politician McAdams, Ben -> 1514
+2026-01-08 04:15:35,570 [INFO] Created politician Cunningham, Joe -> 1515
+2026-01-08 04:15:36,318 [INFO] Created politician Horn, Kendra S. -> 1516
+2026-01-08 04:15:37,056 [INFO] Created politician Brindisi, Anthony -> 1517
+2026-01-08 04:15:37,749 [INFO] Created politician Rose, Max -> 1518
+2026-01-08 04:15:38,390 [INFO] Created politician Torres Small, Xochitl -> 1519
+2026-01-08 04:15:39,049 [INFO] Created politician Watkins, Steve -> 1520
+2026-01-08 04:15:39,716 [INFO] Created politician Finkenauer, Abby -> 1521
+2026-01-08 04:15:40,392 [INFO] Created politician Shalala, Donna E. -> 1522
+2026-01-08 04:15:41,068 [INFO] Created politician Mucarsel-Powell, Debbie -> 1523
+2026-01-08 04:15:41,741 [INFO] Created politician Spano, Ross -> 1524
+2026-01-08 04:15:42,430 [INFO] Created politician Rouda, Harley -> 1525
+2026-01-08 04:15:43,081 [INFO] Created politician Hill, Katie -> 1526
+2026-01-08 04:15:43,730 [INFO] Created politician Cox, TJ -> 1527
+2026-01-08 04:15:44,371 [INFO] Created politician Jones, Brenda -> 1528
+2026-01-08 04:15:45,028 [INFO] Created politician Jones, Doug -> 1529
+2026-01-08 04:15:45,675 [INFO] Created politician Handel, Karen C. -> 1530
+2026-01-08 04:15:46,334 [INFO] Created politician Gianforte, Greg -> 1531
+2026-01-08 04:15:46,990 [INFO] Created politician Strange, Luther -> 1532
+2026-01-08 04:15:47,629 [INFO] Created politician Garrett, Thomas A., Jr. -> 1533
+2026-01-08 04:15:48,435 [INFO] Created politician Taylor, Scott -> 1534
+2026-01-08 04:15:49,068 [INFO] Created politician Faso, John J. -> 1535
+2026-01-08 04:15:49,727 [INFO] Created politician Kihuen, Ruben J. -> 1536
+2026-01-08 04:15:50,416 [INFO] Created politician Lewis, Jason -> 1537
+2026-01-08 04:15:51,048 [INFO] Created politician Mitchell, Paul -> 1538
+2026-01-08 04:15:51,691 [INFO] Created politician Rooney, Francis -> 1539
+2026-01-08 04:15:52,350 [INFO] Created politician Donovan, Daniel M., Jr. -> 1540
+2026-01-08 04:15:53,011 [INFO] Created politician Perdue, David -> 1541
+2026-01-08 04:15:53,170 [INFO] Progress: 850/5200 members ingested
+2026-01-08 04:15:53,968 [INFO] Created politician Jenkins, Evan H. -> 1542
+2026-01-08 04:15:54,648 [INFO] Created politician Comstock, Barbara -> 1543
+2026-01-08 04:15:55,310 [INFO] Created politician Hurd, Will -> 1544
+2026-01-08 04:15:55,952 [INFO] Created politician Ratcliffe, John -> 1545
+2026-01-08 04:15:56,606 [INFO] Created politician Costello, Ryan A. -> 1546
+2026-01-08 04:15:57,250 [INFO] Created politician Russell, Steve -> 1547
+2026-01-08 04:15:57,912 [INFO] Created politician Hardy, Cresent -> 1548
+2026-01-08 04:15:58,575 [INFO] Created politician MacArthur, Thomas -> 1549
+2026-01-08 04:15:59,230 [INFO] Created politician Ashford, Brad -> 1550
+2026-01-08 04:15:59,889 [INFO] Created politician Walker, Mark -> 1551
+2026-01-08 04:16:00,531 [INFO] Created politician Trott, David A. -> 1552
+2026-01-08 04:16:01,191 [INFO] Created politician Bishop, Mike -> 1553
+2026-01-08 04:16:01,849 [INFO] Created politician Poliquin, Bruce -> 1554
+2026-01-08 04:16:02,511 [INFO] Created politician Abraham, Ralph Lee -> 1555
+2026-01-08 04:16:03,150 [INFO] Created politician Young, David -> 1556
+2026-01-08 04:16:03,789 [INFO] Created politician Blum, Rod -> 1557
+2026-01-08 04:16:04,433 [INFO] Created politician Takai, Mark -> 1558
+2026-01-08 04:16:05,117 [INFO] Created politician Curbelo, Carlos -> 1559
+2026-01-08 04:16:05,791 [INFO] Created politician Graham, Gwen -> 1560
+2026-01-08 04:16:06,449 [INFO] Created politician Walters, Mimi -> 1561
+2026-01-08 04:16:07,096 [INFO] Created politician Knight, Stephen -> 1562
+2026-01-08 04:16:07,753 [INFO] Created politician McSally, Martha -> 1563
+2026-01-08 04:16:08,412 [INFO] Created politician Brat, Dave -> 1564
+2026-01-08 04:16:09,075 [INFO] Created politician Clawson, Curt -> 1565
+2026-01-08 04:16:09,751 [INFO] Created politician Jolly, David W. -> 1566
+2026-01-08 04:16:10,391 [INFO] Created politician Walsh, John E. -> 1567
+2026-01-08 04:16:11,052 [INFO] Created politician Byrne, Bradley -> 1568
+2026-01-08 04:16:11,731 [INFO] Created politician McAllister, Vance M. -> 1569
+2026-01-08 04:16:12,372 [INFO] Created politician Chiesa, Jeff -> 1570
+2026-01-08 04:16:13,056 [INFO] Created politician Kennedy, Joseph P., III -> 1571
+2026-01-08 04:16:13,712 [INFO] Created politician Heck, Denny -> 1572
+2026-01-08 04:16:14,372 [INFO] Created politician Gallego, Pete P. -> 1573
+2026-01-08 04:16:15,009 [INFO] Created politician O'Rourke, Beto -> 1574
+2026-01-08 04:16:15,672 [INFO] Created politician Rothfus, Keith J. -> 1575
+2026-01-08 04:16:16,330 [INFO] Created politician Bridenstine, Jim -> 1576
+2026-01-08 04:16:16,975 [INFO] Created politician Collins, Chris -> 1577
+2026-01-08 04:16:17,652 [INFO] Created politician Lujan Grisham, Michelle -> 1578
+2026-01-08 04:16:18,332 [INFO] Created politician Holding, George -> 1579
+2026-01-08 04:16:18,991 [INFO] Created politician Meadows, Mark -> 1580
+2026-01-08 04:16:19,631 [INFO] Created politician Pittenger, Robert -> 1581
+2026-01-08 04:16:20,296 [INFO] Created politician Cowan, William M. -> 1582
+2026-01-08 04:16:20,931 [INFO] Created politician Heitkamp, Heidi -> 1583
+2026-01-08 04:16:21,731 [INFO] Created politician Bentivolio, Kerry L. -> 1584
+2026-01-08 04:16:22,392 [INFO] Created politician Delaney, John K. -> 1585
+2026-01-08 04:16:23,031 [INFO] Created politician Messer, Luke -> 1586
+2026-01-08 04:16:23,716 [INFO] Created politician Brooks, Susan W. -> 1587
+2026-01-08 04:16:24,370 [INFO] Created politician Enyart, William L. -> 1588
+2026-01-08 04:16:25,031 [INFO] Created politician Gabbard, Tulsi -> 1589
+2026-01-08 04:16:25,673 [INFO] Created politician Collins, Doug -> 1590
+2026-01-08 04:16:26,332 [INFO] Created politician Garcia, Joe -> 1591
+2026-01-08 04:16:26,495 [INFO] Progress: 900/5200 members ingested
+2026-01-08 04:16:27,297 [INFO] Created politician Radel, Trey -> 1592
+2026-01-08 04:16:27,973 [INFO] Created politician Murphy, Patrick -> 1593
+2026-01-08 04:16:28,611 [INFO] Created politician DeSantis, Ron -> 1594
+2026-01-08 04:16:29,272 [INFO] Created politician Yoho, Ted S. -> 1595
+2026-01-08 04:16:29,933 [INFO] Created politician Esty, Elizabeth H. -> 1596
+2026-01-08 04:16:30,632 [INFO] Created politician Negrete McLeod, Gloria -> 1597
+2026-01-08 04:16:31,290 [INFO] Created politician Cook, Paul -> 1598
+2026-01-08 04:16:31,952 [INFO] Created politician Barber, Ron -> 1599
+2026-01-08 04:16:32,595 [INFO] Created politician Harman, Jane -> 1600
+2026-01-08 04:16:33,269 [INFO] Created politician Kirk, Mark Steven -> 1601
+2026-01-08 04:16:33,949 [INFO] Created politician Rehberg, Denny -> 1602
+2026-01-08 04:16:34,592 [INFO] Created politician Obama, Barack -> 1603
+2026-01-08 04:16:35,324 [INFO] Created politician Cazayoux, Donald J., Jr. -> 1604
+2026-01-08 04:16:35,975 [INFO] Created politician Corker, Bob -> 1605
+2026-01-08 04:16:36,633 [INFO] Created politician Jindal, Bobby -> 1606
+2026-01-08 04:16:37,308 [INFO] Created politician Webb, Jim -> 1607
+2026-01-08 04:16:37,953 [INFO] Created politician McCaskill, Claire -> 1608
+2026-01-08 04:16:38,664 [INFO] Created politician Sekula Gibbs, Shelley -> 1609
+2026-01-08 04:16:39,330 [INFO] Created politician Weiner, Anthony D. -> 1610
+2026-01-08 04:16:39,977 [INFO] Created politician Lee, Christopher J. -> 1611
+2026-01-08 04:16:40,631 [INFO] Created politician Thurmond, Strom -> 1612
+2026-01-08 04:16:41,292 [INFO] Created politician Ayotte, Kelly -> 1613
+2026-01-08 04:16:41,950 [INFO] Created politician Owens, William L. -> 1614
+2026-01-08 04:16:42,592 [INFO] Created politician Turner, Robert L. -> 1615
+2026-01-08 04:16:43,254 [INFO] Created politician Hahn, Janice -> 1616
+2026-01-08 04:16:43,896 [INFO] Created politician Goodwin, Carte Patrick -> 1617
+2026-01-08 04:16:44,577 [INFO] Created politician Graves, Tom -> 1618
+2026-01-08 04:16:45,231 [INFO] Created politician Djou, Charles K. -> 1619
+2026-01-08 04:16:45,873 [INFO] Created politician Critz, Mark S. -> 1620
+2026-01-08 04:16:46,517 [INFO] Created politician Murtha, John P. -> 1621
+2026-01-08 04:16:47,178 [INFO] Created politician Brown, Scott P. -> 1622
+2026-01-08 04:16:47,830 [INFO] Created politician Wexler, Robert -> 1623
+2026-01-08 04:16:48,513 [INFO] Created politician LeMieux, George S. -> 1624
+2026-01-08 04:16:49,229 [INFO] Created politician Hochul, Kathleen C. -> 1625
+2026-01-08 04:16:49,922 [INFO] Created politician Martinez, Mel -> 1626
+2026-01-08 04:16:50,575 [INFO] Created politician Franken, Al -> 1627
+2026-01-08 04:16:51,260 [INFO] Created politician Tauscher, Ellen O. -> 1628
+2026-01-08 04:16:51,921 [INFO] Created politician McHugh, John M. -> 1629
+2026-01-08 04:16:52,642 [INFO] Created politician Wu, David -> 1630
+2026-01-08 04:16:53,296 [INFO] Created politician Carson, Julia -> 1631
+2026-01-08 04:16:53,953 [INFO] Created politician Ribble, Reid J. -> 1632
+2026-01-08 04:16:54,590 [INFO] Created politician Duffy, Sean P. -> 1633
+2026-01-08 04:16:55,411 [INFO] Created politician Hurt, Robert -> 1634
+2026-01-08 04:16:56,093 [INFO] Created politician Rigell, E. Scott -> 1635
+2026-01-08 04:16:56,773 [INFO] Created politician Canseco, Francisco "Quico" -> 1636
+2026-01-08 04:16:57,411 [INFO] Created politician Flores, Bill -> 1637
+2026-01-08 04:16:58,070 [INFO] Created politician Fincher, Stephen Lee -> 1638
+2026-01-08 04:16:58,735 [INFO] Created politician Black, Diane -> 1639
+2026-01-08 04:16:59,390 [INFO] Created politician Noem, Kristi L. -> 1640
+2026-01-08 04:17:00,039 [INFO] Created politician Mulvaney, Mick -> 1641
+2026-01-08 04:17:00,192 [INFO] Progress: 950/5200 members ingested
+2026-01-08 04:17:01,012 [INFO] Created politician Gowdy, Trey -> 1642
+2026-01-08 04:17:01,672 [INFO] Created politician Barletta, Lou -> 1643
+2026-01-08 04:17:02,355 [INFO] Created politician Marino, Tom -> 1644
+2026-01-08 04:17:02,992 [INFO] Created politician Meehan, Patrick -> 1645
+2026-01-08 04:17:03,629 [INFO] Created politician Renacci, James B. -> 1646
+2026-01-08 04:17:04,280 [INFO] Created politician Buerkle, Ann Marie -> 1647
+2026-01-08 04:17:04,954 [INFO] Created politician Hanna, Richard L. -> 1648
+2026-01-08 04:17:05,591 [INFO] Created politician Gibson, Christopher P. -> 1649
+2026-01-08 04:17:06,233 [INFO] Created politician Hayworth, Nan A. S. -> 1650
+2026-01-08 04:17:06,872 [INFO] Created politician Grimm, Michael G. -> 1651
+2026-01-08 04:17:07,530 [INFO] Created politician Heck, Joseph J. -> 1652
+2026-01-08 04:17:08,175 [INFO] Created politician Runyan, Jon -> 1653
+2026-01-08 04:17:08,893 [INFO] Created politician Guinta, Frank C. -> 1654
+2026-01-08 04:17:09,598 [INFO] Created politician Berg, Rick -> 1655
+2026-01-08 04:17:10,253 [INFO] Created politician Ellmers, Renee L. -> 1656
+2026-01-08 04:17:10,897 [INFO] Created politician Nunnelee, Alan -> 1657
+2026-01-08 04:17:11,555 [INFO] Created politician Cravaack, Chip -> 1658
+2026-01-08 04:17:12,236 [INFO] Created politician Clarke, Hansen -> 1659
+2026-01-08 04:17:12,900 [INFO] Created politician Amash, Justin -> 1660
+2026-01-08 04:17:13,573 [INFO] Created politician Benishek, Dan -> 1661
+2026-01-08 04:17:14,211 [INFO] Created politician Landry, Jeffrey M. -> 1662
+2026-01-08 04:17:14,876 [INFO] Created politician Pompeo, Mike -> 1663
+2026-01-08 04:17:15,533 [INFO] Created politician Yoder, Kevin -> 1664
+2026-01-08 04:17:16,195 [INFO] Created politician Huelskamp, Tim -> 1665
+2026-01-08 04:17:16,836 [INFO] Created politician Rokita, Todd -> 1666
+2026-01-08 04:17:17,499 [INFO] Created politician Schilling, Robert T. -> 1667
+2026-01-08 04:17:18,153 [INFO] Created politician Hultgren, Randy -> 1668
+2026-01-08 04:17:18,794 [INFO] Created politician Dold, Robert J. -> 1669
+2026-01-08 04:17:19,475 [INFO] Created politician Walsh, Joe -> 1670
+2026-01-08 04:17:20,162 [INFO] Created politician Labrador, Raul R. -> 1671
+2026-01-08 04:17:20,855 [INFO] Created politician Hanabusa, Colleen -> 1672
+2026-01-08 04:17:21,533 [INFO] Created politician Woodall, Rob -> 1673
+2026-01-08 04:17:22,185 [INFO] Created politician Rivera, David -> 1674
+2026-01-08 04:17:22,875 [INFO] Created politician Adams, Sandy -> 1675
+2026-01-08 04:17:23,549 [INFO] Created politician West, Allen B. -> 1676
+2026-01-08 04:17:24,242 [INFO] Created politician Ross, Dennis A. -> 1677
+2026-01-08 04:17:24,933 [INFO] Created politician Nugent, Richard B. -> 1678
+2026-01-08 04:17:25,618 [INFO] Created politician Southerland, Steve II -> 1679
+2026-01-08 04:17:26,281 [INFO] Created politician Carney, John C., Jr. -> 1680
+2026-01-08 04:17:26,955 [INFO] Created politician Gardner, Cory -> 1681
+2026-01-08 04:17:27,614 [INFO] Created politician Tipton, Scott  R. -> 1682
+2026-01-08 04:17:28,277 [INFO] Created politician Denham, Jeff -> 1683
+2026-01-08 04:17:29,096 [INFO] Created politician Quayle, Benjamin -> 1684
+2026-01-08 04:17:29,756 [INFO] Created politician Griffin, Tim -> 1685
+2026-01-08 04:17:30,454 [INFO] Created politician Roby, Martha -> 1686
+2026-01-08 04:17:31,098 [INFO] Created politician Kirk, Paul Grattan, Jr. -> 1687
+2026-01-08 04:17:31,786 [INFO] Created politician Salazar, Ken -> 1688
+2026-01-08 04:17:32,435 [INFO] Created politician Clinton, Hillary Rodham -> 1689
+2026-01-08 04:17:33,114 [INFO] Created politician Richardson, Laura -> 1690
+2026-01-08 04:17:33,796 [INFO] Created politician Broun, Paul C. -> 1691
+2026-01-08 04:17:33,957 [INFO] Progress: 1000/5200 members ingested
+2026-01-08 04:17:34,796 [INFO] Created politician Meehan, Martin T. -> 1692
+2026-01-08 04:17:35,482 [INFO] Created politician Kagen, Steve -> 1693
+2026-01-08 04:17:36,136 [INFO] Created politician Davis, David -> 1694
+2026-01-08 04:17:36,775 [INFO] Created politician Carney, Christopher P. -> 1695
+2026-01-08 04:17:37,435 [INFO] Created politician Murphy, Patrick J. -> 1696
+2026-01-08 04:17:38,097 [INFO] Created politician Sestak, Joe -> 1697
+2026-01-08 04:17:38,782 [INFO] Created politician Altmire, Jason -> 1698
+2026-01-08 04:17:39,438 [INFO] Created politician Fallin, Mary -> 1699
+2026-01-08 04:17:40,094 [INFO] Created politician Space, Zachary T. -> 1700
+2026-01-08 04:17:40,759 [INFO] Created politician Sutton, Betty -> 1701
+2026-01-08 04:17:41,441 [INFO] Created politician Wilson, Charles A. -> 1702
+2026-01-08 04:17:42,134 [INFO] Created politician Arcuri, Michael A. -> 1703
+2026-01-08 04:17:42,928 [INFO] Created politician Hall, John J. -> 1704
+2026-01-08 04:17:43,623 [INFO] Created politician Heller, Dean -> 1705
+2026-01-08 04:17:44,305 [INFO] Created politician Hodes, Paul W. -> 1706
+2026-01-08 04:17:44,984 [INFO] Created politician Shea-Porter, Carol -> 1707
+2026-01-08 04:17:45,656 [INFO] Created politician Shuler, Heath -> 1708
+2026-01-08 04:17:46,397 [INFO] Created politician Bachmann, Michele -> 1709
+2026-01-08 04:17:47,101 [INFO] Created politician Ellison, Keith -> 1710
+2026-01-08 04:17:47,777 [INFO] Created politician Walz, Timothy J. -> 1711
+2026-01-08 04:17:48,441 [INFO] Created politician Boyda, Nancy E. -> 1712
+2026-01-08 04:17:49,076 [INFO] Created politician Ellsworth, Brad -> 1713
+2026-01-08 04:17:49,721 [INFO] Created politician Donnelly, Joe -> 1714
+2026-01-08 04:17:50,407 [INFO] Created politician Hare, Phil -> 1715
+2026-01-08 04:17:51,057 [INFO] Created politician Roskam, Peter J. -> 1716
+2026-01-08 04:17:51,701 [INFO] Created politician Sali, Bill -> 1717
+2026-01-08 04:17:52,362 [INFO] Created politician Loebsack, David -> 1718
+2026-01-08 04:17:53,033 [INFO] Created politician Braley, Bruce L. -> 1719
+2026-01-08 04:17:53,756 [INFO] Created politician Klein, Ron -> 1720
+2026-01-08 04:17:54,396 [INFO] Created politician Mahoney, Tim -> 1721
+2026-01-08 04:17:55,037 [INFO] Created politician Giffords, Gabrielle -> 1722
+2026-01-08 04:17:55,676 [INFO] Created politician Mitchell, Harry E. -> 1723
+2026-01-08 04:17:56,337 [INFO] Created politician Solis, Hilda L. -> 1724
+2026-01-08 04:17:56,983 [INFO] Created politician Murphy, Scott -> 1725
+2026-01-08 04:17:57,792 [INFO] Created politician Perriello, Thomas S.P. -> 1726
+2026-01-08 04:17:58,558 [ERROR] Transaction rolled back due to error
