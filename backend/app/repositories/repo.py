@@ -108,10 +108,15 @@ class PoliticianRepo:
         cur = conn.cursor()
         
         try:
+            # Use bill_id with JOIN to bills table to get bill title
+            # Use COALESCE for vote_value to support both vote_position and vote_value columns
             cur.execute("""
-                SELECT bill_title, vote_value FROM votes 
-                WHERE politician_id = %s 
-                ORDER BY vote_date DESC NULLS LAST
+                SELECT b.title as bill_title, 
+                       COALESCE(v.vote_position, v.vote_value) as vote_value
+                FROM votes v
+                LEFT JOIN bills b ON v.bill_id = b.id
+                WHERE v.politician_id = %s 
+                ORDER BY v.vote_date DESC NULLS LAST
             """, (politician_id,))
             votes = [list(row) for row in cur.fetchall()]
             return votes
