@@ -5,24 +5,32 @@ from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import declarative_base
+from dotenv import load_dotenv
+from app.core.config import settings
 
-# Get database URL from environment variable
-# IMPORTANT: For synchronous psycopg2 (used by PoliticianRepo), use:
-#   DATABASE_URL=postgresql://user:password@localhost/civic_lens
-# For async operations, it will automatically use asyncpg
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./civic_lens.db")
+# Load environment variables from .env file
+load_dotenv()
 
-# The PoliticianRepo uses synchronous psycopg2 and expects a standard PostgreSQL URL
-# The AsyncSession below is for future RAG/AI operations that may need async
+# Get database URL from config settings (which reads from environment)
+# Defaults to SQLite for local dev if DATABASE_URL not set
+DATABASE_URL = settings.get_database_url()
 
-# Convert postgresql:// to postgresql+asyncpg:// for async operations
-async_database_url = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1) if DATABASE_URL.startswith("postgresql://") else DATABASE_URL
+# Supabase connection pooler (pgbouncer) doesn't support prepared statements
+# Disable statement caching for Supabase connections
+# Note: For Supabase pooler, use direct connection string or disable cache
+connect_args = {}
+if "supabase.co" in DATABASE_URL or "pooler" in DATABASE_URL.lower():
+    # Disable prepared statement cache for pgbouncer compatibility
+    # asyncpg requires this to be set in connect_args
+    connect_args = {"statement_cache_size": 0, "prepared_statement_cache_size": 0}
 
 # Create async engine
 engine = create_async_engine(
-    async_database_url,
-    echo=False,
-    future=True
+    DATABASE_URL,
+    echo=False,  # Set to True for SQL query logging during development
+    connect_args=connect_args,
+    # Also disable statement cache at engine level for Supabase
+    pool_pre_ping=True,  # Verify connections before using
 )
 
 # Create session factory
