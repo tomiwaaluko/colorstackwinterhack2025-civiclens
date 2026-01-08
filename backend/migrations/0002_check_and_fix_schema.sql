@@ -14,6 +14,15 @@ BEGIN
             RAISE NOTICE 'Added state_code column to politicians table';
         END IF;
         
+        -- Add CHECK constraint for state_code format if not exists
+        IF NOT EXISTS (SELECT 1 FROM information_schema.constraint_column_usage 
+                      WHERE table_name = 'politicians' AND column_name = 'state_code' 
+                      AND constraint_name = 'politicians_state_code_check') THEN
+            ALTER TABLE politicians ADD CONSTRAINT politicians_state_code_check 
+                CHECK (state_code IS NULL OR state_code ~ '^[A-Z]{2}$');
+            RAISE NOTICE 'Added state_code CHECK constraint to politicians table';
+        END IF;
+        
         -- Add district_number if missing
         IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
                       WHERE table_schema = 'public' AND table_name = 'politicians' AND column_name = 'district_number') THEN
@@ -62,6 +71,15 @@ BEGIN
                       WHERE table_schema = 'public' AND table_name = 'donations' AND column_name = 'state_code') THEN
             ALTER TABLE donations ADD COLUMN state_code CHAR(2);
             RAISE NOTICE 'Added state_code column to donations table';
+        END IF;
+        
+        -- Add CHECK constraint for state_code format if not exists
+        IF NOT EXISTS (SELECT 1 FROM information_schema.constraint_column_usage 
+                      WHERE table_name = 'donations' AND column_name = 'state_code' 
+                      AND constraint_name = 'donations_state_code_check') THEN
+            ALTER TABLE donations ADD CONSTRAINT donations_state_code_check 
+                CHECK (state_code IS NULL OR state_code ~ '^[A-Z]{2}$');
+            RAISE NOTICE 'Added state_code CHECK constraint to donations table';
         END IF;
     END IF;
     

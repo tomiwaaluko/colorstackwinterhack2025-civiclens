@@ -108,8 +108,11 @@ def map_industry(opensecrets_industry: str) -> str:
 
 async def ingest_donations_from_opensecrets(
     politician_ids: Optional[list[int]] = None,
-    cycles: list[str] = ['2024', '2022']
+    cycles: Optional[tuple[str, ...]] = None
 ) -> int:
+    # Set default cycles if not provided
+    if cycles is None:
+        cycles = ('2024', '2022')
     """
     Main ingestion function.
     

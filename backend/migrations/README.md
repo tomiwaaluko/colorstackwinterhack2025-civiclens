@@ -27,10 +27,37 @@ A migration runner script can be created to automate this process.
 
 ## Migration Files
 
-- `0001_enable_postgis.sql` - Enables PostGIS extension for geospatial queries
-- `0002_create_schema.sql` - Creates all database tables (use IF tables don't exist)
-- `0002_create_schema_with_drop.sql` - **USE THIS if tables already exist** - Drops and recreates tables
-- `0002_check_and_fix_schema.sql` - Adds missing columns to existing tables (preserves data)
+### Execution Order and Descriptions
+
+1. **`0001_enable_postgis.sql`** - Enables PostGIS extension for geospatial queries
+2. **`0002_create_schema.sql`** - Creates all database tables (use for NEW databases where tables don't exist)
+3. **`0002_create_schema_with_drop.sql`** - Drops and recreates all tables (use for EXISTING databases when you want a fresh start - WARNING: deletes all data)
+4. **`0002_check_and_fix_schema.sql`** - Adds missing columns to existing tables (use for EXISTING databases to preserve data while updating schema)
+5. **`0003_geographic_standardization.sql`** - Adds geographic standardization with state codes lookup table and spatial functions
+6. **`0008_create_materialized_views.sql`** - Creates materialized views for optimized visualization aggregations
+
+### Recommended Setup Path
+
+**For New Deployments:**
+
+1. Run `0001_enable_postgis.sql`
+2. Run `0002_create_schema.sql`
+3. Run `0003_geographic_standardization.sql`
+4. Run `0008_create_materialized_views.sql`
+
+**For Existing Databases (preserve data):**
+
+1. Run `0001_enable_postgis.sql` (if not already enabled)
+2. Run `0002_check_and_fix_schema.sql` to add any missing columns
+3. Run `0003_geographic_standardization.sql`
+4. Run `0008_create_materialized_views.sql`
+
+**For Existing Databases (fresh start - WARNING: deletes data):**
+
+1. Run `0001_enable_postgis.sql`
+2. Run `0002_create_schema_with_drop.sql`
+3. Run `0003_geographic_standardization.sql`
+4. Run `0008_create_materialized_views.sql`
 
 ## Troubleshooting
 
@@ -39,10 +66,12 @@ A migration runner script can be created to automate this process.
 This error occurs if tables already exist without the `state_code` column. You have two options:
 
 **Option 1: Drop and recreate (loses existing data)**
+
 - Use `0002_create_schema_with_drop.sql` instead
 - This will delete all existing data and recreate tables
 
 **Option 2: Preserve existing data**
+
 1. Run `0002_check_and_fix_schema.sql` first to add missing columns
 2. Then run `0002_create_schema.sql` (will skip existing tables but create missing ones)
 
@@ -52,4 +81,3 @@ This error occurs if tables already exist without the `state_code` column. You h
 - Always run migrations in order (sequential numbering)
 - Test migrations on a development database first
 - If you see column errors, check if tables already exist with old schema
-

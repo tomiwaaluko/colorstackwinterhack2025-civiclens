@@ -25,7 +25,7 @@ CREATE TABLE sources (
     source_url TEXT NOT NULL,
     publisher TEXT NOT NULL,
     title TEXT NOT NULL,
-    source_type TEXT NOT NULL CHECK (source_type IN ('vote', 'bill', 'donation', 'statement')),
+    source_type TEXT NOT NULL CHECK (source_type IN ('vote', 'bill', 'bill_sponsor', 'donation', 'statement')),
     published_at TIMESTAMP WITH TIME ZONE,
     retrieved_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     license_notes TEXT,

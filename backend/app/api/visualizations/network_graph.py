@@ -48,11 +48,13 @@ async def get_network_graph(
     edges = []
     node_ids = set()
     
-    # Build politician filter
-    politician_filter = ""
+    # Build politician filters for different query aliases
+    donations_politician_filter = ""
+    votes_politician_filter = ""
     params = {}
     if politician_ids:
-        politician_filter = "AND d.politician_id = ANY(:politician_ids)"
+        donations_politician_filter = "AND d.politician_id = ANY(:politician_ids)"
+        votes_politician_filter = "AND v.politician_id = ANY(:politician_ids)"
         params["politician_ids"] = politician_ids
     
     # Get politician nodes and donation edges
@@ -66,7 +68,7 @@ async def get_network_graph(
             COUNT(*) as donation_count
         FROM donations d
         JOIN politicians p ON d.politician_id = p.id
-        WHERE 1=1 {politician_filter}
+        WHERE 1=1 {donations_politician_filter}
         GROUP BY p.id, p.name, d.donor_name, d.donor_category
         ORDER BY total_amount DESC
         LIMIT 500
@@ -120,7 +122,7 @@ async def get_network_graph(
         FROM votes v
         JOIN politicians p ON v.politician_id = p.id
         JOIN bills b ON v.bill_id = b.id
-        WHERE 1=1 {politician_filter}
+        WHERE 1=1 {votes_politician_filter}
         GROUP BY p.id, p.name, b.id, b.bill_number, b.title
         ORDER BY vote_count DESC
         LIMIT 200
@@ -176,7 +178,7 @@ async def get_network_graph(
             JOIN politicians p1 ON d.politician_id = p1.id
             JOIN votes v ON v.politician_id = p1.id
             JOIN bills b ON v.bill_id = b.id
-            WHERE 1=1 {politician_filter}
+            WHERE 1=1 {donations_politician_filter}
               AND b.topic = d.donor_category  -- Match bill topic to donor category
             GROUP BY d.donor_name, d.donor_category, b.id, b.bill_number
             HAVING COUNT(DISTINCT d.id) > 0

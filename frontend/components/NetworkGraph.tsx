@@ -8,9 +8,19 @@ const ForceGraph2D = dynamic(
   () => import("react-force-graph").then((mod) => mod.ForceGraph2D),
   { ssr: false }
 );
-import type { NetworkGraphResponse, NetworkNode, NetworkEdge } from "@/lib/types";
+import type {
+  NetworkGraphResponse,
+  NetworkNode,
+  NetworkEdge,
+} from "@/lib/types";
 import { getNetworkGraph } from "@/lib/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import LoadingSpinner from "./LoadingSpinner";
 
@@ -82,7 +92,9 @@ export default function NetworkGraph({
       <Card>
         <CardHeader>
           <CardTitle>Network Graph</CardTitle>
-          <CardDescription>Relationships between politicians, donors, and bills</CardDescription>
+          <CardDescription>
+            Relationships between politicians, donors, and bills
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[600px] flex items-center justify-center">
@@ -98,7 +110,9 @@ export default function NetworkGraph({
       <Card>
         <CardHeader>
           <CardTitle>Network Graph</CardTitle>
-          <CardDescription>Relationships between politicians, donors, and bills</CardDescription>
+          <CardDescription>
+            Relationships between politicians, donors, and bills
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[600px] flex items-center justify-center text-red-600">
@@ -114,7 +128,9 @@ export default function NetworkGraph({
       <Card>
         <CardHeader>
           <CardTitle>Network Graph</CardTitle>
-          <CardDescription>Relationships between politicians, donors, and bills</CardDescription>
+          <CardDescription>
+            Relationships between politicians, donors, and bills
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[600px] flex items-center justify-center text-gray-500">
@@ -129,7 +145,9 @@ export default function NetworkGraph({
     <Card>
       <CardHeader>
         <CardTitle>Network Graph</CardTitle>
-        <CardDescription>Relationships between politicians, donors, and bills</CardDescription>
+        <CardDescription>
+          Relationships between politicians, donors, and bills
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Legend */}
@@ -172,7 +190,9 @@ export default function NetworkGraph({
             }}
             nodeLabel={(node: any) => {
               const networkNode = graphData.nodes.find((n) => n.id === node.id);
-              return networkNode ? `${networkNode.label} (${networkNode.type})` : node.id;
+              return networkNode
+                ? `${networkNode.label} (${networkNode.type})`
+                : node.id;
             }}
             nodeColor={(node: any) => {
               const networkNode = graphData.nodes.find((n) => n.id === node.id);
@@ -187,8 +207,9 @@ export default function NetworkGraph({
             }}
             linkLabel={(link: any) => {
               const edge = graphData.edges.find(
-                (e) => e.source === link.source?.id || e.source === link.source
-                  && (e.target === link.target?.id || e.target === link.target)
+                (e) =>
+                  e.source === (link.source?.id || link.source) &&
+                  e.target === (link.target?.id || link.target)
               );
               if (!edge) return "";
               const sourceNode = graphData.nodes.find(
@@ -197,19 +218,23 @@ export default function NetworkGraph({
               const targetNode = graphData.nodes.find(
                 (n) => n.id === (link.target?.id || link.target)
               );
-              return `${sourceNode?.label || link.source} → ${targetNode?.label || link.target} (${edge.type})`;
+              return `${sourceNode?.label || link.source} → ${
+                targetNode?.label || link.target
+              } (${edge.type})`;
             }}
             linkColor={(link: any) => {
               const edge = graphData.edges.find(
-                (e) => (e.source === link.source?.id || e.source === link.source)
-                  && (e.target === link.target?.id || e.target === link.target)
+                (e) =>
+                  (e.source === link.source?.id || e.source === link.source) &&
+                  (e.target === link.target?.id || e.target === link.target)
               );
               return edge ? getEdgeColor(edge) : "#6b7280";
             }}
             linkWidth={(link: any) => {
               const edge = graphData.edges.find(
-                (e) => (e.source === link.source?.id || e.source === link.source)
-                  && (e.target === link.target?.id || e.target === link.target)
+                (e) =>
+                  (e.source === link.source?.id || e.source === link.source) &&
+                  (e.target === link.target?.id || e.target === link.target)
               );
               return edge ? Math.max(1, Math.min(5, edge.weight / 1000)) : 1;
             }}
@@ -224,8 +249,9 @@ export default function NetworkGraph({
             }}
             onLinkClick={(link: any) => {
               const edge = graphData.edges.find(
-                (e) => (e.source === link.source?.id || e.source === link.source)
-                  && (e.target === link.target?.id || e.target === link.target)
+                (e) =>
+                  (e.source === link.source?.id || e.source === link.source) &&
+                  (e.target === link.target?.id || e.target === link.target)
               );
               if (edge) {
                 setSelectedEdge(edge);
@@ -248,20 +274,23 @@ export default function NetworkGraph({
               <h3 className="font-semibold text-lg">{selectedNode.label}</h3>
               <Badge variant="outline">{selectedNode.type}</Badge>
             </div>
-            {selectedNode.metadata && Object.keys(selectedNode.metadata).length > 0 && (
-              <div className="text-sm text-gray-600 space-y-1">
-                {Object.entries(selectedNode.metadata).map(([key, value]) => (
-                  <div key={key}>
-                    <span className="font-medium">{key}:</span> {String(value)}
-                  </div>
-                ))}
-              </div>
-            )}
+            {selectedNode.metadata &&
+              Object.keys(selectedNode.metadata).length > 0 && (
+                <div className="text-sm text-gray-600 space-y-1">
+                  {Object.entries(selectedNode.metadata).map(([key, value]) => (
+                    <div key={key}>
+                      <span className="font-medium">{key}:</span>{" "}
+                      {String(value)}
+                    </div>
+                  ))}
+                </div>
+              )}
             <div className="text-sm text-gray-500">
               Connections:{" "}
               {
                 graphData.edges.filter(
-                  (e) => e.source === selectedNode.id || e.target === selectedNode.id
+                  (e) =>
+                    e.source === selectedNode.id || e.target === selectedNode.id
                 ).length
               }
             </div>
@@ -272,24 +301,36 @@ export default function NetworkGraph({
           <div className="p-4 bg-gray-50 rounded-lg space-y-2">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-lg">
-                {graphData.nodes.find((n) => n.id === selectedEdge.source)?.label} →{" "}
-                {graphData.nodes.find((n) => n.id === selectedEdge.target)?.label}
+                {
+                  graphData.nodes.find((n) => n.id === selectedEdge.source)
+                    ?.label
+                }{" "}
+                →{" "}
+                {
+                  graphData.nodes.find((n) => n.id === selectedEdge.target)
+                    ?.label
+                }
               </h3>
               <Badge variant="outline">{selectedEdge.type}</Badge>
             </div>
             <div className="text-sm space-y-1">
               <div>
-                <span className="font-medium">Weight:</span> {selectedEdge.weight.toLocaleString()}
+                <span className="font-medium">Weight:</span>{" "}
+                {selectedEdge.weight.toLocaleString()}
               </div>
-              {selectedEdge.metadata && Object.keys(selectedEdge.metadata).length > 0 && (
-                <div className="text-gray-600">
-                  {Object.entries(selectedEdge.metadata).map(([key, value]) => (
-                    <div key={key}>
-                      <span className="font-medium">{key}:</span> {String(value)}
-                    </div>
-                  ))}
-                </div>
-              )}
+              {selectedEdge.metadata &&
+                Object.keys(selectedEdge.metadata).length > 0 && (
+                  <div className="text-gray-600">
+                    {Object.entries(selectedEdge.metadata).map(
+                      ([key, value]) => (
+                        <div key={key}>
+                          <span className="font-medium">{key}:</span>{" "}
+                          {String(value)}
+                        </div>
+                      )
+                    )}
+                  </div>
+                )}
             </div>
           </div>
         )}
@@ -297,11 +338,15 @@ export default function NetworkGraph({
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 text-sm">
           <div className="text-center">
-            <div className="font-semibold text-lg">{graphData.nodes.length}</div>
+            <div className="font-semibold text-lg">
+              {graphData.nodes.length}
+            </div>
             <div className="text-gray-600">Nodes</div>
           </div>
           <div className="text-center">
-            <div className="font-semibold text-lg">{graphData.edges.length}</div>
+            <div className="font-semibold text-lg">
+              {graphData.edges.length}
+            </div>
             <div className="text-gray-600">Edges</div>
           </div>
           <div className="text-center">
@@ -315,4 +360,3 @@ export default function NetworkGraph({
     </Card>
   );
 }
-

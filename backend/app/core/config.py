@@ -27,7 +27,7 @@ class Settings:
 
     # Redis Configuration (Optional)
     REDIS_URL: Optional[str] = os.getenv("REDIS_URL", None)
-    REDIS_ENABLED: bool = REDIS_URL is not None
+    # Note: REDIS_ENABLED is evaluated at runtime via should_use_redis()
 
     # Gemini AI Configuration (Optional)
     GEMINI_API_KEY: Optional[str] = os.getenv("GEMINI_API_KEY", None)
@@ -78,7 +78,8 @@ class Settings:
     @classmethod
     def should_use_redis(cls) -> bool:
         """Check if Redis caching is enabled and configured."""
-        return cls.REDIS_ENABLED
+        # Evaluate at runtime to handle env vars loaded after module import
+        return bool(os.getenv("REDIS_URL") or cls.REDIS_URL)
 
 
 # Global settings instance

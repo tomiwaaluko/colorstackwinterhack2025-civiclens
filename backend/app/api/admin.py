@@ -60,6 +60,8 @@ async def refresh_materialized_views(
                     await db.commit()
                     results.append({"view": view, "status": "refreshed", "method": "concurrent"})
                 except Exception as e:
+                    # Rollback the failed transaction before trying fallback
+                    await db.rollback()
                     # Fallback to non-concurrent if CONCURRENTLY fails
                     await db.execute(text(f"REFRESH MATERIALIZED VIEW {view}"))
                     await db.commit()

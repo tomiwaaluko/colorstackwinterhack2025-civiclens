@@ -119,9 +119,36 @@ async def normalize_politicians():
                 state_code = None
                 district_number = None
                 
-                # For senators/reps, we might need to look up by name or other data
-                # For now, we'll mark as needing manual review if we can't determine
+                # Attempt 1: Parse from current state_code/district if they exist but are invalid
+                if current_state_code:
+                    parsed_code, parsed_district = parse_state_district(current_state_code)
+                    if parsed_code:
+                        state_code = parsed_code
+                        district_number = parsed_district or current_district
                 
+                # Attempt 2: Try to extract state from position string (e.g., "Senator from California")
+                if not state_code and position:
+                    # Match patterns like "Senator from STATE" or "Representative from STATE"
+                    position_match = re.search(r'(?:Senator|Representative|Governor)\s+(?:from|of)\s+([A-Za-z\s]+)', position, re.IGNORECASE)
+                    if position_match:
+                        state_name = position_match.group(1).strip()
+                        state_code = STATE_NAME_TO_CODE.get(state_name)
+                    
+                    # Also try to find a district number in position (e.g., "Representative, 12th District")
+                    if not district_number:
+                        district_match = re.search(r'(\d+)(?:st|nd|rd|th)?\s*District', position, re.IGNORECASE)
+                        if district_match:
+                            district_number = int(district_match.group(1))
+                
+                # Attempt 3: For federal positions without state, mark as needing review
+                if not state_code and position:
+                    # President and Vice President are federal without state
+                    if position.lower() in ('president', 'vice president'):
+                        print(f"✓ {name}: Federal position ({position}) - no state_code needed")
+                        skipped_count += 1
+                        continue
+                
+                # If all inference attempts failed, mark for manual review
                 if not state_code:
                     # Check if we have any other data to infer from
                     # This is a placeholder - in real scenario, you might have

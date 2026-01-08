@@ -79,6 +79,8 @@ async def refresh_materialized_views():
             print("[INFO] Starting materialized view refresh...")
             print(f"[INFO] Found {len(MATERIALIZED_VIEWS)} materialized views to refresh\n")
 
+            failed_views = []
+            
             for view_name in MATERIALIZED_VIEWS:
                 try:
                     print(f"  -> Refreshing {view_name}...", end=" ", flush=True)
@@ -86,6 +88,7 @@ async def refresh_materialized_views():
                     await session.commit()
                     print("[OK]")
                 except Exception as e:
+                    await session.rollback()
                     # If CONCURRENTLY fails (e.g., no unique index), try without it
                     try:
                         await session.execute(text(f"REFRESH MATERIALIZED VIEW {view_name}"))
@@ -94,14 +97,22 @@ async def refresh_materialized_views():
                     except Exception as e2:
                         print(f"[ERROR] {e2}")
                         await session.rollback()
+                        failed_views.append({"view": view_name, "error": str(e2)})
 
-            print("\n[SUCCESS] All materialized views refreshed successfully!")
-            return True
+            # Report results based on failures
+            if failed_views:
+                print(f"\n[WARNING] {len(failed_views)} view(s) failed to refresh:")
+                for failure in failed_views:
+                    print(f"  - {failure['view']}: {failure['error']}")
+                return {"success": False, "failed_views": failed_views}
+            else:
+                print("\n[SUCCESS] All materialized views refreshed successfully!")
+                return {"success": True, "failed_views": []}
 
         except Exception as e:
             print(f"\n[ERROR] Error refreshing materialized views: {e}")
             await session.rollback()
-            return False
+            return {"success": False, "failed_views": [{"view": "unknown", "error": str(e)}]}
         finally:
             await session.close()
 

@@ -24,6 +24,7 @@ if "supabase.co" in DATABASE_URL or "pooler" in DATABASE_URL.lower():
     # asyncpg requires this to be set in connect_args
     connect_args = {"statement_cache_size": 0, "prepared_statement_cache_size": 0}
 
+# Create async engine
 engine = create_async_engine(
     DATABASE_URL,
     echo=False,  # Set to True for SQL query logging during development

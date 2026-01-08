@@ -170,25 +170,31 @@ async def verify_demo_data():
 
             # 7. Verify sources
             print("7. Checking Sources...")
-            result = await session.execute(
-                text("""
-                    SELECT 
-                        COUNT(DISTINCT v.source_id) as vote_sources,
-                        COUNT(DISTINCT d.source_id) as donation_sources,
-                        COUNT(DISTINCT s.source_id) as statement_sources
-                    FROM votes v, donations d, statements s
-                """)
+            
+            # Use separate queries to avoid Cartesian product
+            vote_sources_result = await session.execute(
+                text("SELECT COUNT(DISTINCT source_id) FROM votes")
             )
-            row = result.mappings().first()
-            if row:
-                print(f"   Vote sources: {row['vote_sources']}")
-                print(f"   Donation sources: {row['donation_sources']}")
-                print(f"   Statement sources: {row['statement_sources']}")
-                if row['vote_sources'] == 0 or row['donation_sources'] == 0:
-                    print("   ⚠️  WARNING: Some records missing sources")
-                    all_passed = False
-                else:
-                    print("   ✅ Pass")
+            vote_sources = vote_sources_result.scalar() or 0
+            
+            donation_sources_result = await session.execute(
+                text("SELECT COUNT(DISTINCT source_id) FROM donations")
+            )
+            donation_sources = donation_sources_result.scalar() or 0
+            
+            statement_sources_result = await session.execute(
+                text("SELECT COUNT(DISTINCT source_id) FROM statements")
+            )
+            statement_sources = statement_sources_result.scalar() or 0
+            
+            print(f"   Vote sources: {vote_sources}")
+            print(f"   Donation sources: {donation_sources}")
+            print(f"   Statement sources: {statement_sources}")
+            if vote_sources == 0 or donation_sources == 0:
+                print("   ⚠️  WARNING: Some records missing sources")
+                all_passed = False
+            else:
+                print("   ✅ Pass")
             print()
 
             # Summary
