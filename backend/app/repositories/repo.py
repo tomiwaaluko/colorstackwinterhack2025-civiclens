@@ -8,7 +8,12 @@ Maintains the same interface for backward compatibility.
 import os
 from typing import List, Dict, Optional
 from rapidfuzz import fuzz
-import psycopg2
+try:
+    import psycopg2
+    PSYCOPG2_AVAILABLE = True
+except ImportError:
+    PSYCOPG2_AVAILABLE = False
+    psycopg2 = None  # type: ignore
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -24,6 +29,12 @@ class PoliticianRepo:
         Args:
             db_url: PostgreSQL connection string. If not provided, uses DATABASE_URL env var.
         """
+        if not PSYCOPG2_AVAILABLE:
+            raise RuntimeError(
+                "psycopg2 is not installed. Install it with: pip install psycopg2-binary\n"
+                "Or for development without database, use the /api/qa/ask endpoint instead."
+            )
+        
         self.db_url = db_url or os.getenv('DATABASE_URL')
         if not self.db_url:
             raise ValueError("DATABASE_URL environment variable not set")

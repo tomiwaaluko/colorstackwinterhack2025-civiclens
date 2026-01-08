@@ -1,6 +1,7 @@
 "use client";
 
 import { ExternalLink, Calendar, Building } from "lucide-react";
+import type { Citation } from "@/lib/types";
 import {
   Tooltip,
   TooltipContent,
@@ -16,14 +17,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-
-interface Citation {
-  id: string;
-  source: string;
-  url: string;
-  date: string;
-  type: "vote" | "statement" | "donation";
-}
 
 interface CitationBadgeProps {
   citation: Citation;
@@ -63,18 +56,39 @@ export function CitationBadge({ citation, index }: CitationBadgeProps) {
           <div className="flex items-start gap-3">
             <Building className="h-5 w-5 text-muted-foreground mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-foreground">Source</p>
-              <p className="text-sm text-muted-foreground">{citation.source}</p>
+              <p className="text-sm font-medium text-foreground">Title</p>
+              <p className="text-sm text-muted-foreground">{citation.title}</p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <Building className="h-5 w-5 text-muted-foreground mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-foreground">Publisher</p>
+              <p className="text-sm text-muted-foreground">{citation.publisher}</p>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
             <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-foreground">Date</p>
-              <p className="text-sm text-muted-foreground">{citation.date}</p>
+              <p className="text-sm font-medium text-foreground">Retrieved At</p>
+              <p className="text-sm text-muted-foreground">
+                {new Date(citation.retrieved_at).toLocaleDateString()}
+              </p>
             </div>
           </div>
+
+          {citation.snippet && (
+            <div className="flex items-start gap-3">
+              <div>
+                <p className="text-sm font-medium text-foreground">Snippet</p>
+                <p className="text-sm text-muted-foreground italic">
+                  {citation.snippet}
+                </p>
+              </div>
+            </div>
+          )}
 
           <div className="flex items-start gap-3">
             <ExternalLink className="h-5 w-5 text-muted-foreground mt-0.5" />

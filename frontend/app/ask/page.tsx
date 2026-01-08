@@ -2,6 +2,8 @@
 
 import { useState, Suspense } from "react";
 import { CitationBadge } from "@/components/CitationBadge";
+import { askQuestion } from "@/lib/api";
+import type { AIResponse, Citation as APICitation, Claim } from "@/lib/types";
 import {
   Sparkles,
   Send,
@@ -20,14 +22,9 @@ interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
-  citations?: {
-    id: string;
-    source: string;
-    url: string;
-    date: string;
-    type: "vote" | "statement" | "donation";
-  }[];
+  citations?: APICitation[];
   confidence?: "high" | "medium" | "low";
+  claims?: Claim[];
 }
 
 const suggestedQuestions = [
@@ -50,18 +47,18 @@ const mockConversation: Message[] = [
       "Based on verified voting records and public statements, Senator Elizabeth Warren has consistently supported healthcare expansion legislation. Key findings:\n\n• Voted YES on the Affordable Care Act expansion bill (2021)\n• Co-sponsored Medicare for All legislation (S.1129)\n• Publicly advocated for prescription drug price controls in 47 verified statements\n\nWarren has voted in favor of healthcare-related legislation 94% of the time since taking office in 2013.",
     citations: [
       {
-        id: "1",
-        source: "Congress.gov",
+        source_id: "1",
         url: "https://www.congress.gov/bill/117th-congress/senate-bill/1129",
-        date: "2021-04-21",
-        type: "vote",
+        title: "Medicare for All Act",
+        publisher: "Congress.gov",
+        retrieved_at: "2021-04-21T00:00:00Z",
       },
       {
-        id: "2",
-        source: "GovTrack.us",
+        source_id: "2",
         url: "https://www.govtrack.us/congress/members/elizabeth_warren/412542",
-        date: "2024-01-15",
-        type: "vote",
+        title: "Senator Warren Voting Record",
+        publisher: "GovTrack.us",
+        retrieved_at: "2024-01-15T00:00:00Z",
       },
     ],
     confidence: "high",
@@ -73,7 +70,7 @@ function AskPageContent() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
 
     const userMessage: Message = {
@@ -86,27 +83,34 @@ function AskPageContent() {
     setInput("");
     setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      // Call the real API
+      const response = await askQuestion({
+        question: input.trim(),
+      });
+
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content:
-          "I found relevant information based on verified records. This response would include factual data with citations from official sources.",
-        citations: [
-          {
-            id: "1",
-            source: "Congress.gov",
-            url: "https://www.congress.gov",
-            date: "2024-01-15",
-            type: "vote",
-          },
-        ],
+        content: response.answer,
+        citations: response.citations,
+        claims: response.claims,
         confidence: "high",
       };
+      
       setMessages((prev) => [...prev, aiMessage]);
+    } catch (error) {
+      // Handle error
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "I apologize, but I encountered an error processing your question. Please try again.",
+        confidence: "low",
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const handleSuggestedQuestion = (question: string) => {
@@ -245,7 +249,7 @@ function AskPageContent() {
                         <div className="space-y-2">
                           {message.citations.map((citation, index) => (
                             <div
-                              key={citation.id}
+                              key={citation.source_id}
                               className="flex items-center gap-2 text-sm"
                             >
                               <CitationBadge
@@ -253,7 +257,7 @@ function AskPageContent() {
                                 index={index + 1}
                               />
                               <span className="text-muted-foreground">
-                                {citation.source}
+                                {citation.publisher}
                               </span>
                               <a
                                 href={citation.url}
