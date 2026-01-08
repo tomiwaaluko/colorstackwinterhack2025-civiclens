@@ -33,6 +33,7 @@ engine = create_async_engine(
     pool_pre_ping=True,  # Verify connections before using
 )
 
+# Create session factory
 AsyncSessionLocal = async_sessionmaker(
     engine,
     class_=AsyncSession,

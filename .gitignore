@@ -3,3 +3,5 @@
 
 # Frontend Vite folder (local only)
 frontendvite/
+
+.env

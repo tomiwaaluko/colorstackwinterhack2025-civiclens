@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-from pathlib import Path
 from typing import Optional
 from ..repositories.repo import PoliticianRepo
 from ..schemas.search import SearchResponse
@@ -7,8 +6,7 @@ from ..schemas.politician import PoliticianSummary
 
 router = APIRouter()
 
-DATA_PATH = Path(__file__).parent.parent / "data" / "politicians.json"
-repo = PoliticianRepo(str(DATA_PATH))
+repo = PoliticianRepo()
 
 @router.get("/search", response_model=SearchResponse)
 def search_politicians(name: str, zip_code: Optional[str] = None, limit: int = 10):
