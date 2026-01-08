@@ -5,17 +5,31 @@ from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import declarative_base
+from dotenv import load_dotenv
+from app.core.config import settings
 
-# Get database URL from environment variable
-# For now, using SQLite for simplicity. For production, use PostgreSQL with pgvector
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./civic_lens.db")
+# Load environment variables from .env file
+load_dotenv()
 
-# For PostgreSQL with pgvector, use:
-# DATABASE_URL = "postgresql+asyncpg://user:password@localhost/civic_lens"
+# Get database URL from config settings (which reads from environment)
+# Defaults to SQLite for local dev if DATABASE_URL not set
+DATABASE_URL = settings.get_database_url()
+
+# Supabase connection pooler (pgbouncer) doesn't support prepared statements
+# Disable statement caching for Supabase connections
+# Note: For Supabase pooler, use direct connection string or disable cache
+connect_args = {}
+if "supabase.co" in DATABASE_URL or "pooler" in DATABASE_URL.lower():
+    # Disable prepared statement cache for pgbouncer compatibility
+    # asyncpg requires this to be set in connect_args
+    connect_args = {"statement_cache_size": 0, "prepared_statement_cache_size": 0}
 
 engine = create_async_engine(
     DATABASE_URL,
     echo=False,  # Set to True for SQL query logging during development
+    connect_args=connect_args,
+    # Also disable statement cache at engine level for Supabase
+    pool_pre_ping=True,  # Verify connections before using
 )
 
 AsyncSessionLocal = async_sessionmaker(
