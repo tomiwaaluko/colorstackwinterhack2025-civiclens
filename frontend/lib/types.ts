@@ -13,11 +13,16 @@ export interface Politician {
   id: string;
   name: string;
   party?: string;
-  office?: string;
-  state?: string;
-  district?: string;
-  photo_url?: string;
+  position?: string;  // 'President', 'Vice President', 'Senator', 'Representative', 'Governor', 'Other'
+  state_code?: string;  // 2-letter USPS state code (e.g., 'CA', 'NY', 'DE')
+  district_number?: number | null;  // Congressional district (1-53) or null for senators/presidents
+  image_url?: string;  // URL to politician photo
+  photo_url?: string;  // Legacy field, use image_url instead
   bio?: string;
+  // Legacy fields for backward compatibility
+  office?: string;  // Deprecated: use position instead
+  state?: string;  // Deprecated: use state_code instead
+  district?: string;  // Deprecated: use district_number instead
 }
 
 export interface Vote {
@@ -86,6 +91,104 @@ export interface ComparisonResult {
   politician_b: PoliticianProfile;
   topic?: string;
   comparison_summary?: string;
+}
+
+// Visualization types
+export interface VisualizationCitation {
+  source_id: number;
+  source_url: string;
+  title: string;
+  publisher: string;
+  retrieved_at: string;
+}
+
+export interface StateDonationValue {
+  total_amount: number;
+  donation_count: number;
+  avg_amount?: number | null;
+  top_donor_category?: string | null;
+  top_category_amount?: number | null;
+  citations: VisualizationCitation[];
+  top_politicians: Array<{
+    politician_id: number;
+    name: string;
+    total_amount: number;
+  }>;
+  top_donors: Array<{
+    donor_name: string;
+    total_amount: number;
+    donation_count: number;
+  }>;
+}
+
+export interface DonationsMapResponse {
+  level: string;
+  values: Record<string, StateDonationValue>;
+  metadata: {
+    date_range: {
+      start: string | null;
+      end: string | null;
+    };
+    citation_count: number;
+    total_states: number;
+    filters: {
+      politician_ids?: number[] | null;
+      category?: string | null;
+      start_date?: string | null;
+      end_date?: string | null;
+    };
+  };
+}
+
+export type EventType = "vote" | "bill_sponsor" | "donation" | "statement";
+
+export interface TimelineEvent {
+  id: string;
+  type: EventType;
+  date: string;
+  title: string;
+  outcome?: string | null;
+  citations: VisualizationCitation[];
+  citation_count: number;
+}
+
+export interface TimelineResponse {
+  events: TimelineEvent[];
+  clusters?: any[];
+}
+
+export interface NetworkNode {
+  id: string;
+  label: string;
+  type: string; // 'politician' | 'donor' | 'bill'
+  metadata?: Record<string, any>;
+}
+
+export interface NetworkEdge {
+  source: string;
+  target: string;
+  weight: number;
+  type: string; // 'donation' | 'vote' | 'indirect'
+  metadata?: Record<string, any>;
+}
+
+export interface NetworkGraphResponse {
+  nodes: NetworkNode[];
+  edges: NetworkEdge[];
+}
+
+export interface CategoryValue {
+  category: string;
+  total_amount: number;
+  donation_count: number;
+  avg_amount?: number | null;
+  citations: VisualizationCitation[];
+}
+
+export interface RadialResponse {
+  categories: CategoryValue[];
+  total_amount: number;
+  total_count: number;
 }
 
 // AI Q&A types (matching AI response schema)
