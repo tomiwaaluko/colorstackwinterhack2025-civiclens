@@ -84,6 +84,7 @@ export default function Navbar() {
   const navItems = [
     { name: "Search", path: "/" },
     { name: "Compare", path: "/compare" },
+    { name: "Visualizations", path: "/visualizations" },
     { name: "Ask AI", path: "/ask" },
     { name: "About", path: "/about" },
   ];

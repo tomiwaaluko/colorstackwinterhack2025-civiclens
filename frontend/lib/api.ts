@@ -10,6 +10,11 @@ import type {
   Citation,
   Vote,
   Donation,
+  DonationsMapResponse,
+  TimelineResponse,
+  NetworkGraphResponse,
+  RadialResponse,
+  EventType,
 } from "./types";
 
 // API base URL - defaults to localhost for development
@@ -276,6 +281,143 @@ export async function askQuestion(request: AskRequest): Promise<AIResponse> {
     method: "POST",
     body: JSON.stringify(request),
   });
+}
+
+// Visualization API functions
+
+export async function getDonationsMap(params?: {
+  politician_ids?: number[];
+  category?: string;
+  start_date?: string;
+  end_date?: string;
+  aggregation_level?: string;
+}): Promise<DonationsMapResponse> {
+  if (DEMO_MODE) {
+    // Return demo data for donations map
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return {
+      level: "state",
+      values: {
+        CA: {
+          total_amount: 200000,
+          donation_count: 5,
+          avg_amount: 40000,
+          top_donor_category: "Technology",
+          top_category_amount: 150000,
+          citations: [],
+          top_politicians: [],
+          top_donors: [],
+        },
+        NY: {
+          total_amount: 150000,
+          donation_count: 3,
+          avg_amount: 50000,
+          top_donor_category: "Finance",
+          top_category_amount: 100000,
+          citations: [],
+          top_politicians: [],
+          top_donors: [],
+        },
+      },
+      metadata: {
+        date_range: { start: null, end: null },
+        citation_count: 0,
+        total_states: 2,
+        filters: {},
+      },
+    };
+  }
+
+  const queryParams = new URLSearchParams();
+  if (params?.politician_ids) {
+    params.politician_ids.forEach((id) => queryParams.append("politician_ids", id.toString()));
+  }
+  if (params?.category) queryParams.append("category", params.category);
+  if (params?.start_date) queryParams.append("start_date", params.start_date);
+  if (params?.end_date) queryParams.append("end_date", params.end_date);
+  if (params?.aggregation_level) queryParams.append("aggregation_level", params.aggregation_level);
+
+  return fetchApi<DonationsMapResponse>(
+    `/api/visualizations/donations-map${queryParams.toString() ? `?${queryParams.toString()}` : ""}`
+  );
+}
+
+export async function getPoliticianTimeline(
+  politicianId: number,
+  params?: {
+    start_date?: string;
+    end_date?: string;
+    event_types?: EventType[];
+  }
+): Promise<TimelineResponse> {
+  if (DEMO_MODE) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return {
+      events: [],
+      clusters: [],
+    };
+  }
+
+  const queryParams = new URLSearchParams();
+  if (params?.start_date) queryParams.append("start_date", params.start_date);
+  if (params?.end_date) queryParams.append("end_date", params.end_date);
+  if (params?.event_types) {
+    params.event_types.forEach((type) => queryParams.append("event_types", type));
+  }
+
+  return fetchApi<TimelineResponse>(
+    `/api/visualizations/politician-timeline/${politicianId}${queryParams.toString() ? `?${queryParams.toString()}` : ""}`
+  );
+}
+
+export async function getNetworkGraph(params?: {
+  politician_ids?: number[];
+  include_indirect?: boolean;
+}): Promise<NetworkGraphResponse> {
+  if (DEMO_MODE) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return {
+      nodes: [],
+      edges: [],
+    };
+  }
+
+  const queryParams = new URLSearchParams();
+  if (params?.politician_ids) {
+    params.politician_ids.forEach((id) => queryParams.append("politician_ids", id.toString()));
+  }
+  if (params?.include_indirect !== undefined) {
+    queryParams.append("include_indirect", params.include_indirect.toString());
+  }
+
+  return fetchApi<NetworkGraphResponse>(
+    `/api/visualizations/network-graph${queryParams.toString() ? `?${queryParams.toString()}` : ""}`
+  );
+}
+
+export async function getPoliticianRadial(
+  politicianId: number,
+  params?: {
+    start_date?: string;
+    end_date?: string;
+  }
+): Promise<RadialResponse> {
+  if (DEMO_MODE) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return {
+      categories: [],
+      total_amount: 0,
+      total_count: 0,
+    };
+  }
+
+  const queryParams = new URLSearchParams();
+  if (params?.start_date) queryParams.append("start_date", params.start_date);
+  if (params?.end_date) queryParams.append("end_date", params.end_date);
+
+  return fetchApi<RadialResponse>(
+    `/api/visualizations/politician-radial/${politicianId}${queryParams.toString() ? `?${queryParams.toString()}` : ""}`
+  );
 }
 
 // Helper to check if we're in demo mode
