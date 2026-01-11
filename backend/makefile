@@ -1,5 +1,16 @@
 .PHONY: install run dev test clean db-test api-test populate help
 
+# Detect OS and set virtual environment paths
+ifeq ($(OS),Windows_NT)
+	VENV_BIN = .venv/Scripts
+	PYTHON = $(VENV_BIN)/python.exe
+	PIP = $(VENV_BIN)/pip.exe
+else
+	VENV_BIN = .venv/bin
+	PYTHON = $(VENV_BIN)/python
+	PIP = $(VENV_BIN)/pip
+endif
+
 # Default target - show help
 help:
 	@echo "CivicLens Backend - Available Commands:"
@@ -25,31 +36,31 @@ help:
 
 # Install dependencies
 install:
-	.venv/bin/pip install -r requirements.txt
+	$(PIP) install -r requirements.txt
 
 # Run backend server in production mode
 run:
-	.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+	$(VENV_BIN)/uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 # Run backend server in development mode with auto-reload
 dev:
-	.venv/bin/uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+	$(VENV_BIN)/uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 
 # Run all tests
 test:
-	.venv/bin/pytest tests/ -v
+	$(VENV_BIN)/pytest tests/ -v
 
 # Test database connection
 db-test:
-	.venv/bin/python test_db_connection.py
+	$(PYTHON) test_db_connection.py
 
 # Test API endpoints
 api-test:
-	.venv/bin/python test_api_endpoints.py
+	$(PYTHON) test_api_endpoints.py
 
 # Populate database with politician data
 populate:
-	.venv/bin/python populate_database.py
+	$(PYTHON) populate_database.py
 
 # Clean Python cache files
 clean:
