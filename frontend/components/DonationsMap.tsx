@@ -49,6 +49,7 @@ interface DonationsMapProps {
   showTimeSlider?: boolean;
   showViewModeToggle?: boolean;
   comparativePoliticians?: Array<{ id: number; name: string; party: string }>;
+  onCitationClick?: (citations: any[], stateName?: string) => void;
 }
 
 // Component to update map bounds
@@ -97,6 +98,7 @@ export default function DonationsMap({
   showTimeSlider = true,
   showViewModeToggle = true,
   comparativePoliticians = [],
+  onCitationClick,
 }: DonationsMapProps) {
   const [mapData, setMapData] = useState<DonationsMapResponse | null>(null);
   const [geoJson, setGeoJson] = useState<any>(null);
@@ -574,9 +576,21 @@ export default function DonationsMap({
             {/* Citations */}
             {selectedData.citations.length > 0 && (
               <div className="mt-2">
-                <span className="text-gray-600 text-sm">Sources:</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600 text-sm">
+                    Sources ({selectedData.citations.length})
+                  </span>
+                  {onCitationClick && (
+                    <button
+                      onClick={() => onCitationClick(selectedData.citations, selectedState || undefined)}
+                      className="text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                    >
+                      View all evidence →
+                    </button>
+                  )}
+                </div>
                 <div className="flex flex-wrap gap-1 mt-1">
-                  {selectedData.citations.map((citation, idx) => (
+                  {selectedData.citations.slice(0, 3).map((citation, idx) => (
                     <a
                       key={idx}
                       href={citation.source_url}
@@ -587,6 +601,11 @@ export default function DonationsMap({
                       {citation.title}
                     </a>
                   ))}
+                  {selectedData.citations.length > 3 && (
+                    <span className="text-xs text-gray-500">
+                      +{selectedData.citations.length - 3} more
+                    </span>
+                  )}
                 </div>
               </div>
             )}

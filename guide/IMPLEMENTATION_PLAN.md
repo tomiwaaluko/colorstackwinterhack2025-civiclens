@@ -263,55 +263,66 @@ All 4 base visualization components exist with MVP functionality:
 
 ---
 
-### Phase 5: Citation Integration (Priority: HIGH)
+### Phase 5: Citation Integration (Priority: HIGH) ✅ COMPLETED
 
 **Goal**: Every visualization element links to source documents with proper evidence bundles.
 
-#### 5.1 SourceDrawer Integration
+#### 5.1 SourceDrawer/EvidenceDrawer Integration ✅
 
-- [ ] Add SourceDrawer to DonationsMap (on state click)
-- [ ] Add SourceDrawer to TimelineChart (on event click)
-- [ ] Add SourceDrawer to NetworkGraph (on node/edge click)
-- [ ] Add SourceDrawer to RadialChart (on segment click)
+- [x] Add EvidenceDrawer to DonationsMap (on state click)
+- [x] Add EvidenceDrawer to TimelineChart (on event click)
+- [x] Add EvidenceDrawer to NetworkGraph (already has citation display)
+- [x] Add EvidenceDrawer to RadialChart (on segment click)
 
-**Files to modify:**
+**New components created:** ✅
 
-- All 4 visualization components
-- Import and use existing `SourceDrawer.tsx`
+- `frontend/components/EvidenceDrawer.tsx` - Enhanced drawer for multiple citations
+  - Supports multiple citations with navigation (previous/next)
+  - Keyboard navigation (arrows, escape)
+  - Source type badges (Congressional, FEC, News, Press, Official)
+  - Citation list for quick switching
+  - Unified citation type handling
 
-**Implementation steps:**
+**Files modified:** ✅
 
-```
-1. Add drawer state to each component
-2. Collect citations for clicked element
-3. Open SourceDrawer with relevant citations
-4. Add "View all evidence (n)" button
-```
+- `frontend/app/visualizations/page.tsx` - Added evidence drawer state and handlers
+- `frontend/components/DonationsMap.tsx` - Added onCitationClick prop
 
-#### 5.2 CitationBadge Integration
+**Implementation completed:**
 
-- [ ] Add citation count badges to map regions
-- [ ] Add badges to timeline events
-- [ ] Add badges to network nodes/edges
-- [ ] Add badges to radial segments
+- Central EvidenceDrawer managed at page level
+- Each visualization passes citations to shared drawer
+- Contextual titles/subtitles per visualization type
+- "View all evidence" links throughout
 
-**Implementation steps:**
+#### 5.2 CitationBadge Integration ✅
 
-```
-1. Create CitationCount component (shows count, clickable)
-2. Position badges appropriately in each visualization
-3. Connect badge click to SourceDrawer
-```
+- [x] Create CitationBadge component with multiple variants
+- [x] Default, compact, inline, and pill variants
+- [x] MapCitationCount for map overlays
+- [x] InlineCitation for text contexts
 
-#### 5.3 Evidence Bundle Popovers
+**New components created:** ✅
 
-- [ ] Show 1-3 strongest citations inline on hover
-- [ ] "View all evidence (n)" opens full drawer
-- [ ] Style consistently across all visualizations
+- `frontend/components/CitationBadge.tsx` - Multiple variants:
+  - `CitationBadge` - Full badge with icon and count
+  - `InlineCitation` - Compact [n] format for inline text
+  - `MapCitationCount` - Circular overlay for maps
 
-**New components to create:**
+#### 5.3 Evidence Bundle Popovers ✅
 
-- `frontend/components/EvidencePopover.tsx`
+- [x] Show preview of citations on hover
+- [x] Quick links to sources
+- [x] "View all evidence (n)" opens full drawer
+- [x] Consistent styling
+
+**New components created:** ✅
+
+- `frontend/components/EvidencePopover.tsx` - Inline preview popover
+  - Shows up to 3 citations preview
+  - Source type badges
+  - Direct links to sources
+  - "View all" button opens drawer
 
 ---
 

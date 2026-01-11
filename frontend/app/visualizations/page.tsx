@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 
 // Dynamic imports to avoid SSR issues with browser-only libraries
@@ -32,6 +32,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { X, Plus } from "lucide-react";
+import EvidenceDrawer, { toUnifiedCitation, type UnifiedCitation } from "@/components/EvidenceDrawer";
 
 // Demo politicians for comparison - in production this would come from API
 const DEMO_POLITICIANS = [
@@ -122,15 +123,71 @@ export default function VisualizationsPage() {
     setTimelineComparePoliticians(timelineComparePoliticians.filter((p) => p.id !== id));
   };
   
+  // Evidence Drawer state
+  const [evidenceDrawerOpen, setEvidenceDrawerOpen] = useState(false);
+  const [evidenceCitations, setEvidenceCitations] = useState<UnifiedCitation[]>([]);
+  const [evidenceTitle, setEvidenceTitle] = useState("Source Evidence");
+  const [evidenceSubtitle, setEvidenceSubtitle] = useState<string | undefined>();
+
+  // Open evidence drawer with citations
+  const openEvidenceDrawer = useCallback((
+    citations: any[],
+    title?: string,
+    subtitle?: string
+  ) => {
+    const unified = citations.map(c => toUnifiedCitation(c));
+    setEvidenceCitations(unified);
+    setEvidenceTitle(title || "Source Evidence");
+    setEvidenceSubtitle(subtitle);
+    setEvidenceDrawerOpen(true);
+  }, []);
+
+  // Close evidence drawer
+  const closeEvidenceDrawer = useCallback(() => {
+    setEvidenceDrawerOpen(false);
+  }, []);
+
   // Timeline event handlers
   const handleTimelineEventClick = (event: any) => {
     console.log("Timeline event clicked:", event);
-    // Could open a detail modal or drawer here
+    if (event.citations && event.citations.length > 0) {
+      openEvidenceDrawer(
+        event.citations,
+        "Event Sources",
+        event.title
+      );
+    }
   };
   
   const handleTimelineCitationClick = (citations: any[]) => {
-    console.log("Timeline citations:", citations);
-    // Could open SourceDrawer with the citations
+    openEvidenceDrawer(citations, "Timeline Evidence");
+  };
+
+  // Map citation handler
+  const handleMapCitationClick = (citations: any[], stateName?: string) => {
+    openEvidenceDrawer(
+      citations,
+      "Donation Sources",
+      stateName ? `${stateName} donations` : undefined
+    );
+  };
+
+  // Network citation handler
+  const handleNetworkCitationClick = (citations: any[], nodeName?: string) => {
+    openEvidenceDrawer(
+      citations,
+      "Network Evidence",
+      nodeName
+    );
+  };
+
+  // Radial citation handler
+  const handleRadialCitationClick = (citations: any[], categoryName?: string) => {
+    openEvidenceDrawer(
+      citations,
+      "Category Sources",
+      categoryName ? `${categoryName} donations` : undefined
+    );
   };
 
   return (
@@ -295,6 +352,7 @@ export default function VisualizationsPage() {
             showTimeSlider={true}
             showViewModeToggle={true}
             comparativePoliticians={comparativePoliticians}
+            onCitationClick={handleMapCitationClick}
           />
         </TabsContent>
 
@@ -557,6 +615,7 @@ export default function VisualizationsPage() {
               politicianId={parseInt(radialFilters.politicianId)}
               startDate={radialFilters.startDate || undefined}
               endDate={radialFilters.endDate || undefined}
+              onCitationClick={(citations) => handleRadialCitationClick(citations)}
             />
           )}
           {!radialFilters.politicianId && (
@@ -568,6 +627,15 @@ export default function VisualizationsPage() {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Evidence Drawer - shared across all visualizations */}
+      <EvidenceDrawer
+        citations={evidenceCitations}
+        isOpen={evidenceDrawerOpen}
+        onClose={closeEvidenceDrawer}
+        title={evidenceTitle}
+        subtitle={evidenceSubtitle}
+      />
     </div>
   );
 }
