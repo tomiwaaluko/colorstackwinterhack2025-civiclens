@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: civiclens-backend
+    ports:
+      - "8000:8000"
+    environment:
+      # Load environment variables from .env file
+      - DATABASE_URL=${DATABASE_URL}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-flash}
+      - GEMINI_EMBEDDING_MODEL=${GEMINI_EMBEDDING_MODEL:-gemini-embedding-001}
+      - RAG_TOP_K=${RAG_TOP_K:-8}
+      - RAG_MIN_SIMILARITY=${RAG_MIN_SIMILARITY:-0.20}
+      - CONGRESS_GOV_API_KEY=${CONGRESS_GOV_API_KEY}
+      - OPENSTATES_API_KEY=${OPENSTATES_API_KEY}
+      - GOOGLE_CIVIC_API_KEY=${GOOGLE_CIVIC_API_KEY}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - DEMO_MODE=${DEMO_MODE:-false}
+      - NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=${NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
+      - REDIS_URL=${REDIS_URL}
+    env_file:
+      - .env
+    volumes:
+      # Mount source code for development (hot reload)
+      - .:/app
+      # Exclude virtual environment
+      - /app/.venv
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    restart: unless-stopped
+    networks:
+      - civiclens-network
+
+networks:
+  civiclens-network:
+    driver: bridge

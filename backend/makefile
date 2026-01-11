@@ -1,66 +1,76 @@
-.PHONY: install run dev test clean db-test api-test populate help
-
-# Detect OS and set virtual environment paths
-ifeq ($(OS),Windows_NT)
-	VENV_BIN = .venv/Scripts
-	PYTHON = $(VENV_BIN)/python.exe
-	PIP = $(VENV_BIN)/pip.exe
-else
-	VENV_BIN = .venv/bin
-	PYTHON = $(VENV_BIN)/python
-	PIP = $(VENV_BIN)/pip
-endif
+.PHONY: install build run dev stop logs shell test db-test api-test populate clean help
 
 # Default target - show help
 help:
 	@echo "CivicLens Backend - Available Commands:"
 	@echo ""
-	@echo "Setup & Installation:"
-	@echo "  make install        - Install Python dependencies"
+	@echo "Setup & Build:"
+	@echo "  make build          - Build Docker image"
 	@echo ""
-	@echo "Run Application:"
-	@echo "  make run            - Run the backend API server (production mode)"
-	@echo "  make dev            - Run the backend API server with hot reload (development mode)"
+	@echo "Run Application (Docker):"
+	@echo "  make run            - Start backend in Docker (detached mode)"
+	@echo "  make dev            - Start backend in Docker with logs (foreground)"
+	@echo "  make stop           - Stop and remove Docker containers"
+	@echo "  make logs           - View Docker container logs"
+	@echo "  make shell          - Open shell in Docker container"
 	@echo ""
-	@echo "Testing:"
-	@echo "  make test           - Run all tests"
-	@echo "  make db-test        - Test database connection"
-	@echo "  make api-test       - Test API endpoints"
+	@echo "Testing (Docker):"
+	@echo "  make test           - Run all tests in Docker"
+	@echo "  make db-test        - Test database connection in Docker"
+	@echo "  make api-test       - Test API endpoints in Docker"
 	@echo ""
-	@echo "Database:"
+	@echo "Database (Docker):"
 	@echo "  make populate       - Populate database with politician data"
 	@echo ""
 	@echo "Utilities:"
 	@echo "  make clean          - Remove Python cache files"
 	@echo ""
 
-# Install dependencies
-install:
-	$(PIP) install -r requirements.txt
+# Build Docker image
+build:
+	@echo "Building Docker image..."
+	docker-compose build
 
-# Run backend server in production mode
+# Run backend server in Docker (detached mode)
 run:
-	$(VENV_BIN)/uvicorn app.main:app --host 0.0.0.0 --port 8000
+	@echo "Starting backend in Docker..."
+	docker-compose up -d
+	@echo "Backend is running at http://localhost:8000"
+	@echo "Use 'make logs' to view logs or 'make stop' to stop"
 
-# Run backend server in development mode with auto-reload
+# Run backend server in Docker (foreground with logs)
 dev:
-	$(VENV_BIN)/uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+	@echo "Starting backend in Docker with logs..."
+	docker-compose up
 
-# Run all tests
+# Stop Docker containers
+stop:
+	@echo "Stopping Docker containers..."
+	docker-compose down
+
+# View Docker logs
+logs:
+	docker-compose logs -f backend
+
+# Open shell in Docker container
+shell:
+	docker-compose exec backend /bin/bash
+
+# Run all tests in Docker
 test:
-	$(VENV_BIN)/pytest tests/ -v
+	docker-compose exec backend pytest tests/ -v
 
-# Test database connection
+# Test database connection in Docker
 db-test:
-	$(PYTHON) test_db_connection.py
+	docker-compose exec backend python test_db_connection.py
 
-# Test API endpoints
+# Test API endpoints in Docker
 api-test:
-	$(PYTHON) test_api_endpoints.py
+	docker-compose exec backend python test_api_endpoints.py
 
-# Populate database with politician data
+# Populate database with politician data in Docker
 populate:
-	$(PYTHON) populate_database.py
+	docker-compose exec backend python populate_database.py
 
 # Clean Python cache files
 clean:
