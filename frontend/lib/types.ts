@@ -140,6 +140,24 @@ export interface DonationsMapResponse {
   };
 }
 
+// Extended types for map visualization modes
+export type MapViewMode = "total" | "party" | "comparative";
+
+export interface PartyDonationValue {
+  democrat: number;
+  republican: number;
+  independent: number;
+  total: number;
+}
+
+export interface ComparativePoliticianData {
+  id: number;
+  name: string;
+  party: string;
+  color: string;
+  values: Record<string, number>;
+}
+
 export type EventType = "vote" | "bill_sponsor" | "donation" | "statement";
 
 export interface TimelineEvent {
@@ -150,11 +168,40 @@ export interface TimelineEvent {
   outcome?: string | null;
   citations: VisualizationCitation[];
   citation_count: number;
+  topic?: string;
+  amount?: number; // For donation events
+  related_events?: string[]; // IDs of related events
+}
+
+export interface TimelineCluster {
+  id: string;
+  name: string;
+  topic: string;
+  start_date: string;
+  end_date: string;
+  event_ids: string[];
+  event_count: number;
 }
 
 export interface TimelineResponse {
   events: TimelineEvent[];
-  clusters?: any[];
+  clusters?: TimelineCluster[];
+}
+
+// Timeline comparative mode types
+export interface ComparativeTimelineData {
+  politician_id: number;
+  politician_name: string;
+  party: string;
+  events: TimelineEvent[];
+}
+
+export interface TimelineComparisonResult {
+  politicians: ComparativeTimelineData[];
+  date_range: {
+    start: string;
+    end: string;
+  };
 }
 
 export interface NetworkNode {
