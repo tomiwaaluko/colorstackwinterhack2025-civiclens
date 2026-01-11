@@ -1,11 +1,18 @@
-from fastapi import FastAPI
+import time
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.health import router as health_router
 from app.api.search import router as search_router
 from app.api.politicians import router as politicians_router
+from app.api.all_politicians import router as all_politicians_router
 from app.api.compare import router as compare_router
+from app.api.map import router as map_router
+from app.api.votes import router as votes_router
+from app.api.policies import router as policies_router
+from app.api.impact import router as impact_router
 from app.api.qa import router as qa_router
+from app.api.rag import router as rag_router
 from app.api.visualizations.donations_map import router as donations_map_router
 from app.api.visualizations.timeline import router as timeline_router
 from app.api.visualizations.network_graph import router as network_graph_router
@@ -34,12 +41,27 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
+    # Middleware to log request duration
+    @app.middleware("http")
+    async def add_process_time_header(request: Request, call_next):
+        start_time = time.time()
+        response = await call_next(request)
+        process_time = time.time() - start_time
+        print(f"Request: {request.url.path} took {process_time:.4f} seconds")
+        return response
+
     # Routers
     app.include_router(health_router)
     app.include_router(search_router)
     app.include_router(politicians_router)
+    app.include_router(all_politicians_router)
     app.include_router(compare_router)
+    app.include_router(map_router)
+    app.include_router(votes_router)
+    app.include_router(policies_router)
+    app.include_router(impact_router)
     app.include_router(qa_router)
+    app.include_router(rag_router)
     
     # Visualization routers
     app.include_router(donations_map_router)

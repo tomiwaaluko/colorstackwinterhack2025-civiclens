@@ -28,7 +28,7 @@ class PoliticianRepo:
         """
         self._search_cache = {}
 
-    async def _politician_row_to_dict(self, row, db: AsyncSession) -> Dict:
+    async def _politician_row_to_dict(self, row, db: AsyncSession, fetch_details: bool = True) -> Dict:
         """Convert database row to dictionary matching JSON format"""
         # Convert SQLAlchemy Row to dict
         politician = {
@@ -44,8 +44,12 @@ class PoliticianRepo:
         politician_id = row.id
 
         # Get statements and votes
-        statements = await self._get_statements(politician_id, db)
-        votes = await self._get_votes(politician_id, db)
+        statements = []
+        votes = []
+        
+        if fetch_details:
+            statements = await self._get_statements(politician_id, db)
+            votes = await self._get_votes(politician_id, db)
 
         # Build politician_details to match JSON schema
         politician['politician_details'] = {
@@ -154,7 +158,20 @@ class PoliticianRepo:
             return self._search_cache[cache_key]
 
         # Get all politicians and search in memory (easier for fuzzy matching)
-        all_politicians = await self.get_all(db)
+        # OPTIMIZATION: Fetch basic info only first to avoid N+1 query problem
+        result = await db.execute(
+            text("""
+                SELECT id, full_name, state, current_office, image_url, party
+                FROM politicians
+                ORDER BY full_name
+            """)
+        )
+
+        all_politicians = []
+        for row in result.fetchall():
+            # Pass fetch_details=False to skip expensive queries during scanning
+            politician = await self._politician_row_to_dict(row, db, fetch_details=False)
+            all_politicians.append(politician)
 
         scored_results = []
         name_lower = name.lower()
@@ -174,6 +191,23 @@ class PoliticianRepo:
         scored_results.sort(key=lambda x: x[1], reverse=True)
         results = [politician for politician, _ in scored_results[:limit]]
 
+        # OPTIMIZATION: Fetch details only for the top results
+        for politician in results:
+            # We need to fetch details now
+            try:
+                uuid_id = UUID(politician['id'])
+                statements = await self._get_statements(uuid_id, db)
+                votes = await self._get_votes(uuid_id, db)
+                
+                politician['politician_details'] = {
+                    'statements': statements,
+                    'votes': votes
+                }
+                politician['vote_count'] = len(votes)
+                politician['statement_count'] = len(statements)
+            except Exception as e:
+                print(f"Error fetching details for {politician.get('name')}: {e}")
+
         if len(self._search_cache) < 256:
             self._search_cache[cache_key] = results
 
@@ -181,9 +215,22 @@ class PoliticianRepo:
 
     async def get_national_politicians(self, db: AsyncSession) -> List[Dict]:
         """Get all national-level politicians"""
-        # In the database, we can identify national politicians by checking if they have no specific state
-        all_politicians = await self.get_all(db)
-        return [p for p in all_politicians if p.get('state_or_district') == 'National']
+        # OPTIMIZATION: Query directly instead of fetching all and filtering
+        result = await db.execute(
+            text("""
+                SELECT id, full_name, state, current_office, image_url, party
+                FROM politicians
+                WHERE state IS NULL OR state = '' OR state = 'National'
+                ORDER BY full_name
+            """)
+        )
+        
+        politicians = []
+        for row in result.fetchall():
+            politician = await self._politician_row_to_dict(row, db, fetch_details=True)
+            politicians.append(politician)
+            
+        return politicians
 
     async def get_politicians_by_location(self, db: AsyncSession, lat: float = None, lng: float = None, state: str = None) -> List[Dict]:
         """
