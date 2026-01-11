@@ -45,6 +45,19 @@ import {
   SkipToContent,
   VisualizationDescription,
 } from "@/components/AccessibilityWrapper";
+import DiscoveryTour, {
+  VISUALIZATION_TOUR_STEPS,
+  useDiscoveryTour,
+} from "@/components/DiscoveryTour";
+import SuggestedExplorations, {
+  getDefaultExplorations,
+  type Exploration,
+} from "@/components/SuggestedExplorations";
+import StorySequence, {
+  SAMPLE_STORIES,
+  StorySelector,
+  type Story,
+} from "@/components/StorySequence";
 
 // Demo politicians for comparison - in production this would come from API
 const DEMO_POLITICIANS = [
@@ -82,6 +95,16 @@ export default function VisualizationsPage() {
     Array<{ id: number; name: string; party: string }>
   >([]);
   const [timelineComparePolitician, setTimelineComparePolitician] = useState<string>("");
+
+  // Active tab state
+  const [activeTab, setActiveTab] = useState("map");
+
+  // Discovery Tour state
+  const { showTour, startTour, closeTour, completeTour, hasSeenTour } = useDiscoveryTour();
+
+  // Story state
+  const [activeStory, setActiveStory] = useState<Story | null>(null);
+  const [showStorySelector, setShowStorySelector] = useState(false);
 
   const [networkFilters, setNetworkFilters] = useState({
     politicianIds: [] as number[],
@@ -202,6 +225,33 @@ export default function VisualizationsPage() {
     );
   };
 
+  // Exploration handlers
+  const switchToTab = useCallback((tab: string) => {
+    setActiveTab(tab);
+  }, []);
+
+  const setPoliticianIdForExploration = useCallback((id: string) => {
+    setTimelineFilters((prev) => ({ ...prev, politicianId: id }));
+    setRadialFilters((prev) => ({ ...prev, politicianId: id }));
+  }, []);
+
+  const handleExplore = useCallback((exploration: Exploration) => {
+    console.log("Starting exploration:", exploration.title);
+  }, []);
+
+  // Story handlers
+  const handleSelectStory = useCallback((story: Story) => {
+    setActiveStory(story);
+    setShowStorySelector(false);
+  }, []);
+
+  const handleCloseStory = useCallback(() => {
+    setActiveStory(null);
+  }, []);
+
+  // Get explorations with handlers bound
+  const explorations = getDefaultExplorations(switchToTab, setPoliticianIdForExploration);
+
   return (
     <AccessibilityProvider>
       <SkipToContent targetId="visualization-content" />
@@ -213,13 +263,35 @@ export default function VisualizationsPage() {
               Explore donation data, timelines, networks, and relationships through interactive visualizations
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            {!hasSeenTour && (
+              <Badge variant="secondary" className="animate-pulse">New user? Try the tour!</Badge>
+            )}
+            <Button variant="outline" size="sm" onClick={startTour}>
+              Start Tour
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setShowStorySelector(!showStorySelector)}>
+              Guided Stories
+            </Button>
             <AccessibilityToolbar />
           </div>
         </div>
 
+        {/* Suggested Explorations */}
+        <SuggestedExplorations
+          explorations={explorations}
+          onExplore={handleExplore}
+          maxVisible={3}
+          variant="inline"
+        />
+
+        {/* Story Selector Panel */}
+        {showStorySelector && (
+          <StorySelector stories={SAMPLE_STORIES} onSelectStory={handleSelectStory} />
+        )}
+
         <main id="visualization-content" role="main" aria-label="Visualization content">
-          <Tabs defaultValue="map" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="map">Donations Map</TabsTrigger>
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
@@ -657,6 +729,29 @@ export default function VisualizationsPage() {
           title={evidenceTitle}
           subtitle={evidenceSubtitle}
         />
+
+        {/* Discovery Tour for first-time users */}
+        <DiscoveryTour
+          steps={VISUALIZATION_TOUR_STEPS}
+          isOpen={showTour}
+          onClose={closeTour}
+          onComplete={completeTour}
+        />
+
+        {/* Story Sequence for guided narratives */}
+        {activeStory && (
+          <StorySequence
+            story={activeStory}
+            isOpen={!!activeStory}
+            onClose={handleCloseStory}
+            onStepChange={(step, index) => {
+              // Handle visualization highlighting based on step
+              if (step.dataHighlight) {
+                setActiveTab(step.dataHighlight.type);
+              }
+            }}
+          />
+        )}
       </div>
     </AccessibilityProvider>
   );
