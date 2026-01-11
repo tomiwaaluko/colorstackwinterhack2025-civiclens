@@ -250,3 +250,128 @@ h6 {
   color: var(--color-primary);
   border-radius: 9999px;
 }
+
+/* ================================
+   HIGH CONTRAST MODE
+   ================================ */
+.high-contrast {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --card: 0 0% 0%;
+  --card-foreground: 0 0% 100%;
+  --primary: 60 100% 50%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 0 0% 20%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 80%;
+  --accent: 60 100% 50%;
+  --accent-foreground: 0 0% 0%;
+  --border: 0 0% 100%;
+}
+
+.high-contrast body {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+.high-contrast a {
+  color: #ffff00 !important;
+  text-decoration: underline !important;
+}
+
+.high-contrast button,
+.high-contrast [role="button"] {
+  border: 2px solid #fff !important;
+}
+
+.high-contrast *:focus {
+  outline: 3px solid #ffff00 !important;
+  outline-offset: 2px !important;
+}
+
+.high-contrast .bg-gray-50,
+.high-contrast .bg-gray-100,
+.high-contrast .bg-white {
+  background-color: #000 !important;
+  border: 1px solid #fff !important;
+}
+
+.high-contrast .text-gray-500,
+.high-contrast .text-gray-600 {
+  color: #ccc !important;
+}
+
+.high-contrast .border {
+  border-color: #fff !important;
+}
+
+/* ================================
+   FOCUS STYLES
+   ================================ */
+*:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Skip link that shows on focus */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  padding: 0.5rem 1rem;
+  z-index: 9999;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ================================
+   REDUCED MOTION
+   ================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ================================
+   KEYBOARD NAVIGATION INDICATORS
+   ================================ */
+[data-focus-visible-added] {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Roving tabindex list items */
+[role="listbox"] [role="option"]:focus {
+  background-color: hsl(var(--accent));
+  outline: 2px solid hsl(var(--ring));
+}
+
+/* Interactive element hover/focus states */
+.interactive-element {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.interactive-element:hover {
+  transform: translateY(-1px);
+}
+
+.interactive-element:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 3px hsl(var(--ring) / 0.3);
+}
+
+.interactive-element:active {
+  transform: translateY(0);
+}

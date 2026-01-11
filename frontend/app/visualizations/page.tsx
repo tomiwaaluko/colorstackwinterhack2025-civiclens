@@ -31,8 +31,20 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { X, Plus } from "lucide-react";
+import { X, Plus, Accessibility } from "lucide-react";
 import EvidenceDrawer, { toUnifiedCitation, type UnifiedCitation } from "@/components/EvidenceDrawer";
+import DataTableExport, {
+  generateMapTableData,
+  generateTimelineTableData,
+  generateRadialTableData,
+  generateNetworkTableData,
+} from "@/components/DataTableExport";
+import {
+  AccessibilityProvider,
+  AccessibilityToolbar,
+  SkipToContent,
+  VisualizationDescription,
+} from "@/components/AccessibilityWrapper";
 
 // Demo politicians for comparison - in production this would come from API
 const DEMO_POLITICIANS = [
@@ -191,15 +203,23 @@ export default function VisualizationsPage() {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4 space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Interactive Visualizations</h1>
-        <p className="text-gray-600">
-          Explore donation data, timelines, networks, and relationships through interactive visualizations
-        </p>
-      </div>
+    <AccessibilityProvider>
+      <SkipToContent targetId="visualization-content" />
+      <div className="container mx-auto py-8 px-4 space-y-8">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Interactive Visualizations</h1>
+            <p className="text-gray-600">
+              Explore donation data, timelines, networks, and relationships through interactive visualizations
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <AccessibilityToolbar />
+          </div>
+        </div>
 
-      <Tabs defaultValue="map" className="w-full">
+        <main id="visualization-content" role="main" aria-label="Visualization content">
+          <Tabs defaultValue="map" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="map">Donations Map</TabsTrigger>
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
@@ -626,16 +646,18 @@ export default function VisualizationsPage() {
             </Card>
           )}
         </TabsContent>
-      </Tabs>
+        </Tabs>
+        </main>
 
-      {/* Evidence Drawer - shared across all visualizations */}
-      <EvidenceDrawer
-        citations={evidenceCitations}
-        isOpen={evidenceDrawerOpen}
-        onClose={closeEvidenceDrawer}
-        title={evidenceTitle}
-        subtitle={evidenceSubtitle}
-      />
-    </div>
+        {/* Evidence Drawer - shared across all visualizations */}
+        <EvidenceDrawer
+          citations={evidenceCitations}
+          isOpen={evidenceDrawerOpen}
+          onClose={closeEvidenceDrawer}
+          title={evidenceTitle}
+          subtitle={evidenceSubtitle}
+        />
+      </div>
+    </AccessibilityProvider>
   );
 }
