@@ -1,19 +1,22 @@
 """API endpoints for politician voting records"""
-from fastapi import APIRouter, HTTPException
-from pathlib import Path
+from fastapi import APIRouter, HTTPException, Depends
 from ..repositories.repo import PoliticianRepo
 from ..schemas.vote import VotesResponse, Vote
+from sqlalchemy.ext.asyncio import AsyncSession
+from ..core.database import get_db
 
 router = APIRouter()
 
-DATA_PATH = Path(__file__).parent.parent / "data" / "politicians.json"
-repo = PoliticianRepo(str(DATA_PATH))
+repo = PoliticianRepo()
 
 
 @router.get("/politicians/{politician_id}/votes", response_model=VotesResponse)
-def get_politician_votes(politician_id: int):
+async def get_politician_votes(
+    politician_id: str,
+    db: AsyncSession = Depends(get_db),
+):
     """Get voting record for a specific politician"""
-    politician = repo.get_by_id(politician_id)
+    politician = await repo.get_by_id(politician_id, db)
     if not politician:
         raise HTTPException(status_code=404, detail="Politician not found")
 

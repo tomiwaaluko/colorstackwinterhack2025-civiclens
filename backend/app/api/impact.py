@@ -1,24 +1,28 @@
 """API endpoints for politician impact on constituents"""
-from fastapi import APIRouter, HTTPException
-from pathlib import Path
+from fastapi import APIRouter, HTTPException, Depends
 from typing import Optional
+from sqlalchemy.ext.asyncio import AsyncSession
 from ..repositories.repo import PoliticianRepo
 from ..schemas.impact import ImpactResponse, CurrentBill
+from ..core.database import get_db
 
 router = APIRouter()
 
-DATA_PATH = Path(__file__).parent.parent / "data" / "politicians.json"
-repo = PoliticianRepo(str(DATA_PATH))
+repo = PoliticianRepo()
 
 
 @router.get("/politicians/{politician_id}/impact", response_model=ImpactResponse)
-def get_politician_impact(politician_id: int, zip_code: Optional[str] = None):
+async def get_politician_impact(
+    politician_id: str,
+    zip_code: Optional[str] = None,
+    db: AsyncSession = Depends(get_db),
+):
     """
     Get current bills and impact for a specific politician.
 
     Shows how the politician's current legislative work affects constituents.
     """
-    politician = repo.get_by_id(politician_id)
+    politician = await repo.get_by_id(politician_id, db)
     if not politician:
         raise HTTPException(status_code=404, detail="Politician not found")
 

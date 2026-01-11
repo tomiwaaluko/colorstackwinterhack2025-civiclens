@@ -1,21 +1,22 @@
 """API endpoints for map-based politician lookup"""
-from fastapi import APIRouter, Query
-from pathlib import Path
+from fastapi import APIRouter, Depends, Query
 from typing import Optional
+from sqlalchemy.ext.asyncio import AsyncSession
 from ..repositories.repo import PoliticianRepo
 from ..schemas.location import MapResponse, MapPolitician, Location, LocationCenter
+from ..core.database import get_db
 
 router = APIRouter()
 
-DATA_PATH = Path(__file__).parent.parent / "data" / "politicians.json"
-repo = PoliticianRepo(str(DATA_PATH))
+repo = PoliticianRepo()
 
 
 @router.get("/map/politicians", response_model=MapResponse)
-def get_politicians_by_location(
+async def get_politicians_by_location(
     lat: Optional[float] = Query(None, description="Latitude"),
     lng: Optional[float] = Query(None, description="Longitude"),
-    state: Optional[str] = Query(None, description="State abbreviation (e.g., CA, NY)")
+    state: Optional[str] = Query(None, description="State abbreviation (e.g., CA, NY)"),
+    db: AsyncSession = Depends(get_db),
 ):
     """
     Get politicians serving a specific location.
@@ -27,7 +28,7 @@ def get_politicians_by_location(
     Returns all politicians (senators, representatives) serving that area.
     Does NOT include national-level politicians (use /politicians/national instead).
     """
-    politicians = repo.get_politicians_by_location(lat=lat, lng=lng, state=state)
+    politicians = await repo.get_politicians_by_location(db, lat=lat, lng=lng, state=state)
 
     map_politicians = []
     for p in politicians:
@@ -52,13 +53,13 @@ def get_politicians_by_location(
 
 
 @router.get("/map/national", response_model=MapResponse)
-def get_national_politicians():
+async def get_national_politicians(db: AsyncSession = Depends(get_db)):
     """
     Get national-level politicians (President, Vice President).
 
     These are NOT shown on the map, but in a separate list/index.
     """
-    politicians = repo.get_national_politicians()
+    politicians = await repo.get_national_politicians(db)
 
     map_politicians = []
     for p in politicians:
