@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useMemo, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useMemo, useCallback, useRef, Suspense, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { SearchBarNew } from "@/components/SearchBarNew";
 import { PoliticianCardNew } from "@/components/PoliticianCardNew";
 import { Filter, Grid, List, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { searchPoliticians } from "@/lib/api";
+import type { Politician } from "@/lib/types";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import {
   Select,
   SelectContent,
@@ -15,74 +18,73 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const mockPoliticians = [
-  {
-    id: "1",
-    name: "Alexandria Ocasio-Cortez",
-    party: "Democrat",
-    state: "NY-14",
-    position: "U.S. Representative",
-    verifiedVotes: 1247,
-    verifiedStatements: 892,
-    featured: true,
-  },
-  {
-    id: "2",
-    name: "Marco Rubio",
-    party: "Republican",
-    state: "Florida",
-    position: "U.S. Senator",
-    verifiedVotes: 2156,
-    verifiedStatements: 1423,
-  },
-  {
-    id: "3",
-    name: "Elizabeth Warren",
-    party: "Democrat",
-    state: "Massachusetts",
-    position: "U.S. Senator",
-    verifiedVotes: 2847,
-    verifiedStatements: 1876,
-  },
-  {
-    id: "4",
-    name: "Ted Cruz",
-    party: "Republican",
-    state: "Texas",
-    position: "U.S. Senator",
-    verifiedVotes: 2534,
-    verifiedStatements: 1654,
-  },
-  {
-    id: "5",
-    name: "Bernie Sanders",
-    party: "Independent",
-    state: "Vermont",
-    position: "U.S. Senator",
-    verifiedVotes: 3421,
-    verifiedStatements: 2145,
-  },
-  {
-    id: "6",
-    name: "Mitt Romney",
-    party: "Republican",
-    state: "Utah",
-    position: "U.S. Senator",
-    verifiedVotes: 1876,
-    verifiedStatements: 987,
-  },
-];
-
 function SearchPageContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
+  const initialZip = searchParams.get("zip") || "";
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState("relevance");
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [politicians, setPoliticians] = useState<Politician[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const lastSearchKeyRef = useRef("");
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const performSearch = useCallback(
+    async (query: string, zip: string) => {
+      const trimmedQuery = query.trim();
+      const trimmedZip = zip.trim();
+      const searchKey = `${trimmedQuery}::${trimmedZip}`;
+
+      if (lastSearchKeyRef.current === searchKey) {
+        return;
+      }
+      lastSearchKeyRef.current = searchKey;
+
+      abortControllerRef.current?.abort();
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
+      setIsLoading(true);
+      setHasSearched(true);
+      setError(null);
+
+      try {
+        const results = await searchPoliticians(
+          trimmedQuery || undefined,
+          trimmedZip || undefined,
+          controller.signal
+        );
+        setPoliticians(results.politicians);
+      } catch (searchError) {
+        if (searchError instanceof Error && searchError.name === "AbortError") {
+          return;
+        }
+        const message =
+          typeof searchError === "object" &&
+          searchError !== null &&
+          "message" in searchError
+            ? String((searchError as { message?: string }).message)
+            : "Unable to fetch search results.";
+        setError(message);
+        setPoliticians([]);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
+
+  useEffect(() => {
+    performSearch(initialQuery, initialZip);
+  }, [initialQuery, initialZip, performSearch]);
 
   const filteredPoliticians = useMemo(() => {
     if (activeFilters.length === 0) {
-      return mockPoliticians;
+      return politicians;
     }
 
     // Separate filters into groups
@@ -93,21 +95,24 @@ function SearchPageContent() {
       ["Senate", "House"].includes(filter)
     );
 
-    return mockPoliticians.filter((politician) => {
+    return politicians.filter((politician) => {
       // Check party filters (if any selected, must match one)
       if (selectedPartyFilters.length > 0) {
-        const matchesParty = selectedPartyFilters.includes(politician.party);
+        const matchesParty = politician.party
+          ? selectedPartyFilters.includes(politician.party)
+          : false;
         if (!matchesParty) return false;
       }
 
       // Check position filters (if any selected, must match one)
       if (selectedPositionFilters.length > 0) {
+        const positionValue = politician.position || politician.office || "";
         const matchesPosition = selectedPositionFilters.some((filter) => {
           if (filter === "Senate") {
-            return politician.position.includes("Senator");
+            return positionValue.includes("Senator");
           }
           if (filter === "House") {
-            return politician.position.includes("Representative");
+            return positionValue.includes("Representative");
           }
           return false;
         });
@@ -117,7 +122,7 @@ function SearchPageContent() {
       // Politician matches all non-empty filter groups
       return true;
     });
-  }, [activeFilters]);
+  }, [activeFilters, politicians]);
 
   const sortedPoliticians = useMemo(() => {
     const sorted = [...filteredPoliticians];
@@ -126,10 +131,12 @@ function SearchPageContent() {
       case "name":
         return sorted.sort((a, b) => a.name.localeCompare(b.name));
       case "votes":
-        return sorted.sort((a, b) => b.verifiedVotes - a.verifiedVotes);
+        return sorted.sort(
+          (a, b) => (b.vote_count ?? 0) - (a.vote_count ?? 0)
+        );
       case "statements":
         return sorted.sort(
-          (a, b) => b.verifiedStatements - a.verifiedStatements
+          (a, b) => (b.statement_count ?? 0) - (a.statement_count ?? 0)
         );
       case "relevance":
       default:
@@ -137,9 +144,19 @@ function SearchPageContent() {
     }
   }, [filteredPoliticians, sortBy]);
 
-  const handleSearch = (_query: string, _zip: string) => {
-    // Search functionality will be implemented with API integration
-    // Navigate to results or update state based on query and zip
+  const handleSearch = (query: string, zip: string) => {
+    const trimmedQuery = query.trim();
+    const trimmedZip = zip.trim();
+    const params = new URLSearchParams();
+
+    if (trimmedQuery) params.set("q", trimmedQuery);
+    if (trimmedZip) params.set("zip", trimmedZip);
+
+    const nextPath = params.toString()
+      ? `/search?${params.toString()}`
+      : "/search";
+    router.push(nextPath);
+    performSearch(trimmedQuery, trimmedZip);
   };
 
   const toggleFilter = (filter: string) => {
@@ -158,7 +175,12 @@ function SearchPageContent() {
           <h1 className="font-serif text-3xl font-bold text-foreground mb-6">
             Search Politicians
           </h1>
-          <SearchBarNew variant="hero" onSearch={handleSearch} />
+          <SearchBarNew
+            variant="hero"
+            onSearch={handleSearch}
+            defaultQuery={initialQuery}
+            defaultZip={initialZip}
+          />
         </div>
       </section>
 
@@ -224,36 +246,70 @@ function SearchPageContent() {
           </div>
 
           {/* Results Count */}
-          <p className="text-sm text-muted-foreground mb-6">
-            Showing{" "}
-            <span className="font-semibold text-foreground">
-              {sortedPoliticians.length}
-            </span>{" "}
-            politicians
-            {initialQuery && (
-              <>
-                {" "}
-                for &quot;
-                <span className="font-semibold text-foreground">
-                  {initialQuery}
-                </span>
-                &quot;
-              </>
-            )}
-          </p>
+          {hasSearched && (
+            <p className="text-sm text-muted-foreground mb-6">
+              Showing{" "}
+              <span className="font-semibold text-foreground">
+                {sortedPoliticians.length}
+              </span>{" "}
+              politicians
+              {initialQuery && (
+                <>
+                  {" "}
+                  for &quot;
+                  <span className="font-semibold text-foreground">
+                    {initialQuery}
+                  </span>
+                  &quot;
+                </>
+              )}
+            </p>
+          )}
 
           {/* Results Grid */}
-          <div
-            className={
-              viewMode === "grid"
-                ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                : "flex flex-col gap-4"
-            }
-          >
-            {sortedPoliticians.map((politician) => (
-              <PoliticianCardNew key={politician.id} {...politician} />
-            ))}
-          </div>
+          {isLoading && (
+            <div className="flex justify-center py-12">
+              <LoadingSpinner />
+            </div>
+          )}
+          {!isLoading && error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center text-red-800">
+              {error}
+            </div>
+          )}
+          {!isLoading && !error && hasSearched && sortedPoliticians.length === 0 && (
+            <div className="bg-card border border-border rounded-lg p-6 text-center text-muted-foreground">
+              No politicians found. Try a different name or ZIP code.
+            </div>
+          )}
+          {!isLoading && !error && sortedPoliticians.length > 0 && (
+            <div
+              className={
+                viewMode === "grid"
+                  ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                  : "flex flex-col gap-4"
+              }
+            >
+              {sortedPoliticians.map((politician) => (
+                <PoliticianCardNew
+                  key={politician.id}
+                  id={politician.id}
+                  name={politician.name}
+                  party={politician.party || "Unknown"}
+                  state={
+                    politician.state ||
+                    politician.state_code ||
+                    politician.state_or_district ||
+                    "N/A"
+                  }
+                  position={politician.position || politician.office || "Unknown"}
+                  image={politician.image_url || politician.photo_url}
+                  verifiedVotes={politician.vote_count ?? 0}
+                  verifiedStatements={politician.statement_count ?? 0}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </div>

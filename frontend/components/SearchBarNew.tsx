@@ -3,19 +3,31 @@
 import { Search, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface SearchBarNewProps {
   variant?: "hero" | "compact";
   onSearch?: (query: string, zip: string) => void;
+  defaultQuery?: string;
+  defaultZip?: string;
 }
 
 export function SearchBarNew({
   variant = "hero",
   onSearch,
+  defaultQuery = "",
+  defaultZip = "",
 }: SearchBarNewProps) {
-  const [query, setQuery] = useState("");
-  const [zip, setZip] = useState("");
+  const [query, setQuery] = useState(defaultQuery);
+  const [zip, setZip] = useState(defaultZip);
+
+  useEffect(() => {
+    setQuery(defaultQuery);
+  }, [defaultQuery]);
+
+  useEffect(() => {
+    setZip(defaultZip);
+  }, [defaultZip]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

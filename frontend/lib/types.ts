@@ -19,6 +19,9 @@ export interface Politician {
   image_url?: string;  // URL to politician photo
   photo_url?: string;  // Legacy field, use image_url instead
   bio?: string;
+  state_or_district?: string;  // Backend summary field (e.g., "CA-12" or "National")
+  vote_count?: number;  // Search summary count
+  statement_count?: number;  // Search summary count
   // Legacy fields for backward compatibility
   office?: string;  // Deprecated: use position instead
   state?: string;  // Deprecated: use state_code instead
@@ -57,6 +60,15 @@ export interface Statement {
   date?: string;
   source_type?: string;
   citations: Citation[];
+}
+
+export interface PoliticianDetails {
+  statements: string[];
+  votes: string[][];
+}
+
+export interface PoliticianSummaryResponse extends Politician {
+  politician_details?: PoliticianDetails;
 }
 
 export interface SearchResult {
@@ -322,4 +334,3 @@ export interface DemoData {
   comparisons?: Record<string, ComparisonResult>;
   aiResponses?: Record<string, AIResponse>;
 }
-

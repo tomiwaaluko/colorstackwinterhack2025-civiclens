@@ -18,6 +18,7 @@ import type {
   NetworkEdge,
   RadialResponse,
   EventType,
+  PoliticianSummaryResponse,
 } from "./types";
 
 // API base URL - defaults to localhost for development
@@ -76,6 +77,72 @@ const DEMO_DATA: DemoData = {
   },
 };
 
+const SEARCH_CACHE = new Map<string, SearchResult>();
+
+type BackendPoliticianSummary = {
+  id: string;
+  name: string;
+  image_url?: string | null;
+  party?: string | null;
+  state_or_district?: string | null;
+  position?: string | null;
+  vote_count?: number;
+  statement_count?: number;
+  politician_details?: {
+    statements?: string[];
+    votes?: string[][];
+  };
+};
+
+type BackendSearchResponse = {
+  politician_summaries?: BackendPoliticianSummary[];
+  politicians?: SearchResult["politicians"];
+  total?: number;
+};
+
+function normalizePoliticianSummary(
+  summary: BackendPoliticianSummary
+): PoliticianSummaryResponse {
+  const stateOrDistrict = summary.state_or_district ?? undefined;
+  const stateMatch = stateOrDistrict?.match(/^([A-Za-z]{2})(?:-(\d+))?$/);
+  const stateCode = stateMatch ? stateMatch[1].toUpperCase() : undefined;
+  const districtNumber = stateMatch?.[2];
+
+  return {
+    id: summary.id,
+    name: summary.name,
+    party: summary.party ?? undefined,
+    position: summary.position ?? undefined,
+    office: summary.position ?? undefined,
+    state_or_district: stateOrDistrict,
+    state_code: stateCode,
+    state: stateCode ?? stateOrDistrict,
+    district: districtNumber,
+    district_number: districtNumber ? Number(districtNumber) : undefined,
+    image_url: summary.image_url ?? undefined,
+    photo_url: summary.image_url ?? undefined,
+    vote_count: summary.vote_count ?? 0,
+    statement_count: summary.statement_count ?? 0,
+    politician_details: {
+      statements: summary.politician_details?.statements ?? [],
+      votes: summary.politician_details?.votes ?? [],
+    },
+  };
+}
+
+function normalizeSearchResponse(data: BackendSearchResponse): SearchResult {
+  if (Array.isArray(data.politicians)) {
+    return { politicians: data.politicians, total: data.total };
+  }
+
+  const summaries = data.politician_summaries ?? [];
+  const politicians = summaries.map((summary) =>
+    normalizePoliticianSummary(summary)
+  );
+
+  return { politicians, total: data.total ?? politicians.length };
+}
+
 async function fetchApi<T>(
   endpoint: string,
   options?: RequestInit
@@ -117,6 +184,11 @@ export async function searchPoliticians(
   zip?: string,
   signal?: AbortSignal
 ): Promise<SearchResult> {
+  const cacheKey = `${name ?? ""}::${zip ?? ""}`;
+  if (SEARCH_CACHE.has(cacheKey)) {
+    return SEARCH_CACHE.get(cacheKey) as SearchResult;
+  }
+
   if (DEMO_MODE) {
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 300));
@@ -150,23 +222,30 @@ export async function searchPoliticians(
       }
     }
 
-    return { politicians: results };
+    const demoResult = { politicians: results };
+    SEARCH_CACHE.set(cacheKey, demoResult);
+    return demoResult;
   }
 
   const params = new URLSearchParams();
   if (name) params.append("name", name);
-  if (zip) params.append("zip", zip);
+  if (zip) params.append("zip_code", zip);
 
-  return fetchApi<SearchResult>(`/search?${params.toString()}`, { signal });
+  const data = await fetchApi<BackendSearchResponse>(
+    `/search?${params.toString()}`,
+    { signal }
+  );
+  const normalized = normalizeSearchResponse(data);
+  SEARCH_CACHE.set(cacheKey, normalized);
+  return normalized;
 }
 
-export async function getPoliticianProfile(
-  id: string
-): Promise<PoliticianProfile> {
+export async function getPoliticianSummary(
+  id: string,
+  signal?: AbortSignal
+): Promise<PoliticianSummaryResponse> {
   if (DEMO_MODE) {
-    // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 300));
-
     const profile = DEMO_DATA.profiles[id];
     if (!profile) {
       throw {
@@ -174,10 +253,35 @@ export async function getPoliticianProfile(
         message: `Politician with ID ${id} not found`,
       } as ApiError;
     }
-    return profile;
+    return {
+      ...profile.politician,
+      politician_details: {
+        statements: [],
+        votes: [],
+      },
+      vote_count: 0,
+      statement_count: 0,
+    };
   }
 
-  return fetchApi<PoliticianProfile>(`/politician/${id}`);
+  const data = await fetchApi<BackendPoliticianSummary>(
+    `/politicians/${id}`,
+    { signal }
+  );
+  return normalizePoliticianSummary(data);
+}
+
+export async function getPoliticianProfile(
+  id: string
+): Promise<PoliticianProfile> {
+  const summary = await getPoliticianSummary(id);
+  return {
+    politician: summary,
+    votes: [],
+    donations: [],
+    statements: [],
+    source_count: undefined,
+  };
 }
 
 export async function getPoliticianVotes(

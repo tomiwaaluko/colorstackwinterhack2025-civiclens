@@ -2,16 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { getPoliticianProfile } from "@/lib/api";
-import type { PoliticianProfile, ApiError, Citation } from "@/lib/types";
+import { getPoliticianSummary } from "@/lib/api";
+import type {
+  ApiError,
+  PoliticianSummaryResponse,
+  Politician,
+} from "@/lib/types";
 import ProfileHeader from "@/components/ProfileHeader";
-import KeyVotes from "@/components/KeyVotes";
-import DonorChart from "@/components/DonorChart";
-import StatementsList from "@/components/StatementsList";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import InsufficientData from "@/components/InsufficientData";
-import SourceDrawer from "@/components/SourceDrawer";
-import AskPanel from "@/components/AskPanel";
 
 export default function PoliticianProfilePage() {
   const params = useParams();
@@ -21,23 +20,10 @@ export default function PoliticianProfilePage() {
   const id =
     typeof rawId === "string" ? rawId : Array.isArray(rawId) ? rawId[0] : null;
 
-  const [profile, setProfile] = useState<PoliticianProfile | null>(null);
+  const [profile, setProfile] = useState<PoliticianSummaryResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedCitation, setSelectedCitation] = useState<Citation | null>(
-    null
-  );
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  const handleCitationClick = (citation: Citation) => {
-    setSelectedCitation(citation);
-    setIsDrawerOpen(true);
-  };
-
-  const handleCloseDrawer = () => {
-    setIsDrawerOpen(false);
-    setSelectedCitation(null);
-  };
+  const [politician, setPolitician] = useState<Politician | null>(null);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -52,8 +38,16 @@ export default function PoliticianProfilePage() {
       setError(null);
 
       try {
-        const data = await getPoliticianProfile(id);
+        const data = await getPoliticianSummary(id);
         setProfile(data);
+        setPolitician({
+          id: data.id,
+          name: data.name,
+          party: data.party,
+          office: data.position,
+          state: data.state_or_district,
+          photo_url: data.image_url,
+        });
       } catch (err) {
         const apiError = err as ApiError;
         setError(apiError.message || "Failed to load politician profile");
@@ -97,64 +91,103 @@ export default function PoliticianProfilePage() {
     );
   }
 
+  const votes = profile.politician_details?.votes ?? [];
+  const statements = profile.politician_details?.statements ?? [];
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="space-y-8">
         {/* Header Section */}
-        <ProfileHeader politician={profile.politician} />
+        {politician && <ProfileHeader politician={politician} />}
 
-        {/* Main Content Grid */}
-        <div className="grid gap-8 lg:grid-cols-3">
-          {/* Left Column: Key Info */}
-          <div className="lg:col-span-2 space-y-8">
-            <section>
-              <KeyVotes
-                votes={profile.votes || []}
-                onCitationClick={handleCitationClick}
-              />
-            </section>
-
-            <section>
-              <StatementsList
-                statements={profile.statements || []}
-                onCitationClick={handleCitationClick}
-              />
-            </section>
-          </div>
-
-          {/* Right Column: Donors & AI */}
-          <div className="space-y-8">
-            <section>
-              <DonorChart
-                donations={profile.donations || []}
-                onCitationClick={handleCitationClick}
-              />
-            </section>
-
-            <section className="rounded-xl bg-ink-50 p-6">
-              <h3 className="headline-sm mb-4 text-ink-900">
-                Ask About {profile.politician.name}
-              </h3>
-              {id && <AskPanel politicianIds={[id]} />}
-            </section>
-          </div>
-        </div>
-
-        {profile.source_count !== undefined && profile.source_count > 0 && (
-          <div className="mt-12 border-t border-ink-100 pt-6 text-center">
-            <p className="text-sm text-ink-500">
-              This profile is based on {profile.source_count} source
-              {profile.source_count !== 1 ? "s" : ""} of public information.
+        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <p className="text-sm text-muted-foreground">Votes Recorded</p>
+            <p className="mt-2 text-2xl font-semibold text-foreground">
+              {profile.vote_count ?? 0}
             </p>
           </div>
-        )}
-      </div>
+          <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <p className="text-sm text-muted-foreground">Statements Logged</p>
+            <p className="mt-2 text-2xl font-semibold text-foreground">
+              {profile.statement_count ?? 0}
+            </p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <p className="text-sm text-muted-foreground">Position</p>
+            <p className="mt-2 text-lg font-semibold text-foreground">
+              {profile.position || "Unknown"}
+            </p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+            <p className="text-sm text-muted-foreground">State/District</p>
+            <p className="mt-2 text-lg font-semibold text-foreground">
+              {profile.state_or_district || "N/A"}
+            </p>
+          </div>
+        </section>
 
-      <SourceDrawer
-        citation={selectedCitation}
-        isOpen={isDrawerOpen}
-        onClose={handleCloseDrawer}
-      />
+        <div className="grid gap-8 lg:grid-cols-2">
+          <section className="space-y-4">
+            <h2 className="headline-md text-foreground">Recent Votes</h2>
+            {votes.length === 0 ? (
+              <InsufficientData
+                title="No voting records available"
+                message="Voting records for this politician are not available at this time."
+              />
+            ) : (
+              <div className="grid gap-4">
+                {votes.map((vote, index) => {
+                  const billTitle = vote[0] || "Unknown Bill";
+                  const voteValue = vote[1] || "Unknown";
+                  return (
+                    <div
+                      key={`${billTitle}-${index}`}
+                      className="bg-card border-2 border-black p-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                    >
+                      <div className="flex flex-col gap-2">
+                        <p className="text-sm uppercase tracking-wide text-muted-foreground">
+                          Vote
+                        </p>
+                        <h3 className="font-serif text-lg text-foreground">
+                          {billTitle}
+                        </h3>
+                        <span className="inline-flex w-fit items-center rounded-full border border-border bg-muted px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-foreground">
+                          {voteValue}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+
+          <section className="space-y-4">
+            <h2 className="headline-md text-foreground">Statements</h2>
+            {statements.length === 0 ? (
+              <InsufficientData
+                title="No statements available"
+                message="Public statements for this politician are not available at this time."
+              />
+            ) : (
+              <div className="grid gap-4">
+                {statements.map((statement, index) => (
+                  <div
+                    key={`${index}-${statement.slice(0, 12)}`}
+                    className="relative bg-card border-2 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                  >
+                    <div className="absolute left-0 top-6 h-12 w-1 rounded-r bg-amber-500" />
+                    <blockquote className="pl-4 font-serif text-lg italic text-foreground">
+                      &quot;{statement}&quot;
+                    </blockquote>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
+      </div>
     </div>
   );
 }
