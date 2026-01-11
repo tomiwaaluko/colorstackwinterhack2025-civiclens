@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
-import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
+import dynamic from "next/dynamic";
+// Import from the mapbox subpath export for react-map-gl v8
+import Map, { Source, Layer, Popup } from "react-map-gl/mapbox";
+import "mapbox-gl/dist/mapbox-gl.css";
 import type { DonationsMapResponse, MapViewMode, ComparativePoliticianData } from "@/lib/types";
 import { getDonationsMap } from "@/lib/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,15 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoadingSpinner from "./LoadingSpinner";
 import TimeSlider from "./ui/TimeSlider";
-
-// Fix Leaflet default marker icon issue
-import L from "leaflet";
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
-});
 
 // Available years for time slider (can be dynamic based on data)
 const AVAILABLE_YEARS = [2022, 2023, 2024];
@@ -40,6 +33,9 @@ const PARTY_COLORS = {
   independent: "#10b981",
 };
 
+// Get Mapbox token from environment
+const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || "";
+
 interface DonationsMapProps {
   politicianIds?: number[];
   category?: string;
@@ -52,43 +48,6 @@ interface DonationsMapProps {
   onCitationClick?: (citations: any[], stateName?: string) => void;
 }
 
-// Component to update map bounds
-function MapBounds({ data }: { data: DonationsMapResponse | null }) {
-  const map = useMap();
-  
-  useEffect(() => {
-    if (data && Object.keys(data.values).length > 0) {
-      map.fitBounds([
-        [24.396308, -125.0],
-        [49.384358, -66.93457],
-      ]);
-    }
-  }, [map, data]);
-
-  return null;
-}
-
-// MapRefresher component to force re-render of GeoJSON
-function MapRefresher({ 
-  geoJson, 
-  styleFeature, 
-  onEachFeature, 
-  refreshKey 
-}: { 
-  geoJson: any; 
-  styleFeature: (feature: any) => any;
-  onEachFeature: (feature: any, layer: any) => void;
-  refreshKey: number;
-}) {
-  return (
-    <GeoJSON
-      key={refreshKey}
-      data={geoJson}
-      style={styleFeature}
-      onEachFeature={onEachFeature}
-    />
-  );
-}
 
 export default function DonationsMap({
   politicianIds,
@@ -102,19 +61,43 @@ export default function DonationsMap({
 }: DonationsMapProps) {
   const [mapData, setMapData] = useState<DonationsMapResponse | null>(null);
   const [geoJson, setGeoJson] = useState<any>(null);
+  const [styledGeoJson, setStyledGeoJson] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedState, setSelectedState] = useState<string | null>(null);
+  const [hoveredState, setHoveredState] = useState<string | null>(null);
+  const [popupInfo, setPopupInfo] = useState<{ stateCode: string; lng: number; lat: number } | null>(null);
   
   // Phase 1 enhancements state
   const [selectedYear, setSelectedYear] = useState<number>(AVAILABLE_YEARS[AVAILABLE_YEARS.length - 1]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [viewMode, setViewMode] = useState<MapViewMode>("total");
-  const [geoJsonKey, setGeoJsonKey] = useState(0);
   
   // Cache for comparative data
   const [comparativeData, setComparativeData] = useState<Record<number, DonationsMapResponse>>({});
   const [partyData, setPartyData] = useState<Record<string, { democrat: number; republican: number; independent: number }>>({});
+
+  // Map ref for fitBounds
+  const mapRef = useRef<any>(null);
+
+  // Fit bounds when data loads
+  useEffect(() => {
+    if (mapData && mapRef.current && Object.keys(mapData.values).length > 0) {
+      const map = mapRef.current.getMap();
+      if (map) {
+        map.fitBounds(
+          [
+            [-125.0, 24.396308], // Southwest [lng, lat]
+            [-66.93457, 49.384358], // Northeast [lng, lat]
+          ],
+          {
+            padding: { top: 50, bottom: 50, left: 50, right: 50 },
+            duration: 1000,
+          }
+        );
+      }
+    }
+  }, [mapData]);
 
   // Load state boundaries
   useEffect(() => {
@@ -153,7 +136,6 @@ export default function DonationsMap({
       .then((data) => {
         setMapData(data);
         setIsLoading(false);
-        setGeoJsonKey((k) => k + 1); // Force GeoJSON re-render
       })
       .catch((err) => {
         console.error("Failed to load donations map data:", err);
@@ -182,7 +164,6 @@ export default function DonationsMap({
         newComparativeData[id] = data;
       });
       setComparativeData(newComparativeData);
-      setGeoJsonKey((k) => k + 1);
     });
   }, [viewMode, comparativePoliticians, selectedYear, startDate, endDate, showTimeSlider, getDateRangeForYear]);
 
@@ -190,8 +171,6 @@ export default function DonationsMap({
   useEffect(() => {
     if (viewMode !== "party" || !mapData) return;
 
-    // Aggregate by party - in real implementation, this would come from backend
-    // For now, we'll simulate by using top_politicians data
     const partyAggregation: Record<string, { democrat: number; republican: number; independent: number }> = {};
     
     Object.entries(mapData.values).forEach(([stateCode, stateData]) => {
@@ -201,15 +180,12 @@ export default function DonationsMap({
         independent: 0,
       };
       
-      // Simulate party distribution based on top politicians
       stateData.top_politicians.forEach((pol) => {
-        // Use name-based heuristic for demo (in production, this would be from data)
         const amount = pol.total_amount;
         const partyGuess = Math.random() > 0.5 ? "democrat" : "republican";
         partyAggregation[stateCode][partyGuess] += amount;
       });
       
-      // If no top_politicians, distribute total amount
       if (stateData.top_politicians.length === 0) {
         const total = stateData.total_amount;
         partyAggregation[stateCode].democrat = total * 0.45;
@@ -219,7 +195,6 @@ export default function DonationsMap({
     });
     
     setPartyData(partyAggregation);
-    setGeoJsonKey((k) => k + 1);
   }, [viewMode, mapData]);
 
   // Calculate color scale
@@ -252,14 +227,12 @@ export default function DonationsMap({
     const total = democrat + republican + independent;
     if (total === 0) return "#e5e7eb";
     
-    // Blend colors based on proportions
     const dRatio = democrat / total;
     const rRatio = republican / total;
     
     if (dRatio > 0.6) return PARTY_COLORS.democrat;
     if (rRatio > 0.6) return PARTY_COLORS.republican;
     
-    // Mix blue and red for competitive states
     const r = Math.round(59 * dRatio + 239 * rRatio + 16 * (1 - dRatio - rRatio));
     const g = Math.round(130 * dRatio + 68 * rRatio + 185 * (1 - dRatio - rRatio));
     const b = Math.round(246 * dRatio + 68 * rRatio + 129 * (1 - dRatio - rRatio));
@@ -270,7 +243,6 @@ export default function DonationsMap({
   const getComparativeColor = useCallback((stateCode: string): string => {
     if (comparativePoliticians.length === 0) return "#e5e7eb";
     
-    // Find which politician has the most donations in this state
     let maxAmount = 0;
     let dominantPoliticianIndex = -1;
     
@@ -287,85 +259,82 @@ export default function DonationsMap({
     return POLITICIAN_COLORS[dominantPoliticianIndex % POLITICIAN_COLORS.length];
   }, [comparativePoliticians, comparativeData]);
 
-  // Style function for GeoJSON
-  const styleFeature = useCallback((feature: any) => {
-    const stateCode = feature.properties.STATE_CODE;
-    const donationData = mapData?.values[stateCode];
-    const isSelected = selectedState === stateCode;
+  // Create styled GeoJSON with color properties
+  useEffect(() => {
+    if (!geoJson || !mapData) return;
 
-    let fillColor = "#e5e7eb";
-    let fillOpacity = 0.3;
+    const styledFeatures = geoJson.features.map((feature: any) => {
+      const stateCode = feature.properties.STATE_CODE;
+      const donationData = mapData.values[stateCode];
 
-    if (viewMode === "total" && donationData) {
-      fillColor = getColorForAmount(donationData.total_amount);
-      fillOpacity = 0.7;
-    } else if (viewMode === "party") {
-      fillColor = getPartyColor(stateCode);
-      fillOpacity = 0.7;
-    } else if (viewMode === "comparative") {
-      fillColor = getComparativeColor(stateCode);
-      fillOpacity = 0.7;
-    }
+      let fillColor = "#e5e7eb";
+      let fillOpacity = 0.3;
 
-    return {
-      fillColor,
-      fillOpacity,
-      weight: isSelected ? 3 : 1,
-      color: isSelected ? "#000" : "#fff",
-      opacity: 1,
-    };
-  }, [mapData, selectedState, viewMode, getColorForAmount, getPartyColor, getComparativeColor]);
+      if (viewMode === "total" && donationData) {
+        fillColor = getColorForAmount(donationData.total_amount);
+        fillOpacity = 0.7;
+      } else if (viewMode === "party") {
+        fillColor = getPartyColor(stateCode);
+        fillOpacity = 0.7;
+      } else if (viewMode === "comparative") {
+        fillColor = getComparativeColor(stateCode);
+        fillOpacity = 0.7;
+      }
+
+      return {
+        ...feature,
+        properties: {
+          ...feature.properties,
+          fillColor,
+          fillOpacity,
+          isSelected: selectedState === stateCode,
+          isHovered: hoveredState === stateCode,
+        },
+      };
+    });
+
+    setStyledGeoJson({
+      type: "FeatureCollection",
+      features: styledFeatures,
+    });
+  }, [geoJson, mapData, viewMode, selectedState, hoveredState, getColorForAmount, getPartyColor, getComparativeColor]);
 
   // Handle feature click
-  const onEachFeature = useCallback((feature: any, layer: any) => {
+  const handleFeatureClick = useCallback((event: any) => {
+    const feature = event.features?.[0];
+    if (!feature?.properties?.STATE_CODE) return;
+
     const stateCode = feature.properties.STATE_CODE;
-    const donationData = mapData?.values[stateCode];
+    setSelectedState(stateCode);
 
-    // Build tooltip content based on view mode
-    let tooltipContent = feature.properties.NAME || stateCode;
-    
-    if (viewMode === "total" && donationData) {
-      tooltipContent = `${feature.properties.NAME || stateCode}: $${donationData.total_amount.toLocaleString()}`;
-    } else if (viewMode === "party") {
-      const statePartyData = partyData[stateCode];
-      if (statePartyData) {
-        tooltipContent = `${feature.properties.NAME || stateCode}<br/>
-          D: $${Math.round(statePartyData.democrat).toLocaleString()}<br/>
-          R: $${Math.round(statePartyData.republican).toLocaleString()}`;
-      }
-    } else if (viewMode === "comparative") {
-      const amounts = comparativePoliticians.map((pol, idx) => {
-        const amount = comparativeData[pol.id]?.values[stateCode]?.total_amount || 0;
-        return `${pol.name}: $${amount.toLocaleString()}`;
-      }).join("<br/>");
-      tooltipContent = `${feature.properties.NAME || stateCode}<br/>${amounts}`;
-    }
-
-    layer.bindTooltip(tooltipContent);
-    
-    layer.on({
-      click: () => setSelectedState(stateCode),
-      mouseover: (e: any) => {
-        const layer = e.target;
-        layer.setStyle({ weight: 3, color: "#000" });
-      },
-      mouseout: (e: any) => {
-        if (selectedState !== stateCode) {
-          const layer = e.target;
-          layer.setStyle({ weight: 1, color: "#fff" });
-        }
-      },
-    });
-  }, [mapData, viewMode, partyData, comparativePoliticians, comparativeData, selectedState]);
+    // Set popup
+    const [lng, lat] = event.lngLat.toArray();
+    setPopupInfo({ stateCode, lng, lat });
+  }, []);
 
   // Handle year change
   const handleYearChange = useCallback((year: number) => {
     setSelectedYear(year);
-    // Stop playing when manually selecting a year
     if (isPlaying) {
       setIsPlaying(false);
     }
   }, [isPlaying]);
+
+  if (!MAPBOX_TOKEN) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Donations by State</CardTitle>
+          <CardDescription>Interactive choropleth map showing donation amounts</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[500px] flex items-center justify-center text-amber-600">
+            Please set NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN in your .env.local file
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (isLoading || !geoJson) {
     return (
@@ -452,23 +421,114 @@ export default function DonationsMap({
 
         {/* Map */}
         <div className="h-[500px] rounded-lg overflow-hidden border">
-          <MapContainer
-            center={[39.8283, -98.5795]}
-            zoom={4}
-            style={{ height: "100%", width: "100%" }}
+          <Map
+            ref={mapRef}
+            mapboxAccessToken={MAPBOX_TOKEN}
+            initialViewState={{
+              longitude: -98.5795,
+              latitude: 39.8283,
+              zoom: 4,
+            }}
+            style={{ width: "100%", height: "100%" }}
+            mapStyle="mapbox://styles/mapbox/light-v11"
+            interactiveLayerIds={["states-fill"]}
+            onMouseEnter={(e) => {
+              const feature = e.features?.[0];
+              if (feature?.properties?.STATE_CODE) {
+                setHoveredState(feature.properties.STATE_CODE);
+              }
+            }}
+            onMouseLeave={() => setHoveredState(null)}
+            onClick={handleFeatureClick}
+            onLoad={(e) => {
+              mapRef.current = e.target;
+            }}
           >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            {mapData && <MapBounds data={mapData} />}
-            <MapRefresher
-              geoJson={geoJson}
-              styleFeature={styleFeature}
-              onEachFeature={onEachFeature}
-              refreshKey={geoJsonKey}
-            />
-          </MapContainer>
+            {styledGeoJson && (
+              <Source id="states" type="geojson" data={styledGeoJson}>
+                <Layer
+                  id="states-fill"
+                  type="fill"
+                  paint={{
+                    "fill-color": ["get", "fillColor"],
+                    "fill-opacity": ["get", "fillOpacity"],
+                  }}
+                />
+                <Layer
+                  id="states-border"
+                  type="line"
+                  paint={{
+                    "line-color": [
+                      "case",
+                      ["get", "isSelected"],
+                      "#000000",
+                      ["get", "isHovered"],
+                      "#666666",
+                      "#ffffff",
+                    ],
+                    "line-width": [
+                      "case",
+                      ["get", "isSelected"],
+                      3,
+                      ["get", "isHovered"],
+                      2,
+                      1,
+                    ],
+                    "line-opacity": 1,
+                  }}
+                />
+              </Source>
+            )}
+
+            {popupInfo && (
+              <Popup
+                longitude={popupInfo.lng}
+                latitude={popupInfo.lat}
+                anchor="bottom"
+                onClose={() => setPopupInfo(null)}
+                closeButton={true}
+                closeOnClick={false}
+              >
+                <div className="text-sm">
+                  {(() => {
+                    const feature = geoJson.features.find(
+                      (f: any) => f.properties.STATE_CODE === popupInfo.stateCode
+                    );
+                    const donationData = mapData?.values[popupInfo.stateCode];
+                    
+                    if (!donationData) return feature?.properties.NAME || popupInfo.stateCode;
+                    
+                    if (viewMode === "total") {
+                      return `${feature?.properties.NAME || popupInfo.stateCode}: $${donationData.total_amount.toLocaleString()}`;
+                    } else if (viewMode === "party") {
+                      const statePartyData = partyData[popupInfo.stateCode];
+                      if (statePartyData) {
+                        return (
+                          <div>
+                            <div className="font-semibold">{feature?.properties.NAME || popupInfo.stateCode}</div>
+                            <div>D: ${Math.round(statePartyData.democrat).toLocaleString()}</div>
+                            <div>R: ${Math.round(statePartyData.republican).toLocaleString()}</div>
+                          </div>
+                        );
+                      }
+                    } else if (viewMode === "comparative") {
+                      const amounts = comparativePoliticians.map((pol) => {
+                        const amount = comparativeData[pol.id]?.values[popupInfo.stateCode]?.total_amount || 0;
+                        return `${pol.name}: $${amount.toLocaleString()}`;
+                      }).join("\n");
+                      return (
+                        <div>
+                          <div className="font-semibold">{feature?.properties.NAME || popupInfo.stateCode}</div>
+                          <div className="whitespace-pre-line">{amounts}</div>
+                        </div>
+                      );
+                    }
+                    return feature?.properties.NAME || popupInfo.stateCode;
+                  })()}
+                </div>
+              </Popup>
+            )}
+          </Map>
         </div>
 
         {/* Time Slider */}
