@@ -253,18 +253,44 @@ export interface NetworkPath {
   description: string;
 }
 
+export interface RelatedBill {
+  id: string;
+  title: string;
+  vote_outcome?: "yes" | "no" | "abstain";
+  sponsorship?: "primary" | "cosponsor" | null;
+}
+
 export interface CategoryValue {
   category: string;
   total_amount: number;
   donation_count: number;
   avg_amount?: number | null;
   citations: VisualizationCitation[];
+  // Enhanced for multi-ring
+  related_bills?: RelatedBill[];
+  top_donors?: Array<{ name: string; amount: number }>;
 }
 
 export interface RadialResponse {
   categories: CategoryValue[];
   total_amount: number;
   total_count: number;
+}
+
+// Comparative radial types
+export interface ComparativeRadialData {
+  politician_id: number;
+  politician_name: string;
+  party: string;
+  data: RadialResponse;
+}
+
+// Pathway animation types
+export interface InfluencePathway {
+  category: string;
+  amount: number;
+  bills: RelatedBill[];
+  step: number; // Current animation step
 }
 
 // AI Q&A types (matching AI response schema)

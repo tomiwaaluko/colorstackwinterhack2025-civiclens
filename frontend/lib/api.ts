@@ -904,11 +904,7 @@ export async function getPoliticianRadial(
 ): Promise<RadialResponse> {
   if (DEMO_MODE) {
     await new Promise((resolve) => setTimeout(resolve, 300));
-    return {
-      categories: [],
-      total_amount: 0,
-      total_count: 0,
-    };
+    return generateDemoRadialData(politicianId);
   }
 
   const queryParams = new URLSearchParams();
@@ -918,6 +914,145 @@ export async function getPoliticianRadial(
   return fetchApi<RadialResponse>(
     `/api/visualizations/politician-radial/${politicianId}${queryParams.toString() ? `?${queryParams.toString()}` : ""}`
   );
+}
+
+// Generate demo radial data for a politician
+function generateDemoRadialData(politicianId: number): RadialResponse {
+  const seed = politicianId * 11;
+  
+  // Categories with related bills
+  const categoryData = [
+    {
+      category: "Healthcare",
+      baseAmount: 150000,
+      baseDonations: 45,
+      bills: [
+        { id: "bill-aca", title: "Affordable Care Act Extension" },
+        { id: "bill-drug", title: "Drug Pricing Reform" },
+        { id: "bill-medicare", title: "Medicare Expansion" },
+      ],
+      donors: [
+        { name: "PhRMA Association", amount: 75000 },
+        { name: "Hospital Association", amount: 45000 },
+        { name: "Health Insurance PAC", amount: 30000 },
+      ],
+    },
+    {
+      category: "Energy",
+      baseAmount: 120000,
+      baseDonations: 38,
+      bills: [
+        { id: "bill-energy", title: "Clean Energy Investment Act" },
+        { id: "bill-infra", title: "Infrastructure Modernization" },
+        { id: "bill-ev", title: "Electric Vehicle Incentives" },
+      ],
+      donors: [
+        { name: "Petroleum Institute", amount: 60000 },
+        { name: "Solar Industries", amount: 35000 },
+        { name: "Coal Mining PAC", amount: 25000 },
+      ],
+    },
+    {
+      category: "Finance",
+      baseAmount: 180000,
+      baseDonations: 52,
+      bills: [
+        { id: "bill-bank", title: "Banking Regulation Reform" },
+        { id: "bill-cfpb", title: "Consumer Financial Protection" },
+        { id: "bill-crypto", title: "Cryptocurrency Standards" },
+      ],
+      donors: [
+        { name: "Wall Street PAC", amount: 90000 },
+        { name: "American Bankers", amount: 55000 },
+        { name: "Credit Union National", amount: 35000 },
+      ],
+    },
+    {
+      category: "Technology",
+      baseAmount: 95000,
+      baseDonations: 28,
+      bills: [
+        { id: "bill-privacy", title: "Data Privacy Protection Act" },
+        { id: "bill-ai", title: "AI Safety Standards" },
+        { id: "bill-antitrust", title: "Tech Antitrust Reform" },
+      ],
+      donors: [
+        { name: "TechNet", amount: 50000 },
+        { name: "Internet Association", amount: 30000 },
+        { name: "Software Alliance", amount: 15000 },
+      ],
+    },
+    {
+      category: "Defense",
+      baseAmount: 140000,
+      baseDonations: 35,
+      bills: [
+        { id: "bill-ndaa", title: "Defense Authorization FY2025" },
+        { id: "bill-veterans", title: "Veterans Benefits Expansion" },
+      ],
+      donors: [
+        { name: "Defense Contractors PAC", amount: 80000 },
+        { name: "Aerospace Industries", amount: 60000 },
+      ],
+    },
+    {
+      category: "Labor",
+      baseAmount: 65000,
+      baseDonations: 22,
+      bills: [
+        { id: "bill-wage", title: "Minimum Wage Increase" },
+        { id: "bill-union", title: "Union Protection Act" },
+      ],
+      donors: [
+        { name: "AFL-CIO", amount: 35000 },
+        { name: "Teachers Union", amount: 30000 },
+      ],
+    },
+  ];
+  
+  const categories = categoryData.map((cat, idx) => {
+    // Vary amounts based on politician
+    const variation = ((seed + idx) % 5) * 10000 - 20000;
+    const amount = Math.max(10000, cat.baseAmount + variation);
+    const donations = Math.max(5, cat.baseDonations + Math.floor(variation / 5000));
+    
+    // Determine vote outcomes based on politician
+    const bills = cat.bills.map((bill, billIdx) => ({
+      ...bill,
+      vote_outcome: ((seed + idx + billIdx) % 3 === 0 ? "no" : "yes") as "yes" | "no",
+      sponsorship: ((seed + idx + billIdx) % 4 === 0 ? "primary" : (seed + idx + billIdx) % 4 === 1 ? "cosponsor" : null) as "primary" | "cosponsor" | null,
+    }));
+    
+    return {
+      category: cat.category,
+      total_amount: amount,
+      donation_count: donations,
+      avg_amount: Math.round(amount / donations),
+      citations: [
+        {
+          source_id: `fec-${cat.category.toLowerCase()}`,
+          source_type: "fec_filing",
+          source_url: "https://fec.gov/data/receipts",
+          title: `FEC Filings - ${cat.category}`,
+          publisher: "FEC.gov",
+        },
+      ],
+      related_bills: bills,
+      top_donors: cat.donors.map((d, dIdx) => ({
+        name: d.name,
+        amount: Math.round(d.amount * (0.8 + ((seed + dIdx) % 5) * 0.1)),
+      })),
+    };
+  });
+  
+  const totalAmount = categories.reduce((sum, c) => sum + c.total_amount, 0);
+  const totalCount = categories.reduce((sum, c) => sum + c.donation_count, 0);
+  
+  return {
+    categories,
+    total_amount: totalAmount,
+    total_count: totalCount,
+  };
 }
 
 // Helper to check if we're in demo mode

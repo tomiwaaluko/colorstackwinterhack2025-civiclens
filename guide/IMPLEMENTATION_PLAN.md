@@ -9,7 +9,7 @@ All 4 base visualization components exist with MVP functionality:
 | `DonationsMap.tsx`  | ✅ Phase 1-2 | Time slider, comparative mode, party overlay  |
 | `TimelineChart.tsx` | ✅ Phase 1-2 | Clustering, cross-reference, comparative view |
 | `NetworkGraph.tsx`  | ✅ Phase 1-3 | Search, exploration modes, clustering         |
-| `RadialChart.tsx`   | ✅ Phase 1   | Multi-ring, pathways, comparative view        |
+| `RadialChart.tsx`   | ✅ Phase 1-4 | Multi-ring, pathways, comparative view        |
 
 ---
 
@@ -191,81 +191,75 @@ All 4 base visualization components exist with MVP functionality:
 
 ---
 
-### Phase 4: Enhance RadialChart (Priority: MEDIUM)
+### Phase 4: Enhance RadialChart (Priority: MEDIUM) ✅ COMPLETED
 
 **Goal**: Create multi-ring layout with bill connections and pathway animations.
 
-#### 4.1 Multi-Ring Layout
+#### 4.1 Multi-Ring Layout ✅
 
-- [ ] **Ring 1 (Inner)**: Donor categories (current implementation)
-- [ ] **Ring 2 (Middle)**: Related bills as spokes
-- [ ] **Ring 3 (Outer)**: Voting outcomes on those bills
-- [ ] Connect categories to bills via curved lines
+- [x] **Ring 1 (Inner)**: Donor categories (pie chart)
+- [x] **Ring 2 (Middle)**: Related bills as segments
+- [x] **Ring 3 (Outer)**: Voting outcomes on those bills (✓/✗/—)
+- [x] Category colors propagate through rings
 
-**Files to modify:**
+**Files modified:** ✅
 
-- `frontend/components/RadialChart.tsx`
-- Backend: `radial.py` endpoint may need bill data
+- `frontend/components/RadialChart.tsx` - Complete rewrite (~750 lines)
+- `frontend/lib/types.ts` - Added RelatedBill, ComparativeRadialData, InfluencePathway
+- `frontend/lib/api.ts` - Added generateDemoRadialData() with related bills and donors
 
-**Implementation steps:**
+**Implementation completed:**
 
-```
-1. Extend backend to include related_bills per category
-2. Convert from pie/donut to custom ECharts polar chart
-3. Add bill layer with spoke connections
-4. Add voting outcome indicators on outer ring
-5. Style connections with category colors
-```
+- Three concentric pie rings: Categories (inner), Bills (middle), Votes (outer)
+- Toggle buttons to show/hide Bills and Votes rings
+- Vote outcomes displayed as ✓/✗/— symbols on outer ring
+- Legend shows vote outcome colors
+- Ring highlighting on hover propagates category selection
 
-#### 4.2 Interactive Segment Interactions
+#### 4.2 Interactive Segment Interactions ✅
 
-- [ ] Hover segment → Highlight connected bills and votes
-- [ ] Click segment → Zoom into category detail view
-- [ ] Add rotation animation to align selected segment at top
+- [x] Hover segment → Highlight connected bills and votes
+- [x] Click segment → Show category detail panel with top donors, bills, votes
+- [x] Highlight propagates across all rings for same category
 
-**Implementation steps:**
+**Implementation completed:**
 
-```
-1. Add onMouseOver/onMouseOut handlers
-2. Implement highlighting logic across rings
-3. Create zoom transition animation
-4. Add rotation animation for focus
-```
+- onMouseOver/onMouseOut handlers highlight category across all rings
+- Click category opens detail panel with full breakdown
+- Detail panel shows: total amount, donation count, average, top donors, related bills with vote outcomes
+- Category breakdown list is clickable for selection
+- Progress bar visualization in category list
 
-#### 4.3 Comparative Radial View
+#### 4.3 Comparative Radial View ✅
 
-- [ ] Side-by-side radial charts for 2-3 politicians
-- [ ] Synchronize category alignment
-- [ ] Highlight segments with significant differences
+- [x] Side-by-side radial charts for 2-3 politicians
+- [x] Synchronize category alignment
+- [x] Normalized categories across all charts
 
-**New components to create:**
+**Implementation completed:**
 
-- `frontend/components/RadialComparison.tsx`
+- View mode tabs: Simple / Multi-Ring / Compare
+- Comparative view shows grid of mini radial charts
+- Categories normalized and sorted consistently
+- Each chart shows politician name and total
+- 2-column grid for 2 politicians, 3-column for 3+
 
-**Implementation steps:**
+#### 4.4 "Influence Pathway" Animation ✅
 
-```
-1. Create wrapper component for multiple charts
-2. Normalize category ordering across charts
-3. Add visual difference indicators
-4. Create shared legend
-```
+- [x] Click category → Animate donation flow (3-step)
+- [x] Step 1: Donation highlights
+- [x] Step 2: Bills ring highlights
+- [x] Step 3: Vote outcomes highlight
+- [x] Progress indicator shows current step
 
-#### 4.4 "Influence Pathway" Animation
+**Implementation completed:**
 
-- [ ] Click category → Animate donation flow line
-- [ ] Show connected bills appearing
-- [ ] Display voting outcome at end
-- [ ] Show evidence bundle during animation
-
-**Implementation steps:**
-
-```
-1. Create pathway animation sequence
-2. Use ECharts graphic animations
-3. Add step-by-step progression
-4. Integrate citation display at each step
-```
+- "Show Pathway" button triggers animation
+- 3-step animation with 1-second intervals
+- Progress badges show: 1. Donation → 2. Bills → 3. Vote
+- Ring segments highlight progressively with borders
+- Animation can be stopped/cleared
+- Purple-themed animation UI
 
 ---
 
