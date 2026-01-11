@@ -1,0 +1,162 @@
+2026-01-10 16:51:52,494 [INFO] === FEC Campaign Finance Ingestion Pipeline Started ===
+2026-01-10 16:51:53,431 [INFO] === Starting contribution ingestion for FEC candidate S8TX00161, cycle 2024 ===
+2026-01-10 16:51:54,679 [ERROR] Candidate S8TX00161 not found in FEC
+2026-01-10 16:51:54,680 [INFO] Transaction committed
+2026-01-10 16:51:54,680 [INFO] === FEC Campaign Finance Ingestion Pipeline Complete ===
+2026-01-10 16:52:23,454 [INFO] === FEC Campaign Finance Ingestion Pipeline Started ===
+2026-01-10 16:52:24,288 [INFO] Found 3 politicians to process
+2026-01-10 16:52:24,288 [INFO] Processing Bernard Sanders (ID: 10000000-0000-0000-0001-000000000001)
+2026-01-10 16:52:25,451 [INFO] Found FEC candidate ID H8VT01016 for Bernard Sanders
+2026-01-10 16:52:25,451 [INFO] === Starting contribution ingestion for FEC candidate H8VT01016, cycle 2024 ===
+2026-01-10 16:52:35,489 [ERROR] Failed to process contribution: new row for relation "donations" violates check constraint "donations_donor_type_check"
+DETAIL:  Failing row contains (75f0686b-56d9-4ff8-9d89-7e56d79913da, 10000000-0000-0000-0001-000000000001, FUTURE FORWARD USA ACTION, PAC, Other, 90000000, 90000000.00, 2024-10-17, 2024-10-17, 2024, DC, da650aae-aa71-465d-913d-25047464cc13, 2026-01-10 21:52:25.658853+00).
+
+2026-01-10 16:52:35,577 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:35,665 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:35,753 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:35,841 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:35,929 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:36,017 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:36,103 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:36,193 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:36,283 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:36,371 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:36,459 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:36,545 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:36,631 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:36,727 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:36,815 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:36,901 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:36,989 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:37,079 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:37,167 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:37,257 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:37,344 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:37,432 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:37,522 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:37,612 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:37,700 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:37,790 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:37,876 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:37,964 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:38,052 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:38,144 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:38,278 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:38,370 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:38,460 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:38,546 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:38,634 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:38,724 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:38,812 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:38,902 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:38,994 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:39,082 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:39,172 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:39,260 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:39,348 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:39,436 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:39,522 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:39,612 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:39,702 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:39,794 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:39,883 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:39,973 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:40,061 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:40,149 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:40,237 [ERROR] Failed to process contribution: current transaction is aborted, commands ignored until end of transaction block
+
+2026-01-10 16:52:40,419 [ERROR] Transaction rolled back due to error
+2026-01-10 17:06:36,201 [INFO] === FEC Campaign Finance Ingestion Pipeline Started ===
+2026-01-10 17:06:37,024 [INFO] Found 3 politicians to process
+2026-01-10 17:06:37,024 [INFO] Processing Bernard Sanders (ID: 10000000-0000-0000-0001-000000000001)
+2026-01-10 17:06:38,265 [INFO] Found FEC candidate ID H8VT01016 for Bernard Sanders
+2026-01-10 17:06:38,265 [INFO] === Starting contribution ingestion for FEC candidate H8VT01016, cycle 2024 ===
+2026-01-10 17:08:23,872 [INFO] Processed 980 contributions for candidate H8VT01016
+2026-01-10 17:08:23,875 [INFO] Processing Alexandria Ocasio-Cortez (ID: 10000000-0000-0000-0001-000000000002)
+2026-01-10 17:08:24,532 [INFO] Found FEC candidate ID H8NY15148 for Alexandria Ocasio-Cortez
+2026-01-10 17:08:24,532 [INFO] === Starting contribution ingestion for FEC candidate H8NY15148, cycle 2024 ===
+2026-01-10 17:10:10,223 [INFO] Processed 980 contributions for candidate H8NY15148
+2026-01-10 17:10:10,225 [INFO] Processing Mitch McConnell (ID: 10000000-0000-0000-0001-000000000003)
+2026-01-10 17:10:10,882 [INFO] Found FEC candidate ID S2KY00012 for Mitch McConnell
+2026-01-10 17:10:10,882 [INFO] === Starting contribution ingestion for FEC candidate S2KY00012, cycle 2024 ===
+2026-01-10 17:11:56,701 [INFO] Processed 980 contributions for candidate S2KY00012
+2026-01-10 17:11:56,793 [INFO] Transaction committed
+2026-01-10 17:11:56,794 [INFO] === FEC Campaign Finance Ingestion Pipeline Complete ===
+2026-01-10 17:28:41,201 [INFO] === FEC Campaign Finance Ingestion Pipeline Started ===
+2026-01-10 17:28:41,790 [INFO] === Starting contribution ingestion for FEC candidate S8TX00161, cycle 2024 ===
+2026-01-10 17:28:43,013 [ERROR] Candidate S8TX00161 not found in FEC
+2026-01-10 17:28:43,013 [INFO] Transaction committed
+2026-01-10 17:28:43,014 [INFO] === FEC Campaign Finance Ingestion Pipeline Complete ===
+2026-01-10 17:28:54,872 [INFO] === FEC Campaign Finance Ingestion Pipeline Started ===
+2026-01-10 17:28:55,630 [INFO] Found 3 politicians to process
+2026-01-10 17:28:55,630 [INFO] Processing Bernard Sanders (ID: 10000000-0000-0000-0001-000000000001)
+2026-01-10 17:28:56,814 [INFO] Found FEC candidate ID H8VT01016 for Bernard Sanders
+2026-01-10 17:28:56,814 [INFO] === Starting contribution ingestion for FEC candidate H8VT01016, cycle 2024 ===
+2026-01-10 17:30:31,087 [INFO] Processed 980 contributions for candidate H8VT01016
+2026-01-10 17:30:31,090 [INFO] Processing Alexandria Ocasio-Cortez (ID: 10000000-0000-0000-0001-000000000002)
+2026-01-10 17:30:31,951 [INFO] Found FEC candidate ID H8NY15148 for Alexandria Ocasio-Cortez
+2026-01-10 17:30:31,952 [INFO] === Starting contribution ingestion for FEC candidate H8NY15148, cycle 2024 ===
+2026-01-10 17:32:06,362 [INFO] Processed 980 contributions for candidate H8NY15148
+2026-01-10 17:32:06,365 [INFO] Processing Mitch McConnell (ID: 10000000-0000-0000-0001-000000000003)
+2026-01-10 17:32:07,031 [INFO] Found FEC candidate ID S2KY00012 for Mitch McConnell
+2026-01-10 17:32:07,031 [INFO] === Starting contribution ingestion for FEC candidate S2KY00012, cycle 2024 ===
+2026-01-10 17:33:41,867 [INFO] Processed 980 contributions for candidate S2KY00012
+2026-01-10 17:33:41,973 [INFO] Transaction committed
+2026-01-10 17:33:41,973 [INFO] === FEC Campaign Finance Ingestion Pipeline Complete ===
+2026-01-10 17:40:35,637 [INFO] === FEC Campaign Finance Ingestion Pipeline Started ===
+2026-01-10 17:40:36,289 [INFO] === Starting contribution ingestion for FEC candidate S8TX00161, cycle 2024 ===
+2026-01-10 17:40:37,457 [ERROR] Candidate S8TX00161 not found in FEC
+2026-01-10 17:40:37,458 [INFO] Transaction committed
+2026-01-10 17:40:37,458 [INFO] === FEC Campaign Finance Ingestion Pipeline Complete ===

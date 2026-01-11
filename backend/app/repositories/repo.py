@@ -8,7 +8,12 @@ Maintains the same interface for backward compatibility.
 import os
 from typing import List, Dict, Optional
 from rapidfuzz import fuzz
-import psycopg2
+try:
+    import psycopg2
+    PSYCOPG2_AVAILABLE = True
+except ImportError:
+    PSYCOPG2_AVAILABLE = False
+    psycopg2 = None  # type: ignore
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -24,6 +29,12 @@ class PoliticianRepo:
         Args:
             db_url: PostgreSQL connection string. If not provided, uses DATABASE_URL env var.
         """
+        if not PSYCOPG2_AVAILABLE:
+            raise RuntimeError(
+                "psycopg2 is not installed. Install it with: pip install psycopg2-binary\n"
+                "Or for development without database, use the /api/qa/ask endpoint instead."
+            )
+        
         self.db_url = db_url or os.getenv('DATABASE_URL')
         if not self.db_url:
             raise ValueError("DATABASE_URL environment variable not set")
@@ -113,10 +124,15 @@ class PoliticianRepo:
         cur = conn.cursor()
         
         try:
+            # Use bill_id with JOIN to bills table to get bill title
+            # Use COALESCE for vote_value to support both vote_position and vote_value columns
             cur.execute("""
-                SELECT bill_title, vote_value FROM votes 
-                WHERE politician_id = %s 
-                ORDER BY vote_date DESC NULLS LAST
+                SELECT b.title as bill_title, 
+                       COALESCE(v.vote_position, v.vote_value) as vote_value
+                FROM votes v
+                LEFT JOIN bills b ON v.bill_id = b.id
+                WHERE v.politician_id = %s 
+                ORDER BY v.vote_date DESC NULLS LAST
             """, (politician_id,))
             votes = [list(row) for row in cur.fetchall()]
             return votes

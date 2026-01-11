@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.rag import router as rag_router
+# from app.api.rag import router as rag_router  # Requires database
 from app.api.health import router as health_router
 from app.api.search import router as search_router
 from app.api.politicians import router as politicians_router
@@ -17,8 +17,8 @@ from app.api.admin import router as admin_router
 
 def create_app() -> FastAPI:
     app = FastAPI(
-        title="Responsible AI RAG API",
-        description="Citation-first Retrieval-Augmented Generation API",
+        title="CivicLens AI API",
+        description="AI-powered Q&A for political information",
         version="0.1.0",
     )
 
@@ -41,7 +41,6 @@ def create_app() -> FastAPI:
     app.include_router(politicians_router)
     app.include_router(compare_router)
     app.include_router(qa_router)
-    app.include_router(rag_router)
     
     # Visualization routers
     app.include_router(donations_map_router)

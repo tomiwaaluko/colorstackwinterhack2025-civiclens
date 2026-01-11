@@ -280,7 +280,7 @@ export async function askQuestion(request: AskRequest): Promise<AIResponse> {
     return demoResponse;
   }
 
-  return fetchApi<AIResponse>("/ai/ask", {
+  return fetchApi<AIResponse>("/api/qa/ask", {
     method: "POST",
     body: JSON.stringify(request),
   });
