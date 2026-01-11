@@ -1,76 +1,681 @@
-# Backend Game Plan (Civic Lens)
+# CivicLens API Documentation
 
-## Your role (Backend / APIs)
-- Own the FastAPI service that exposes the product features as clean, stable APIs.
-- Define request/response contracts so frontend can build against them.
-- Aggregate data from the data/ingestion pipeline (or a temporary store) and shape it for UI needs.
-- Handle performance basics: caching, indexes, pagination, and error behavior.
+Base URL: `http://localhost:8000` (local) or your deployed URL
 
-You are not responsible for the frontend UI, RAG/AI, or data ingestion logic itself. You do coordinate on data schema and API contracts so those teams can integrate cleanly.
+All endpoints return JSON unless otherwise specified.
 
-## Where the information sits (source of truth)
-Recommended setup for hackathon speed:
-- Primary data store: a lightweight database (SQLite for local/dev; Postgres for shared/demo).
-- Data ingestion owns writing/updating the DB (or a JSON fixture while ingestion is still building).
-- Backend owns reading/aggregating data and exposes it via FastAPI.
+---
 
-If ingestion is not ready, use a small JSON/CSV fixture in `backend/data/` and wrap it behind a repository layer so you can swap in a real DB later without rewriting routes.
+## Health Check
 
-## Proposed backend structure (blank canvas)
-Create these directories/files:
-- `backend/app/` — application package root
-- `backend/app/main.py` — FastAPI app instance + middleware + router registration
-- `backend/app/api/` — route modules
-- `backend/app/api/health.py` — `/health` endpoint
-- `backend/app/api/search.py` — `/search` endpoint (name + optional zip)
-- `backend/app/api/politicians.py` — `/politicians` and `/politicians/{id}`
-- `backend/app/api/compare.py` — `/compare?ids=...`
-- `backend/app/api/qa.py` — `/qa` placeholder (if needed by AI/RAG)
-- `backend/app/models/` — ORM models if using SQLAlchemy
-- `backend/app/schemas/` — Pydantic request/response schemas
-- `backend/app/services/` — aggregation logic (search, compare, profile)
-- `backend/app/repositories/` — DB queries (clean interface for data layer)
-- `backend/app/core/` — settings, logging, caching helpers
-- `backend/app/data/` — sample fixtures (JSON/CSV) for local dev
-- `backend/tests/` — smoke tests for key routes
-- `backend/Makefile` — run/test targets (already present)
+### GET `/health`
+Check if the API is running.
 
-## API contracts (first pass)
-These align to the frontend pages you described.
-- `GET /health` → `{ status: "ok" }`
-- `GET /search?name=...&zip=...` → list of politicians with summary cards
-- `GET /politicians/{id}` → full profile + statements
-- `GET /compare?ids=1,2,3` → side-by-side list of the same summary fields
-- `POST /qa` → placeholder for future RAG (can be stubbed)
+**Response:**
+```json
+{
+  "status": "ok"
+}
+```
 
-## Data shape needed by UI (summary card fields)
-Each search/compare result should include:
-- `id`
-- `name`
-- `image_url`
-- `party`
-- `state_or_district`
-- `position` (president, senator, representative, etc.)
-- `vote_count`
-- `statement_count`
+---
 
-## Roadmap aligned to your tickets (backend-only)
-1) Define Pydantic schemas for search results, profiles, compare results.
-2) Implement repository layer that can read from:
-   - JSON fixtures (short-term) and
-   - database (long-term)
-3) Build routes for `/health`, `/search`, `/politicians/{id}`, `/compare`.
-4) Add caching and indexes:
-   - cache common search results (in-memory LRU or Redis if available)
-   - index on `name`, `state`, `district`, `zip` (if in DB)
-5) Add a simple smoke test and a one-command startup (docker compose) later.
+## Politicians
 
-## Open questions to sync with other roles
-- Data/ingestion: What is the source of truth (DB vs files), and what schema?
-- Frontend: Exact fields needed for search cards and compare rows.
-- RAG/AI: Expected `/qa` payload/response shape (if needed for demo).
+### GET `/politicians/{id}`
+Get detailed information about a specific politician by UUID.
 
-## Next actions (for you)
-1) Confirm if we want SQLite or Postgres for the hackathon demo.
-2) Decide whether to start with JSON fixtures or jump straight to DB.
-3) Draft Pydantic schemas and route stubs so frontend can integrate now.
+**Path Parameters:**
+- `id` (string, required): UUID of the politician
+
+**Response:**
+```json
+{
+  "id": "uuid-string",
+  "name": "Joe Biden",
+  "state_or_district": "Delaware",
+  "position": "President",
+  "party": "Democratic",
+  "image_url": "https://...",
+  "vote_count": 45,
+  "statement_count": 120,
+  "politician_details": {
+    "statements": ["statement text 1", "statement text 2"],
+    "votes": [
+      ["HR 1234 - Healthcare Act", "yes"],
+      ["S 567 - Climate Bill", "no"]
+    ]
+  }
+}
+```
+
+**Errors:**
+- `404`: Politician not found
+
+---
+
+## Search
+
+### GET `/search`
+Search for politicians by name with fuzzy matching.
+
+**Query Parameters:**
+- `name` (string, required): Politician name to search for (supports partial names)
+- `zip_code` (string, optional): Zip code for geographic filtering (not yet implemented)
+- `limit` (integer, optional): Maximum results to return (default: 10, max: 50)
+
+**Response:**
+```json
+{
+  "politician_summaries": [
+    {
+      "id": "uuid-string",
+      "name": "Joe Biden",
+      "state_or_district": "Delaware",
+      "position": "President",
+      "party": "Democratic",
+      "image_url": "https://...",
+      "vote_count": 45,
+      "statement_count": 120,
+      "politician_details": {
+        "statements": ["..."],
+        "votes": [["bill", "vote"]]
+      }
+    }
+  ]
+}
+```
+
+---
+
+## Compare
+
+### GET `/compare`
+Compare multiple politicians side-by-side.
+
+**Query Parameters:**
+- `ids` (string, required): Comma-separated politician IDs (e.g., "1,2,3")
+
+**Response:**
+```json
+{
+  "politician_summaries": [
+    {
+      "id": "1",
+      "name": "Politician A",
+      ...
+    },
+    {
+      "id": "2",
+      "name": "Politician B",
+      ...
+    }
+  ]
+}
+```
+
+**Errors:**
+- `404`: One or more politician IDs not found
+
+---
+
+## Q&A (Simple)
+
+### POST `/api/qa/ask`
+Simple Q&A endpoint using Gemini AI directly (no database required).
+
+**Request Body:**
+```json
+{
+  "question": "What is Joe Biden's stance on healthcare?",
+  "politician_ids": ["uuid-1", "uuid-2"],
+  "topic": "healthcare"
+}
+```
+
+**Response:**
+```json
+{
+  "answer": "Based on available information...",
+  "claims": [
+    {
+      "text": "Claim text here",
+      "citations": ["gemini-ai-1"],
+      "confidence": 0.7
+    }
+  ],
+  "citations": [
+    {
+      "source_id": "gemini-ai-1",
+      "url": "https://ai.google.dev/gemini-api",
+      "title": "Gemini AI Response",
+      "publisher": "Google AI",
+      "retrieved_at": "2024-01-15T10:30:00",
+      "snippet": "AI-generated response..."
+    }
+  ],
+  "limitations": "This is a demo response without database integration...",
+  "disclosure": "This answer is generated by AI..."
+}
+```
+
+**Errors:**
+- `500`: GEMINI_API_KEY not configured or AI generation failed
+
+---
+
+## RAG (Advanced)
+
+### POST `/api/rag/answer`
+Advanced RAG endpoint with guardrails, vector retrieval, and citation validation.
+
+**Request Body:**
+```json
+{
+  "question": "What policies has this politician supported?",
+  "politician_ids": ["uuid-1", "uuid-2"],
+  "top_k": 10
+}
+```
+
+**Response (Success):**
+```json
+{
+  "answer": "Based on retrieved evidence...",
+  "claims": [...],
+  "citations": [...]
+}
+```
+
+**Response (Refusal):**
+Plain text: `"I can't help with that request."`
+
+**Response (Insufficient Data):**
+Plain text: `"Insufficient data."`
+
+**Errors:**
+- `500`: AI generation failed
+
+---
+
+## Visualizations
+
+### GET `/api/visualizations/donations-map`
+Get aggregated donation data by state for choropleth map.
+
+**Query Parameters:**
+- `politician_ids` (array[int], optional): Filter by politician IDs
+- `category` (string, optional): Filter by donor category (e.g., "Technology", "Healthcare")
+- `start_date` (date, optional): Start date (ISO8601)
+- `end_date` (date, optional): End date (ISO8601)
+- `aggregation_level` (string, default: "state"): Only "state" supported
+
+**Response:**
+```json
+{
+  "level": "state",
+  "values": {
+    "CA": {
+      "total_amount": 1500000.00,
+      "donation_count": 250,
+      "avg_amount": 6000.00,
+      "top_donor_category": "Technology",
+      "top_category_amount": 800000.00,
+      "citations": [
+        {
+          "source_id": "1",
+          "source_url": "https://...",
+          "title": "FEC Data 2024",
+          "publisher": "FEC",
+          "retrieved_at": "2024-01-15T10:00:00"
+        }
+      ],
+      "top_politicians": [
+        {
+          "politician_id": 1,
+          "name": "Jane Doe",
+          "total_amount": 500000.00
+        }
+      ],
+      "top_donors": [
+        {
+          "donor_name": "Google PAC",
+          "total_amount": 100000.00,
+          "donation_count": 5
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "date_range": {
+      "start": "2023-01-01",
+      "end": "2024-12-31"
+    },
+    "citation_count": 150,
+    "total_states": 50,
+    "filters": {
+      "politician_ids": null,
+      "category": null,
+      "start_date": null,
+      "end_date": null
+    }
+  }
+}
+```
+
+---
+
+### GET `/api/visualizations/politician-timeline/{politician_id}`
+Get timeline events (votes, donations, statements) for a politician.
+
+**Path Parameters:**
+- `politician_id` (int, required): ID of the politician
+
+**Query Parameters:**
+- `start_date` (date, optional): Filter from this date
+- `end_date` (date, optional): Filter to this date
+- `event_types` (array[string], optional): Filter by types ("vote", "donation", "statement")
+
+**Response:**
+```json
+{
+  "events": [
+    {
+      "id": "vote-123",
+      "type": "vote",
+      "date": "2024-03-15",
+      "title": "HR 1234 - Healthcare Reform Act",
+      "outcome": "yes",
+      "citations": [
+        {
+          "source_id": "1",
+          "source_url": "https://...",
+          "title": "Congress.gov",
+          "publisher": "US Congress",
+          "retrieved_at": "2024-03-15T10:00:00"
+        }
+      ],
+      "citation_count": 1
+    },
+    {
+      "id": "donation-456",
+      "type": "donation",
+      "date": "2024-02-10",
+      "title": "Google PAC - $50,000 (Technology)",
+      "outcome": null,
+      "citations": [...],
+      "citation_count": 1
+    },
+    {
+      "id": "statement-789",
+      "type": "statement",
+      "date": "2024-01-20",
+      "title": "We must address climate change...",
+      "outcome": null,
+      "citations": [...],
+      "citation_count": 1
+    }
+  ],
+  "clusters": []
+}
+```
+
+**Errors:**
+- `404`: Politician not found
+
+---
+
+### GET `/api/visualizations/network-graph`
+Get network graph showing relationships between politicians, donors, and bills.
+
+**Query Parameters:**
+- `politician_ids` (array[int], optional): Filter to specific politicians
+- `include_indirect` (bool, default: false): Include indirect donor-bill relationships via category alignment
+
+**Response:**
+```json
+{
+  "nodes": [
+    {
+      "id": "politician-1",
+      "label": "Joe Biden",
+      "type": "politician",
+      "metadata": {
+        "politician_id": 1
+      }
+    },
+    {
+      "id": "donor-Google",
+      "label": "Google PAC",
+      "type": "donor",
+      "metadata": {
+        "category": "Technology"
+      }
+    },
+    {
+      "id": "bill-123",
+      "label": "HR 1234",
+      "type": "bill",
+      "metadata": {
+        "bill_id": 123,
+        "title": "Healthcare Reform Act"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "donor-Google",
+      "target": "politician-1",
+      "weight": 40000.00,
+      "type": "donation",
+      "metadata": {
+        "category": "Technology",
+        "donation_count": 5
+      }
+    },
+    {
+      "source": "politician-1",
+      "target": "bill-123",
+      "weight": 1.0,
+      "type": "vote",
+      "metadata": {
+        "vote_count": 1
+      }
+    }
+  ]
+}
+```
+
+---
+
+### GET `/api/visualizations/politician-radial/{politician_id}`
+Get donation data by category for a politician (for radial/pie chart).
+
+**Path Parameters:**
+- `politician_id` (int, required): ID of the politician
+
+**Query Parameters:**
+- `start_date` (date, optional): Filter from this date
+- `end_date` (date, optional): Filter to this date
+
+**Response:**
+```json
+{
+  "categories": [
+    {
+      "category": "Technology",
+      "total_amount": 400000.00,
+      "donation_count": 45,
+      "avg_amount": 8888.89,
+      "citations": [
+        {
+          "source_id": "1",
+          "source_url": "https://...",
+          "title": "FEC Data",
+          "publisher": "FEC",
+          "retrieved_at": "2024-01-15T10:00:00"
+        }
+      ]
+    },
+    {
+      "category": "Healthcare",
+      "total_amount": 300000.00,
+      "donation_count": 30,
+      "avg_amount": 10000.00,
+      "citations": [...]
+    }
+  ],
+  "total_amount": 1500000.00,
+  "total_count": 250
+}
+```
+
+**Errors:**
+- `404`: Politician not found
+
+---
+
+## AI Insights for Visualizations
+
+### POST `/api/visualizations/ai/insights`
+Generate AI-powered insights for the current visualization.
+
+**Request Body:**
+```json
+{
+  "visualization_type": "donations_map",
+  "filters": {
+    "category": "Technology",
+    "start_date": "2023-01-01",
+    "end_date": "2024-12-31"
+  },
+  "data_summary": {
+    "total_amount": 5000000.00,
+    "state_count": 50,
+    "top_state": "CA"
+  },
+  "selected_items": ["CA", "NY", "TX"]
+}
+```
+
+**Response:**
+```json
+{
+  "insights": [
+    "California receives 30% of all technology donations",
+    "Tech donations increased 45% year-over-year",
+    "3 states account for 60% of all donations"
+  ],
+  "summary": "Technology donations heavily concentrated in coastal states",
+  "suggested_action": "Compare with healthcare donations to see category differences"
+}
+```
+
+**Errors:**
+- `500`: AI generation failed
+
+---
+
+### POST `/api/visualizations/ai/ask`
+Answer a question about the current visualization.
+
+**Request Body:**
+```json
+{
+  "question": "Why does California have the most donations?",
+  "visualization_type": "donations_map",
+  "filters": {...},
+  "data_summary": {...},
+  "selected_items": ["CA"]
+}
+```
+
+**Response:**
+```json
+{
+  "answer": "California has the most donations primarily because...",
+  "supporting_data": [
+    "CA has 120 tech companies donating",
+    "Average donation: $50,000",
+    "Silicon Valley concentration"
+  ],
+  "follow_up_suggestions": [
+    "Which specific companies donate the most?",
+    "How do CA donations compare to NY?"
+  ],
+  "confidence": "high",
+  "limitations": "Data limited to federal donations"
+}
+```
+
+**Errors:**
+- `500`: AI generation failed
+
+---
+
+### POST `/api/visualizations/ai/suggestions`
+Generate AI-powered exploration suggestions.
+
+**Request Body:**
+```json
+{
+  "visualization_type": "timeline",
+  "current_state": {
+    "politician_id": 1,
+    "date_range": ["2023-01-01", "2024-12-31"]
+  },
+  "user_history": [
+    {
+      "action": "filtered_by_date",
+      "timestamp": "2024-01-15T10:00:00"
+    }
+  ]
+}
+```
+
+**Response:**
+```json
+{
+  "suggestions": [
+    {
+      "title": "Compare with party members",
+      "description": "See how this politician's votes compare to others in their party",
+      "action_type": "compare",
+      "metadata": {
+        "suggested_politicians": [2, 3, 4]
+      }
+    },
+    {
+      "title": "View donation patterns",
+      "description": "Explore who funded this politician during this period",
+      "action_type": "filter",
+      "metadata": {
+        "filter": "donations"
+      }
+    }
+  ]
+}
+```
+
+---
+
+### GET `/api/visualizations/ai/status`
+Check if AI features are available.
+
+**Response:**
+```json
+{
+  "available": true,
+  "model": "gemini-2.0-flash"
+}
+```
+
+---
+
+## Admin
+
+### POST `/api/admin/refresh-materialized-views`
+Refresh materialized views (for demo/maintenance).
+
+**Query Parameters:**
+- `view_name` (string, optional): Specific view to refresh (if None, refreshes all)
+- `concurrent` (bool, default: true): Use CONCURRENTLY refresh
+
+**Available Views:**
+- `donations_by_state_cycle`
+- `top_donors_by_region`
+- `graph_edges_by_politician`
+- `donations_by_politician_category`
+- `top_politicians_by_state`
+- `timeline_events_summary`
+
+**Response:**
+```json
+{
+  "success": true,
+  "refreshed": 6,
+  "failed": 0,
+  "results": [
+    {
+      "view": "donations_by_state_cycle",
+      "status": "refreshed",
+      "method": "concurrent"
+    }
+  ],
+  "errors": []
+}
+```
+
+**Errors:**
+- `400`: Invalid view name
+
+---
+
+### GET `/api/admin/materialized-views/status`
+Get status and statistics for all materialized views.
+
+**Response:**
+```json
+{
+  "total_views": 6,
+  "views": [
+    {
+      "name": "donations_by_state_cycle",
+      "schema": "public",
+      "size": "2048 kB",
+      "column_count": 5,
+      "row_count": 1250
+    }
+  ]
+}
+```
+
+---
+
+## Error Responses
+
+All endpoints may return these standard errors:
+
+### 400 Bad Request
+```json
+{
+  "detail": "Invalid parameter value"
+}
+```
+
+### 404 Not Found
+```json
+{
+  "detail": "Resource not found"
+}
+```
+
+### 500 Internal Server Error
+```json
+{
+  "detail": "Internal server error message"
+}
+```
+
+---
+
+## CORS
+
+Allowed origins:
+- `http://localhost:3000`
+- `http://127.0.0.1:3000`
+- `https://civiclensai.vercel.app`
+
+All methods and headers are allowed for these origins.
+
+---
+
+## Rate Limiting
+
+Currently no rate limiting is implemented. Consider adding rate limiting for production use.
+
+---
+
+## Authentication
+
+Currently no authentication is required. Consider adding API keys or OAuth for production use.
