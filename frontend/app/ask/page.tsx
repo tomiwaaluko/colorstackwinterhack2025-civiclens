@@ -97,14 +97,15 @@ function AskPageContent() {
         claims: response.claims,
         confidence: "high",
       };
-      
+
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
       // Handle error
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "I apologize, but I encountered an error processing your question. Please try again.",
+        content:
+          "I apologize, but I encountered an error processing your question. Please try again.",
         confidence: "low",
       };
       setMessages((prev) => [...prev, errorMessage]);
