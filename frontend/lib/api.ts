@@ -12,6 +12,7 @@ import type {
   Donation,
   DonationsMapResponse,
   TimelineResponse,
+  TimelineEvent,
   NetworkGraphResponse,
   NetworkNode,
   NetworkEdge,
@@ -404,7 +405,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     outcome: politicianId % 2 === 1 ? "yes" : "no",
     topic: "Healthcare",
     citations: [
-      { source_id: "congress-1", source_type: "congressional_record", source_url: "https://congress.gov/bill/123", title: "H.R. 1234 - ACA Extension", publisher: "Congress.gov" },
+      { source_id: 1, source_type: "congressional_record", source_url: "https://congress.gov/bill/123", title: "H.R. 1234 - ACA Extension", publisher: "Congress.gov", retrieved_at: "2024-01-15T00:00:00Z" },
     ],
     citation_count: 1,
     related_events: [`evt-${politicianId}-${eventId}`],
@@ -418,7 +419,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     amount: 25000 + (seed % 10) * 1000,
     topic: "Healthcare",
     citations: [
-      { source_id: "fec-1", source_type: "fec_filing", source_url: "https://fec.gov/data/receipts", title: "FEC Filing Q1 2024", publisher: "FEC.gov" },
+      { source_id: "fec-1", source_type: "fec_filing", source_url: "https://fec.gov/data/receipts", title: "FEC Filing Q1 2024", publisher: "FEC.gov", retrieved_at: "2024-01-01T00:00:00Z" },
     ],
     citation_count: 1,
     related_events: [`evt-${politicianId}-${eventId - 2}`],
@@ -431,7 +432,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     title: "Press Release on Healthcare Policy",
     topic: "Healthcare",
     citations: [
-      { source_id: "press-1", source_type: "press_release", source_url: "https://example.com/press", title: "Statement on Healthcare", publisher: "Office Press" },
+      { source_id: "press-1", source_type: "press_release", source_url: "https://example.com/press", title: "Statement on Healthcare", publisher: "Office Press", retrieved_at: "2024-01-01T00:00:00Z" },
     ],
     citation_count: 1,
   });
@@ -444,7 +445,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     title: "Clean Energy Investment Act",
     topic: "Energy",
     citations: [
-      { source_id: "congress-2", source_type: "congressional_record", source_url: "https://congress.gov/bill/456", title: "S. 456 - Clean Energy", publisher: "Congress.gov" },
+      { source_id: "congress-2", source_type: "congressional_record", source_url: "https://congress.gov/bill/456", title: "S. 456 - Clean Energy", publisher: "Congress.gov", retrieved_at: "2024-01-01T00:00:00Z" },
     ],
     citation_count: 1,
   });
@@ -457,7 +458,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     amount: 15000 + (seed % 8) * 500,
     topic: "Energy",
     citations: [
-      { source_id: "fec-2", source_type: "fec_filing", source_url: "https://fec.gov/data/receipts", title: "FEC Filing Q1 2024", publisher: "FEC.gov" },
+      { source_id: "fec-2", source_type: "fec_filing", source_url: "https://fec.gov/data/receipts", title: "FEC Filing Q1 2024", publisher: "FEC.gov", retrieved_at: "2024-01-01T00:00:00Z" },
     ],
     citation_count: 1,
   });
@@ -470,7 +471,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     outcome: politicianId % 3 === 0 ? "no" : "yes",
     topic: "Energy",
     citations: [
-      { source_id: "congress-3", source_type: "congressional_record", source_url: "https://congress.gov/bill/789", title: "H.R. 789 - Infrastructure", publisher: "Congress.gov" },
+      { source_id: "congress-3", source_type: "congressional_record", source_url: "https://congress.gov/bill/789", title: "H.R. 789 - Infrastructure", publisher: "Congress.gov", retrieved_at: "2024-01-01T00:00:00Z" },
     ],
     citation_count: 1,
   });
@@ -484,7 +485,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     outcome: "yes",
     topic: "Technology",
     citations: [
-      { source_id: "congress-4", source_type: "congressional_record", source_url: "https://congress.gov/bill/999", title: "S. 999 - Data Privacy", publisher: "Congress.gov" },
+      { source_id: "congress-4", source_type: "congressional_record", source_url: "https://congress.gov/bill/999", title: "S. 999 - Data Privacy", publisher: "Congress.gov", retrieved_at: "2024-01-01T00:00:00Z" },
     ],
     citation_count: 1,
   });
@@ -497,7 +498,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     amount: 50000 + (seed % 5) * 5000,
     topic: "Technology",
     citations: [
-      { source_id: "fec-3", source_type: "fec_filing", source_url: "https://fec.gov/data/receipts", title: "FEC Filing Q1 2024", publisher: "FEC.gov" },
+      { source_id: "fec-3", source_type: "fec_filing", source_url: "https://fec.gov/data/receipts", title: "FEC Filing Q1 2024", publisher: "FEC.gov", retrieved_at: "2024-01-01T00:00:00Z" },
     ],
     citation_count: 1,
   });
@@ -511,7 +512,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     outcome: politicianId % 2 === 0 ? "yes" : "no",
     topic: "Finance",
     citations: [
-      { source_id: "congress-5", source_type: "congressional_record", source_url: "https://congress.gov/bill/111", title: "H.R. 111 - Banking Reform", publisher: "Congress.gov" },
+      { source_id: "congress-5", source_type: "congressional_record", source_url: "https://congress.gov/bill/111", title: "H.R. 111 - Banking Reform", publisher: "Congress.gov", retrieved_at: "2024-01-01T00:00:00Z" },
     ],
     citation_count: 1,
   });
@@ -524,7 +525,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     amount: 75000 + (seed % 10) * 2500,
     topic: "Finance",
     citations: [
-      { source_id: "fec-4", source_type: "fec_filing", source_url: "https://fec.gov/data/receipts", title: "FEC Filing Q2 2024", publisher: "FEC.gov" },
+      { source_id: "fec-4", source_type: "fec_filing", source_url: "https://fec.gov/data/receipts", title: "FEC Filing Q2 2024", publisher: "FEC.gov", retrieved_at: "2024-01-01T00:00:00Z" },
     ],
     citation_count: 1,
   });
@@ -536,7 +537,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     title: "Op-Ed on Financial Transparency",
     topic: "Finance",
     citations: [
-      { source_id: "news-1", source_type: "news_article", source_url: "https://example.com/news", title: "Op-Ed: Financial Markets", publisher: "Major Newspaper" },
+      { source_id: "news-1", source_type: "news_article", source_url: "https://example.com/news", title: "Op-Ed: Financial Markets", publisher: "Major Newspaper", retrieved_at: "2024-01-01T00:00:00Z" },
     ],
     citation_count: 1,
   });
@@ -549,7 +550,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     outcome: "yes",
     topic: "Finance",
     citations: [
-      { source_id: "congress-6", source_type: "congressional_record", source_url: "https://congress.gov/bill/222", title: "Amendment to H.R. 111", publisher: "Congress.gov" },
+      { source_id: "congress-6", source_type: "congressional_record", source_url: "https://congress.gov/bill/222", title: "Amendment to H.R. 111", publisher: "Congress.gov", retrieved_at: "2024-01-01T00:00:00Z" },
     ],
     citation_count: 1,
   });
@@ -562,7 +563,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     title: "National Parks Protection Act",
     topic: "Environment",
     citations: [
-      { source_id: "congress-7", source_type: "congressional_record", source_url: "https://congress.gov/bill/333", title: "S. 333 - Parks Protection", publisher: "Congress.gov" },
+      { source_id: "congress-7", source_type: "congressional_record", source_url: "https://congress.gov/bill/333", title: "S. 333 - Parks Protection", publisher: "Congress.gov", retrieved_at: "2024-01-01T00:00:00Z" },
     ],
     citation_count: 1,
   });
@@ -575,7 +576,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     amount: 10000 + (seed % 4) * 2000,
     topic: "Environment",
     citations: [
-      { source_id: "fec-5", source_type: "fec_filing", source_url: "https://fec.gov/data/receipts", title: "FEC Filing Q2 2024", publisher: "FEC.gov" },
+      { source_id: "fec-5", source_type: "fec_filing", source_url: "https://fec.gov/data/receipts", title: "FEC Filing Q2 2024", publisher: "FEC.gov", retrieved_at: "2024-01-01T00:00:00Z" },
     ],
     citation_count: 1,
   });
@@ -589,7 +590,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     outcome: "yes",
     topic: "Defense",
     citations: [
-      { source_id: "congress-8", source_type: "congressional_record", source_url: "https://congress.gov/bill/444", title: "NDAA FY2025", publisher: "Congress.gov" },
+      { source_id: "congress-8", source_type: "congressional_record", source_url: "https://congress.gov/bill/444", title: "NDAA FY2025", publisher: "Congress.gov", retrieved_at: "2024-01-01T00:00:00Z" },
     ],
     citation_count: 1,
   });
@@ -602,7 +603,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     amount: 35000 + (seed % 6) * 3000,
     topic: "Defense",
     citations: [
-      { source_id: "fec-6", source_type: "fec_filing", source_url: "https://fec.gov/data/receipts", title: "FEC Filing Q2 2024", publisher: "FEC.gov" },
+      { source_id: "fec-6", source_type: "fec_filing", source_url: "https://fec.gov/data/receipts", title: "FEC Filing Q2 2024", publisher: "FEC.gov", retrieved_at: "2024-01-01T00:00:00Z" },
     ],
     citation_count: 1,
   });
@@ -615,7 +616,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     title: "Independence Day Address",
     topic: "Other",
     citations: [
-      { source_id: "press-2", source_type: "press_release", source_url: "https://example.com/press", title: "July 4th Statement", publisher: "Office Press" },
+      { source_id: "press-2", source_type: "press_release", source_url: "https://example.com/press", title: "July 4th Statement", publisher: "Office Press", retrieved_at: "2024-01-01T00:00:00Z" },
     ],
     citation_count: 1,
   });
@@ -628,7 +629,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     outcome: politicianId % 2 === 1 ? "yes" : "no",
     topic: "Other",
     citations: [
-      { source_id: "congress-9", source_type: "congressional_record", source_url: "https://congress.gov/bill/555", title: "Education Funding", publisher: "Congress.gov" },
+      { source_id: "congress-9", source_type: "congressional_record", source_url: "https://congress.gov/bill/555", title: "Education Funding", publisher: "Congress.gov", retrieved_at: "2024-01-01T00:00:00Z" },
     ],
     citation_count: 1,
   });
@@ -1035,6 +1036,7 @@ function generateDemoRadialData(politicianId: number): RadialResponse {
           source_url: "https://fec.gov/data/receipts",
           title: `FEC Filings - ${cat.category}`,
           publisher: "FEC.gov",
+          retrieved_at: "2024-01-01T00:00:00Z",
         },
       ],
       related_bills: bills,

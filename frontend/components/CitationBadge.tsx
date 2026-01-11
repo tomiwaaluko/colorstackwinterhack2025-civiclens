@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { UnifiedCitation } from "./EvidenceDrawer";
 import EvidencePopover from "./EvidencePopover";
 import { FileText, BookOpen } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface CitationBadgeProps {
   count: number;
@@ -14,7 +15,19 @@ interface CitationBadgeProps {
   className?: string;
 }
 
-export default function CitationBadge({
+// Old interface for compatibility with ask/page.tsx and compare/page.tsx
+interface LegacyCitationBadgeProps {
+  citation: {
+    id: string;
+    source: string;
+    url?: string;
+    date?: string;
+    type?: string;
+  };
+  index: number;
+}
+
+function CitationBadgeComponent({
   count,
   citations,
   onViewAll,
@@ -51,6 +64,32 @@ export default function CitationBadge({
       {badge}
     </EvidencePopover>
   );
+}
+
+// Legacy CitationBadge for ask/page.tsx and compare/page.tsx compatibility
+function LegacyCitationBadge({ citation, index }: LegacyCitationBadgeProps) {
+  return (
+    <Badge
+      variant="outline"
+      className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
+    >
+      <FileText className="h-3 w-3" />
+      [{index}]
+    </Badge>
+  );
+}
+
+// Export both default and named export for compatibility
+export default CitationBadgeComponent;
+
+// Named export that handles both interfaces
+export function CitationBadge(props: CitationBadgeProps | LegacyCitationBadgeProps) {
+  // Check if it's the legacy interface
+  if ("citation" in props && "index" in props) {
+    return <LegacyCitationBadge citation={props.citation} index={props.index} />;
+  }
+  // Use the new interface
+  return <CitationBadgeComponent {...(props as CitationBadgeProps)} />;
 }
 
 // Simpler inline version for use in text

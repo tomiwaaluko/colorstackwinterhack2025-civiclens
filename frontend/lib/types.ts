@@ -95,11 +95,12 @@ export interface ComparisonResult {
 
 // Visualization types
 export interface VisualizationCitation {
-  source_id: number;
+  source_id: number | string; // Can be number or string for flexibility
   source_url: string;
   title: string;
   publisher: string;
   retrieved_at: string;
+  source_type?: string; // Optional source type for categorization
 }
 
 export interface StateDonationValue {

@@ -374,10 +374,14 @@ export default function NetworkGraph({
   // Focus on search result
   const focusOnNode = useCallback((nodeId: string) => {
     if (graphRef.current) {
-      const node = filteredGraphData?.nodes.find((n) => n.id === nodeId);
-      if (node) {
+      // react-force-graph adds x and y properties at runtime
+      const node = filteredGraphData?.nodes.find((n) => n.id === nodeId) as any;
+      if (node && typeof node.x === 'number' && typeof node.y === 'number') {
         graphRef.current.centerAt(node.x, node.y, 500);
         graphRef.current.zoom(2, 500);
+        setHighlightedNodes(new Set([nodeId]));
+      } else {
+        // Fallback: just highlight the node
         setHighlightedNodes(new Set([nodeId]));
       }
     }
@@ -826,7 +830,7 @@ export default function NetworkGraph({
                   (e.source === link.source?.id || e.source === link.source) &&
                   (e.target === link.target?.id || e.target === link.target)
               );
-              return edge?.type === "indirect" ? [5, 5] : undefined;
+              return edge?.type === "indirect" ? [5, 5] : null;
             }}
             onNodeClick={handleNodeClick}
             onLinkClick={handleEdgeClick}

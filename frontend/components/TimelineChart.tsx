@@ -287,8 +287,8 @@ export default function TimelineChart({
   }, []);
 
   // Calculate event counts
-  const eventCounts = useMemo(() => {
-    if (!timelineData) return {};
+  const eventCounts = useMemo((): Record<EventType, number> => {
+    if (!timelineData) return {} as Record<EventType, number>;
     return timelineData.events.reduce((acc, event) => {
       acc[event.type] = (acc[event.type] || 0) + 1;
       return acc;
@@ -326,7 +326,7 @@ export default function TimelineChart({
         name: TYPE_LABELS[type],
         type: "scatter",
         symbolSize: (value: number[]) => {
-          const eventId = value[4] as string;
+          const eventId = String(value[4]);
           const isHighlighted = highlightedEvents.has(eventId);
           const count = value[2] as number;
           const baseSize = Math.max(12, Math.min(35, count * 6));
