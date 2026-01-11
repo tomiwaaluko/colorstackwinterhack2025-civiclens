@@ -1,120 +1,144 @@
 "use client";
 
-import { ExternalLink, Calendar, Building } from "lucide-react";
-import type { Citation } from "@/lib/types";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import type { UnifiedCitation } from "./EvidenceDrawer";
+import EvidencePopover from "./EvidencePopover";
+import { FileText, BookOpen } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface CitationBadgeProps {
-  citation: Citation;
-  index?: number;
+  count: number;
+  citations: UnifiedCitation[];
+  onViewAll: () => void;
+  variant?: "default" | "compact" | "inline" | "pill";
+  showIcon?: boolean;
+  className?: string;
 }
 
-export function CitationBadge({ citation, index }: CitationBadgeProps) {
+// Old interface for compatibility with ask/page.tsx and compare/page.tsx
+interface LegacyCitationBadgeProps {
+  citation: {
+    id: string;
+    source: string;
+    url?: string;
+    date?: string;
+    type?: string;
+  };
+  index: number;
+}
+
+function CitationBadgeComponent({
+  count,
+  citations,
+  onViewAll,
+  variant = "default",
+  showIcon = true,
+  className = "",
+}: CitationBadgeProps) {
+  if (count === 0) return null;
+
+  const baseClasses = "cursor-pointer transition-all";
+  
+  const variantClasses = {
+    default: "inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-md text-xs font-medium hover:bg-blue-100 hover:border-blue-300",
+    compact: "inline-flex items-center justify-center w-5 h-5 bg-blue-500 text-white rounded-full text-xs font-bold hover:bg-blue-600",
+    inline: "inline-flex items-center gap-1 text-blue-600 text-xs font-medium hover:text-blue-800 hover:underline",
+    pill: "inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-100 text-amber-800 rounded-full text-xs font-semibold hover:bg-amber-200",
+  };
+
+  const badge = (
+    <span className={`${baseClasses} ${variantClasses[variant]} ${className}`}>
+      {showIcon && variant !== "compact" && (
+        variant === "pill" ? (
+          <BookOpen className="h-3 w-3" />
+        ) : (
+          <FileText className="h-3 w-3" />
+        )
+      )}
+      {variant === "compact" ? count : `${count} source${count > 1 ? "s" : ""}`}
+    </span>
+  );
+
   return (
-    <Dialog>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <DialogTrigger asChild>
-              <button
-                className="citation-badge cursor-pointer hover:bg-accent/30 transition-colors"
-                aria-label={`Open citation ${index ?? 1}`}
-              >
-                <span>[{index ?? 1}]</span>
-              </button>
-            </DialogTrigger>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p className="text-xs">Click to view source</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+    <EvidencePopover citations={citations} onViewAll={onViewAll}>
+      {badge}
+    </EvidencePopover>
+  );
+}
 
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="font-serif">Source Citation</DialogTitle>
-          <DialogDescription>
-            Verified data source for this information
-          </DialogDescription>
-        </DialogHeader>
+// Legacy CitationBadge for ask/page.tsx and compare/page.tsx compatibility
+function LegacyCitationBadge({ citation, index }: LegacyCitationBadgeProps) {
+  return (
+    <Badge
+      variant="outline"
+      className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
+    >
+      <FileText className="h-3 w-3" />
+      [{index}]
+    </Badge>
+  );
+}
 
-        <div className="space-y-4 py-4">
-          <div className="flex items-start gap-3">
-            <Building className="h-5 w-5 text-muted-foreground mt-0.5" />
-            <div>
-              <p className="text-sm font-medium text-foreground">Title</p>
-              <p className="text-sm text-muted-foreground">{citation.title}</p>
-            </div>
-          </div>
+// Export both default and named export for compatibility
+export default CitationBadgeComponent;
 
-          <div className="flex items-start gap-3">
-            <Building className="h-5 w-5 text-muted-foreground mt-0.5" />
-            <div>
-              <p className="text-sm font-medium text-foreground">Publisher</p>
-              <p className="text-sm text-muted-foreground">{citation.publisher}</p>
-            </div>
-          </div>
+// Named export that handles both interfaces
+export function CitationBadge(props: CitationBadgeProps | LegacyCitationBadgeProps) {
+  // Check if it's the legacy interface
+  if ("citation" in props && "index" in props) {
+    return <LegacyCitationBadge citation={props.citation} index={props.index} />;
+  }
+  // Use the new interface
+  return <CitationBadgeComponent {...(props as CitationBadgeProps)} />;
+}
 
-          <div className="flex items-start gap-3">
-            <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
-            <div>
-              <p className="text-sm font-medium text-foreground">Retrieved At</p>
-              <p className="text-sm text-muted-foreground">
-                {new Date(citation.retrieved_at).toLocaleDateString()}
-              </p>
-            </div>
-          </div>
+// Simpler inline version for use in text
+interface InlineCitationProps {
+  count: number;
+  onClick: () => void;
+}
 
-          {citation.snippet && (
-            <div className="flex items-start gap-3">
-              <div>
-                <p className="text-sm font-medium text-foreground">Snippet</p>
-                <p className="text-sm text-muted-foreground italic">
-                  {citation.snippet}
-                </p>
-              </div>
-            </div>
-          )}
+export function InlineCitation({ count, onClick }: InlineCitationProps) {
+  if (count === 0) return null;
 
-          <div className="flex items-start gap-3">
-            <ExternalLink className="h-5 w-5 text-muted-foreground mt-0.5" />
-            <div>
-              <p className="text-sm font-medium text-foreground">URL</p>
-              <a
-                href={citation.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-primary hover:underline break-all"
-              >
-                {citation.url}
-              </a>
-            </div>
-          </div>
-        </div>
+  return (
+    <button
+      onClick={onClick}
+      className="inline-flex items-center gap-0.5 text-blue-600 hover:text-blue-800 hover:underline text-xs font-medium ml-1"
+    >
+      <FileText className="h-3 w-3" />
+      [{count}]
+    </button>
+  );
+}
 
-        <div className="flex justify-end">
-          <Button asChild variant="outline" size="sm">
-            <a href={citation.url} target="_blank" rel="noopener noreferrer">
-              <ExternalLink className="h-4 w-4 mr-2" />
-              Open Source
-            </a>
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+// Citation count for map overlays
+interface MapCitationCountProps {
+  count: number;
+  onClick: () => void;
+  position?: "top-right" | "bottom-right" | "top-left" | "bottom-left";
+}
+
+export function MapCitationCount({ count, onClick, position = "top-right" }: MapCitationCountProps) {
+  if (count === 0) return null;
+
+  const positionClasses = {
+    "top-right": "top-1 right-1",
+    "bottom-right": "bottom-1 right-1",
+    "top-left": "top-1 left-1",
+    "bottom-left": "bottom-1 left-1",
+  };
+
+  return (
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
+      className={`absolute ${positionClasses[position]} z-10 flex items-center justify-center w-5 h-5 bg-blue-500 text-white rounded-full text-xs font-bold hover:bg-blue-600 shadow-md transition-transform hover:scale-110`}
+      title={`${count} source${count > 1 ? "s" : ""}`}
+    >
+      {count}
+    </button>
   );
 }

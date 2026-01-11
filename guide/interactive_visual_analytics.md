@@ -687,7 +687,31 @@ Response:
 
 ---
 
-**Document Status**: Planning Phase — No Implementation Yet  
-**Last Updated**: [Date]  
+**Document Status**: Implementation In Progress — See `IMPLEMENTATION_PLAN.md` for detailed steps  
+**Last Updated**: January 2026  
 **Owner**: Frontend/UX Team  
 **Reviewers**: Backend, Data/Ingestion, AI/RAG Teams
+
+---
+
+## Implementation Progress
+
+See [`IMPLEMENTATION_PLAN.md`](./IMPLEMENTATION_PLAN.md) for:
+
+- Detailed step-by-step implementation guide
+- Sprint breakdown (5 sprints, ~2 weeks)
+- File structure and component list
+- Success criteria checklist
+
+**Current MVP Components (Completed):**
+
+- ✅ `DonationsMap.tsx` - Choropleth map with state details
+- ✅ `TimelineChart.tsx` - ECharts timeline with multi-layer events
+- ✅ `NetworkGraph.tsx` - Force-directed graph with react-force-graph
+- ✅ `RadialChart.tsx` - Donut chart with category breakdown
+
+**Next Steps:**
+
+1. Add time slider to DonationsMap
+2. Integrate SourceDrawer for citations
+3. Implement comparative mode

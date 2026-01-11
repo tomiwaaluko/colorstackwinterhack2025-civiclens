@@ -95,11 +95,12 @@ export interface ComparisonResult {
 
 // Visualization types
 export interface VisualizationCitation {
-  source_id: number;
+  source_id: number | string; // Can be number or string for flexibility
   source_url: string;
   title: string;
   publisher: string;
   retrieved_at: string;
+  source_type?: string; // Optional source type for categorization
 }
 
 export interface StateDonationValue {
@@ -140,6 +141,24 @@ export interface DonationsMapResponse {
   };
 }
 
+// Extended types for map visualization modes
+export type MapViewMode = "total" | "party" | "comparative";
+
+export interface PartyDonationValue {
+  democrat: number;
+  republican: number;
+  independent: number;
+  total: number;
+}
+
+export interface ComparativePoliticianData {
+  id: number;
+  name: string;
+  party: string;
+  color: string;
+  values: Record<string, number>;
+}
+
 export type EventType = "vote" | "bill_sponsor" | "donation" | "statement";
 
 export interface TimelineEvent {
@@ -150,31 +169,96 @@ export interface TimelineEvent {
   outcome?: string | null;
   citations: VisualizationCitation[];
   citation_count: number;
+  topic?: string;
+  amount?: number; // For donation events
+  related_events?: string[]; // IDs of related events
+}
+
+export interface TimelineCluster {
+  id: string;
+  name: string;
+  topic: string;
+  start_date: string;
+  end_date: string;
+  event_ids: string[];
+  event_count: number;
 }
 
 export interface TimelineResponse {
   events: TimelineEvent[];
-  clusters?: any[];
+  clusters?: TimelineCluster[];
 }
+
+// Timeline comparative mode types
+export interface ComparativeTimelineData {
+  politician_id: number;
+  politician_name: string;
+  party: string;
+  events: TimelineEvent[];
+}
+
+export interface TimelineComparisonResult {
+  politicians: ComparativeTimelineData[];
+  date_range: {
+    start: string;
+    end: string;
+  };
+}
+
+export type NetworkNodeType = "politician" | "donor" | "bill";
+export type NetworkEdgeType = "donation" | "vote" | "sponsor" | "indirect";
 
 export interface NetworkNode {
   id: string;
   label: string;
-  type: string; // 'politician' | 'donor' | 'bill'
+  type: NetworkNodeType;
   metadata?: Record<string, any>;
+  // Enhanced properties
+  category?: string; // For clustering (e.g., "Healthcare", "Finance")
+  party?: string; // For politicians
+  amount?: number; // For donors (total donated)
+  date?: string; // For time filtering
 }
 
 export interface NetworkEdge {
   source: string;
   target: string;
   weight: number;
-  type: string; // 'donation' | 'vote' | 'indirect'
+  type: NetworkEdgeType;
   metadata?: Record<string, any>;
+  // Enhanced properties
+  date?: string;
+  category?: string;
+}
+
+export interface NetworkCluster {
+  id: string;
+  name: string;
+  category: string;
+  node_ids: string[];
+  color: string;
 }
 
 export interface NetworkGraphResponse {
   nodes: NetworkNode[];
   edges: NetworkEdge[];
+  clusters?: NetworkCluster[];
+}
+
+// Exploration mode types
+export type ExplorationMode = "default" | "influence_path" | "legislative_web";
+
+export interface NetworkPath {
+  nodes: string[];
+  edges: Array<{ source: string; target: string }>;
+  description: string;
+}
+
+export interface RelatedBill {
+  id: string;
+  title: string;
+  vote_outcome?: "yes" | "no" | "abstain";
+  sponsorship?: "primary" | "cosponsor" | null;
 }
 
 export interface CategoryValue {
@@ -183,12 +267,31 @@ export interface CategoryValue {
   donation_count: number;
   avg_amount?: number | null;
   citations: VisualizationCitation[];
+  // Enhanced for multi-ring
+  related_bills?: RelatedBill[];
+  top_donors?: Array<{ name: string; amount: number }>;
 }
 
 export interface RadialResponse {
   categories: CategoryValue[];
   total_amount: number;
   total_count: number;
+}
+
+// Comparative radial types
+export interface ComparativeRadialData {
+  politician_id: number;
+  politician_name: string;
+  party: string;
+  data: RadialResponse;
+}
+
+// Pathway animation types
+export interface InfluencePathway {
+  category: string;
+  amount: number;
+  bills: RelatedBill[];
+  step: number; // Current animation step
 }
 
 // AI Q&A types (matching AI response schema)

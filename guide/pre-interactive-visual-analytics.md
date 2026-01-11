@@ -655,16 +655,16 @@ Response:
 
 Before starting visualization component development, verify:
 
-- [ ] **PostgreSQL + PostGIS** running and accessible
-- [ ] **Database schema** complete with all required tables (politicians, donations, votes, bills, sources)
-- [ ] **Geographic fields** standardized (state_code as 2-letter codes)
-- [ ] **Donation data** includes state_code, date, category fields
-- [ ] **Vote data** includes dates spanning multiple years
-- [ ] **Frontend libraries** installed (ECharts, Mapbox/Leaflet, react-force-graph)
-- [ ] **Static map data** in `/frontend/public/data/us-states.json`
-- [ ] **At least one aggregation endpoint** working (e.g., `/api/visualizations/donations-map`)
-- [ ] **Demo seed data** includes multi-state, multi-year data
-- [ ] **Environment variables** configured (DATABASE_URL, DEMO_MODE, MAPBOX_TOKEN if needed)
+- [x] **PostgreSQL + PostGIS** running and accessible - **COMPLETED: Using Supabase PostgreSQL with PostGIS enabled**
+- [x] **Database schema** complete with all required tables (politicians, donations, votes, bills, sources) - **COMPLETED: Schema created and documented in `/docs/schema.md`**
+- [x] **Geographic fields** standardized (state_code as 2-letter codes) - **COMPLETED: State codes standardized in migration 0003**
+- [x] **Donation data** includes state_code, date, category fields - **COMPLETED: Demo seed data includes all required fields**
+- [x] **Vote data** includes dates spanning multiple years - **COMPLETED: Demo seed includes votes spanning 2022-2024 (3 years)**
+- [x] **Frontend libraries** installed (ECharts, Mapbox/Leaflet, react-force-graph) - **COMPLETED: All libraries installed (ECharts, Leaflet, react-force-graph)**
+- [x] **Static map data** in `/frontend/public/data/us-states.json` - **COMPLETED: GeoJSON file exists (304 KB)**
+- [x] **At least one aggregation endpoint** working (e.g., `/api/visualizations/donations-map`) - **COMPLETED: All 4 visualization endpoints implemented and registered**
+- [x] **Demo seed data** includes multi-state, multi-year data - **COMPLETED: Demo seed includes 15+ states and 3 years of data**
+- [x] **Environment variables** configured (DATABASE_URL, DEMO_MODE, MAPBOX_TOKEN if needed) - **COMPLETED: Config module and documentation in place**
 
 ---
 
@@ -695,7 +695,7 @@ ls frontend/public/data/us-states.json
 ## Related Documentation
 
 - **Main Plan**: `interactive_visual_analytics.md`
-- **Data Schema**: `/docs/schema.md` (to be created)
+- **Data Schema**: `/docs/schema.md` - **COMPLETED**
 - **Data Ingestion**: `data_ingestion.md`
 - **Backend Infrastructure**: `backend-infra.md`
 
