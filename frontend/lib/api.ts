@@ -13,6 +13,8 @@ import type {
   DonationsMapResponse,
   TimelineResponse,
   NetworkGraphResponse,
+  NetworkNode,
+  NetworkEdge,
   RadialResponse,
   EventType,
 } from "./types";
@@ -637,13 +639,12 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
 export async function getNetworkGraph(params?: {
   politician_ids?: number[];
   include_indirect?: boolean;
+  min_amount?: number;
+  category?: string;
 }): Promise<NetworkGraphResponse> {
   if (DEMO_MODE) {
     await new Promise((resolve) => setTimeout(resolve, 300));
-    return {
-      nodes: [],
-      edges: [],
-    };
+    return generateDemoNetworkGraph(params?.politician_ids, params?.include_indirect, params?.min_amount, params?.category);
   }
 
   const queryParams = new URLSearchParams();
@@ -653,10 +654,245 @@ export async function getNetworkGraph(params?: {
   if (params?.include_indirect !== undefined) {
     queryParams.append("include_indirect", params.include_indirect.toString());
   }
+  if (params?.min_amount !== undefined) {
+    queryParams.append("min_amount", params.min_amount.toString());
+  }
+  if (params?.category) {
+    queryParams.append("category", params.category);
+  }
 
   return fetchApi<NetworkGraphResponse>(
     `/api/visualizations/network-graph${queryParams.toString() ? `?${queryParams.toString()}` : ""}`
   );
+}
+
+// Generate demo network graph data
+function generateDemoNetworkGraph(
+  politicianIds?: number[],
+  includeIndirect?: boolean,
+  minAmount?: number,
+  category?: string
+): NetworkGraphResponse {
+  const nodes: NetworkNode[] = [];
+  const edges: NetworkEdge[] = [];
+  
+  // Politicians
+  const politicians = [
+    { id: 1, name: "Alexandria Ocasio-Cortez", party: "Democrat" },
+    { id: 2, name: "Ted Cruz", party: "Republican" },
+    { id: 3, name: "Bernie Sanders", party: "Independent" },
+    { id: 4, name: "Marco Rubio", party: "Republican" },
+    { id: 5, name: "Elizabeth Warren", party: "Democrat" },
+    { id: 6, name: "Mitch McConnell", party: "Republican" },
+  ];
+  
+  // Filter politicians if IDs provided
+  const activePoliticians = politicianIds && politicianIds.length > 0
+    ? politicians.filter(p => politicianIds.includes(p.id))
+    : politicians;
+  
+  // Donors by category
+  const donors: Array<{ id: string; name: string; category: string; amount: number }> = [
+    // Healthcare
+    { id: "donor-pharma", name: "PhRMA Association", category: "Healthcare", amount: 150000 },
+    { id: "donor-hospital", name: "American Hospital Assoc.", category: "Healthcare", amount: 85000 },
+    { id: "donor-insurance", name: "Health Insurance PAC", category: "Healthcare", amount: 120000 },
+    // Energy
+    { id: "donor-oil", name: "American Petroleum Institute", category: "Energy", amount: 200000 },
+    { id: "donor-solar", name: "Solar Energy Industries", category: "Energy", amount: 75000 },
+    { id: "donor-coal", name: "Coal Mining PAC", category: "Energy", amount: 90000 },
+    // Finance
+    { id: "donor-banks", name: "American Bankers Assoc.", category: "Finance", amount: 180000 },
+    { id: "donor-wallstreet", name: "Wall Street PAC", category: "Finance", amount: 250000 },
+    { id: "donor-credit", name: "Credit Union National", category: "Finance", amount: 65000 },
+    // Technology
+    { id: "donor-tech", name: "TechNet", category: "Technology", amount: 175000 },
+    { id: "donor-internet", name: "Internet Association", category: "Technology", amount: 95000 },
+    // Defense
+    { id: "donor-defense", name: "Defense Contractors PAC", category: "Defense", amount: 220000 },
+    { id: "donor-aerospace", name: "Aerospace Industries", category: "Defense", amount: 140000 },
+  ];
+  
+  // Bills by category
+  const bills: Array<{ id: string; name: string; category: string }> = [
+    { id: "bill-aca", name: "Affordable Care Act Extension", category: "Healthcare" },
+    { id: "bill-drug", name: "Drug Pricing Reform", category: "Healthcare" },
+    { id: "bill-energy", name: "Clean Energy Investment Act", category: "Energy" },
+    { id: "bill-infra", name: "Infrastructure Modernization", category: "Energy" },
+    { id: "bill-bank", name: "Banking Regulation Reform", category: "Finance" },
+    { id: "bill-cfpb", name: "Consumer Financial Protection", category: "Finance" },
+    { id: "bill-privacy", name: "Data Privacy Protection Act", category: "Technology" },
+    { id: "bill-ai", name: "AI Safety Standards", category: "Technology" },
+    { id: "bill-ndaa", name: "Defense Authorization FY2025", category: "Defense" },
+  ];
+  
+  // Filter by category if provided
+  const filteredDonors = category 
+    ? donors.filter(d => d.category === category)
+    : donors;
+  const filteredBills = category
+    ? bills.filter(b => b.category === category)
+    : bills;
+  
+  // Filter by minimum amount
+  const amountFilteredDonors = minAmount
+    ? filteredDonors.filter(d => d.amount >= minAmount)
+    : filteredDonors;
+  
+  // Add politician nodes
+  activePoliticians.forEach(pol => {
+    nodes.push({
+      id: `pol-${pol.id}`,
+      label: pol.name,
+      type: "politician",
+      party: pol.party,
+      metadata: { party: pol.party },
+    });
+  });
+  
+  // Add donor nodes
+  amountFilteredDonors.forEach(donor => {
+    nodes.push({
+      id: donor.id,
+      label: donor.name,
+      type: "donor",
+      category: donor.category,
+      amount: donor.amount,
+      metadata: { category: donor.category, total_amount: donor.amount },
+    });
+  });
+  
+  // Add bill nodes
+  filteredBills.forEach(bill => {
+    nodes.push({
+      id: bill.id,
+      label: bill.name,
+      type: "bill",
+      category: bill.category,
+      metadata: { category: bill.category },
+    });
+  });
+  
+  // Create donation edges (donor → politician)
+  activePoliticians.forEach(pol => {
+    const seed = pol.id * 17;
+    amountFilteredDonors.forEach((donor, idx) => {
+      // Vary donations by politician and donor
+      const baseAmount = Math.floor(donor.amount / (3 + (seed % 3)));
+      const variation = ((seed + idx) % 5) * 1000;
+      const donationAmount = baseAmount + variation;
+      
+      // Only some politicians receive from each donor
+      if ((seed + idx) % 3 !== 0) {
+        edges.push({
+          source: donor.id,
+          target: `pol-${pol.id}`,
+          type: "donation",
+          weight: donationAmount,
+          category: donor.category,
+          date: `2024-0${(idx % 9) + 1}-15`,
+          metadata: { amount: donationAmount, category: donor.category },
+        });
+      }
+    });
+  });
+  
+  // Create sponsor edges (politician → bill)
+  activePoliticians.forEach(pol => {
+    const seed = pol.id * 13;
+    filteredBills.forEach((bill, idx) => {
+      // Only some politicians sponsor each bill
+      if ((seed + idx) % 4 !== 0) {
+        edges.push({
+          source: `pol-${pol.id}`,
+          target: bill.id,
+          type: "sponsor",
+          weight: 1,
+          category: bill.category,
+          metadata: { role: (seed + idx) % 2 === 0 ? "primary_sponsor" : "cosponsor" },
+        });
+      }
+    });
+  });
+  
+  // Create vote edges (politician → bill)
+  activePoliticians.forEach(pol => {
+    const seed = pol.id * 7;
+    filteredBills.forEach((bill, idx) => {
+      const vote = (seed + idx) % 3 === 0 ? "no" : "yes";
+      edges.push({
+        source: `pol-${pol.id}`,
+        target: bill.id,
+        type: "vote",
+        weight: vote === "yes" ? 1 : -1,
+        category: bill.category,
+        metadata: { vote },
+      });
+    });
+  });
+  
+  // Create indirect edges (donor → bill via shared politicians) if requested
+  if (includeIndirect) {
+    amountFilteredDonors.forEach(donor => {
+      // Find politicians who received from this donor
+      const donorPoliticians = edges
+        .filter(e => e.source === donor.id && e.type === "donation")
+        .map(e => e.target);
+      
+      // Find bills those politicians voted on
+      const relatedBills = new Set<string>();
+      donorPoliticians.forEach(polId => {
+        edges
+          .filter(e => e.source === polId && (e.type === "vote" || e.type === "sponsor"))
+          .forEach(e => relatedBills.add(e.target));
+      });
+      
+      // Create indirect edge to bills in same category
+      relatedBills.forEach(billId => {
+        const bill = filteredBills.find(b => b.id === billId);
+        if (bill && bill.category === donor.category) {
+          // Check if edge doesn't already exist
+          const exists = edges.some(e => e.source === donor.id && e.target === billId);
+          if (!exists) {
+            edges.push({
+              source: donor.id,
+              target: billId,
+              type: "indirect",
+              weight: donor.amount / 10,
+              category: donor.category,
+              metadata: { 
+                description: "Indirect connection via donation to related politicians",
+                via_politicians: donorPoliticians.length,
+              },
+            });
+          }
+        }
+      });
+    });
+  }
+  
+  // Generate clusters
+  const categories = [...new Set([...filteredDonors.map(d => d.category), ...filteredBills.map(b => b.category)])];
+  const categoryColors: Record<string, string> = {
+    Healthcare: "#ef4444",
+    Energy: "#f59e0b",
+    Technology: "#3b82f6",
+    Finance: "#10b981",
+    Defense: "#6b7280",
+  };
+  
+  const clusters = categories.map(cat => ({
+    id: `cluster-${cat.toLowerCase()}`,
+    name: cat,
+    category: cat,
+    node_ids: [
+      ...amountFilteredDonors.filter(d => d.category === cat).map(d => d.id),
+      ...filteredBills.filter(b => b.category === cat).map(b => b.id),
+    ],
+    color: categoryColors[cat] || "#9ca3af",
+  }));
+  
+  return { nodes, edges, clusters };
 }
 
 export async function getPoliticianRadial(

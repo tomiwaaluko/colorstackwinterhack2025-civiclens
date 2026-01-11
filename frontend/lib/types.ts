@@ -204,24 +204,53 @@ export interface TimelineComparisonResult {
   };
 }
 
+export type NetworkNodeType = "politician" | "donor" | "bill";
+export type NetworkEdgeType = "donation" | "vote" | "sponsor" | "indirect";
+
 export interface NetworkNode {
   id: string;
   label: string;
-  type: string; // 'politician' | 'donor' | 'bill'
+  type: NetworkNodeType;
   metadata?: Record<string, any>;
+  // Enhanced properties
+  category?: string; // For clustering (e.g., "Healthcare", "Finance")
+  party?: string; // For politicians
+  amount?: number; // For donors (total donated)
+  date?: string; // For time filtering
 }
 
 export interface NetworkEdge {
   source: string;
   target: string;
   weight: number;
-  type: string; // 'donation' | 'vote' | 'indirect'
+  type: NetworkEdgeType;
   metadata?: Record<string, any>;
+  // Enhanced properties
+  date?: string;
+  category?: string;
+}
+
+export interface NetworkCluster {
+  id: string;
+  name: string;
+  category: string;
+  node_ids: string[];
+  color: string;
 }
 
 export interface NetworkGraphResponse {
   nodes: NetworkNode[];
   edges: NetworkEdge[];
+  clusters?: NetworkCluster[];
+}
+
+// Exploration mode types
+export type ExplorationMode = "default" | "influence_path" | "legislative_web";
+
+export interface NetworkPath {
+  nodes: string[];
+  edges: Array<{ source: string; target: string }>;
+  description: string;
 }
 
 export interface CategoryValue {
