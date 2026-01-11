@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
 
 // Dynamic imports to avoid SSR issues with browser-only libraries
@@ -31,7 +31,14 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { X, Plus, Accessibility } from "lucide-react";
+import { X, Plus, Accessibility, MessageCircle, Sparkles, PanelRightOpen, PanelRightClose } from "lucide-react";
+
+// AI Components
+import VisualizationInsights from "@/components/VisualizationInsights";
+import VisualizationChat from "@/components/VisualizationChat";
+import AISmartSuggestions from "@/components/AISmartSuggestions";
+import PatternAlerts, { type PatternAlert } from "@/components/PatternAlerts";
+import type { VisualizationType, AISuggestion } from "@/lib/visualization-ai";
 import EvidenceDrawer, { toUnifiedCitation, type UnifiedCitation } from "@/components/EvidenceDrawer";
 import DataTableExport, {
   generateMapTableData,
@@ -116,6 +123,92 @@ export default function VisualizationsPage() {
     startDate: "",
     endDate: "",
   });
+
+  // AI Features state
+  const [showAIPanel, setShowAIPanel] = useState(true);
+  const [showAIChat, setShowAIChat] = useState(false);
+  const [aiUserHistory, setAIUserHistory] = useState<string[]>([]);
+
+  // Get current visualization type for AI
+  const currentVisualizationType: VisualizationType = useMemo(() => {
+    switch (activeTab) {
+      case "map":
+        return "donations_map";
+      case "timeline":
+        return "timeline";
+      case "network":
+        return "network_graph";
+      case "radial":
+        return "radial_chart";
+      default:
+        return "donations_map";
+    }
+  }, [activeTab]);
+
+  // Build data summary for AI based on current tab and filters
+  const currentDataSummary = useMemo(() => {
+    switch (activeTab) {
+      case "map":
+        return {
+          filters: donationsFilters,
+          comparativePoliticians: comparativePoliticians.map((p) => p.name),
+          tab: "donations_map",
+        };
+      case "timeline":
+        return {
+          filters: timelineFilters,
+          comparePoliticians: timelineComparePoliticians.map((p) => p.name),
+          tab: "timeline",
+        };
+      case "network":
+        return {
+          filters: networkFilters,
+          tab: "network_graph",
+        };
+      case "radial":
+        return {
+          filters: radialFilters,
+          tab: "radial_chart",
+        };
+      default:
+        return {};
+    }
+  }, [activeTab, donationsFilters, timelineFilters, networkFilters, radialFilters, comparativePoliticians, timelineComparePoliticians]);
+
+  // Handle AI suggestion click
+  const handleAISuggestionClick = useCallback((suggestion: AISuggestion) => {
+    // Track in user history
+    setAIUserHistory((prev) => [...prev.slice(-9), suggestion.title]);
+    
+    // Execute the suggestion action
+    switch (suggestion.action.type) {
+      case "filter":
+        if (suggestion.action.params.category && activeTab === "map") {
+          setDonationsFilters((prev) => ({
+            ...prev,
+            category: suggestion.action.params.category as string,
+          }));
+        }
+        if (suggestion.action.params.viewMode && activeTab === "map") {
+          // The map handles view mode internally
+        }
+        break;
+      case "switch_view":
+        if (suggestion.action.params.tab) {
+          setActiveTab(suggestion.action.params.tab as string);
+        }
+        break;
+      case "compare":
+        // Handle comparison suggestions
+        break;
+      case "timerange":
+        // Handle time range suggestions
+        break;
+      case "drill_down":
+        // Handle drill-down suggestions
+        break;
+    }
+  }, [activeTab]);
 
   const parsePoliticianIds = (value: string): number[] => {
     if (!value.trim()) return [];
@@ -273,9 +366,45 @@ export default function VisualizationsPage() {
             <Button variant="outline" size="sm" onClick={() => setShowStorySelector(!showStorySelector)}>
               Guided Stories
             </Button>
+            <Button
+              variant={showAIChat ? "default" : "outline"}
+              size="sm"
+              onClick={() => setShowAIChat(!showAIChat)}
+              className="gap-1"
+            >
+              <MessageCircle className="h-4 w-4" />
+              AI Chat
+            </Button>
+            <Button
+              variant={showAIPanel ? "default" : "outline"}
+              size="sm"
+              onClick={() => setShowAIPanel(!showAIPanel)}
+              className="gap-1"
+            >
+              <Sparkles className="h-4 w-4" />
+              AI Insights
+            </Button>
+            <PatternAlerts
+              visualizationType={currentVisualizationType}
+              dataSummary={currentDataSummary}
+              onAlertClick={(alert) => {
+                console.log("Alert clicked:", alert);
+                setAIUserHistory((prev) => [...prev.slice(-9), `Viewed alert: ${alert.title}`]);
+              }}
+            />
             <AccessibilityToolbar />
           </div>
         </div>
+
+        {/* AI Smart Suggestions */}
+        <AISmartSuggestions
+          visualizationType={currentVisualizationType}
+          currentState={currentDataSummary}
+          userHistory={aiUserHistory}
+          onSuggestionClick={handleAISuggestionClick}
+          variant="inline"
+          maxVisible={3}
+        />
 
         {/* Suggested Explorations */}
         <SuggestedExplorations
@@ -720,6 +849,39 @@ export default function VisualizationsPage() {
         </TabsContent>
         </Tabs>
         </main>
+
+        {/* AI Insights Panel - Collapsible sidebar */}
+        {showAIPanel && (
+          <div className="fixed right-4 top-24 w-80 z-40 max-h-[calc(100vh-120px)] overflow-y-auto">
+            <VisualizationInsights
+              visualizationType={currentVisualizationType}
+              filters={currentDataSummary}
+              dataSummary={currentDataSummary}
+              selectedItems={[]}
+              onSuggestedAction={(action) => {
+                console.log("AI suggested action:", action);
+              }}
+              autoRefresh={true}
+            />
+          </div>
+        )}
+
+        {/* AI Chat Interface - Collapsible drawer */}
+        {showAIChat && (
+          <div className="fixed right-4 bottom-4 w-96 h-[500px] z-50">
+            <VisualizationChat
+              visualizationType={currentVisualizationType}
+              filters={currentDataSummary}
+              dataSummary={currentDataSummary}
+              selectedItems={[]}
+              isOpen={showAIChat}
+              onClose={() => setShowAIChat(false)}
+              onFollowUp={(question) => {
+                setAIUserHistory((prev) => [...prev.slice(-9), `Asked: ${question}`]);
+              }}
+            />
+          </div>
+        )}
 
         {/* Evidence Drawer - shared across all visualizations */}
         <EvidenceDrawer
