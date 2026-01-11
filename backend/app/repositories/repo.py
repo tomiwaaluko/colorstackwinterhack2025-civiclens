@@ -26,7 +26,40 @@ class PoliticianRepo:
         Args:
             db_session: SQLAlchemy AsyncSession. If not provided, will be passed in method calls.
         """
-        self.db_session = db_session
+        if not PSYCOPG2_AVAILABLE:
+            raise RuntimeError(
+                "psycopg2 is not installed. Install it with: pip install psycopg2-binary\n"
+                "Or for development without database, use the /api/qa/ask endpoint instead."
+            )
+        
+        self.db_url = db_url or os.getenv('DATABASE_URL')
+        if not self.db_url:
+            raise ValueError("DATABASE_URL environment variable not set")
+        
+        # Convert asyncpg URL to standard postgresql for psycopg2
+        # psycopg2 doesn't understand postgresql+asyncpg:// format
+        if self.db_url.startswith("postgresql+asyncpg://"):
+            self.db_url = self.db_url.replace("postgresql+asyncpg://", "postgresql://", 1)
+        
+        # Test connection
+        try:
+            conn = psycopg2.connect(self.db_url, connect_timeout=10)
+            conn.close()
+        except psycopg2.OperationalError as e:
+            error_msg = str(e)
+            if "could not translate host name" in error_msg.lower():
+                raise RuntimeError(
+                    f"Failed to connect to database: {e}\n\n"
+                    "TROUBLESHOOTING:\n"
+                    "1. Check if your Supabase project is PAUSED - go to Supabase dashboard and resume it\n"
+                    "2. Verify DATABASE_URL is correct in your .env file\n"
+                    "3. Check your internet connection\n"
+                    "4. Try: nslookup <hostname> to verify DNS resolution"
+                )
+            raise RuntimeError(f"Failed to connect to database: {e}")
+        except psycopg2.Error as e:
+            raise RuntimeError(f"Failed to connect to database: {e}")
+        
         self._search_cache = {}
 
     async def _politician_row_to_dict(self, row, db: AsyncSession) -> Dict:
