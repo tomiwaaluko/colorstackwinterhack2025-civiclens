@@ -253,7 +253,13 @@ function AskPageContent() {
                               className="flex items-center gap-2 text-sm"
                             >
                               <CitationBadge
-                                citation={citation}
+                                citation={{
+                                  id: citation.source_id,
+                                  source: citation.title,
+                                  url: citation.url,
+                                  date: citation.retrieved_at,
+                                  type: citation.publisher,
+                                }}
                                 index={index + 1}
                               />
                               <span className="text-muted-foreground">
