@@ -125,13 +125,15 @@ INSERT INTO bills (id, external_id, bill_number, title, summary, sponsor_id, int
 -- ============================================================================
 
 -- H.R. 1 votes (House)
-INSERT INTO votes (politician_id, bill_id, vote_value, vote_date, roll_call_number, chamber, source_id) VALUES
-('10000000-0000-0000-0001-000000000002', '20000000-0000-0000-0001-000000000001', 'nay', '2023-03-30', '123', 'house', '00000000-0000-0000-0003-000000000001');
+-- Using vote_position (trigger will auto-sync to vote_value)
+INSERT INTO votes (politician_id, bill_id, vote_position, vote_date, roll_call_number, chamber, source_id) VALUES
+('10000000-0000-0000-0001-000000000002', '20000000-0000-0000-0001-000000000001', 'no', '2023-03-30', 123, 'house', '00000000-0000-0000-0003-000000000001');
 
 -- S. 686 votes (Senate)
-INSERT INTO votes (politician_id, bill_id, vote_value, vote_date, roll_call_number, chamber, source_id) VALUES
-('10000000-0000-0000-0001-000000000001', '20000000-0000-0000-0001-000000000002', 'yea', '2023-03-15', '45', 'senate', '00000000-0000-0000-0003-000000000002'),
-('10000000-0000-0000-0001-000000000003', '20000000-0000-0000-0001-000000000002', 'nay', '2023-03-15', '45', 'senate', '00000000-0000-0000-0003-000000000002');
+-- Using vote_position (trigger will auto-sync to vote_value)
+INSERT INTO votes (politician_id, bill_id, vote_position, vote_date, roll_call_number, chamber, source_id) VALUES
+('10000000-0000-0000-0001-000000000001', '20000000-0000-0000-0001-000000000002', 'yes', '2023-03-15', 45, 'senate', '00000000-0000-0000-0003-000000000002'),
+('10000000-0000-0000-0001-000000000003', '20000000-0000-0000-0001-000000000002', 'no', '2023-03-15', 45, 'senate', '00000000-0000-0000-0003-000000000002');
 
 -- ============================================================================
 -- DONATIONS

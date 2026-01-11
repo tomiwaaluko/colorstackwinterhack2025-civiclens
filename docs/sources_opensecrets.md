@@ -1,8 +1,16 @@
 # OpenSecrets API Source Documentation
 
-## Overview
+## ⚠️ DEPRECATED - API Discontinued
 
-OpenSecrets API provides campaign finance data including contributions, PAC donations, and industry-level aggregations. This document describes how we integrate OpenSecrets data into CivicLens with full provenance tracking.
+**OpenSecrets API was discontinued on April 15, 2025.** This documentation is retained for historical reference only.
+
+**See [OpenSecrets Alternatives](./opensecrets_alternatives.md) for migration options.**
+
+---
+
+## Overview (Historical)
+
+OpenSecrets API provided campaign finance data including contributions, PAC donations, and industry-level aggregations. This document describes how we integrated OpenSecrets data into CivicLens with full provenance tracking.
 
 ## API Information
 

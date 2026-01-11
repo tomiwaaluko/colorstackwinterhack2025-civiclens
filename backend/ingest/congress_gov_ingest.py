@@ -397,8 +397,8 @@ class DatabaseManager:
         """Rollback current transaction"""
         self.conn.rollback()
     
-    def create_source(self, source: Source) -> int:
-        """Insert a source record and return its ID"""
+    def create_source(self, source: Source) -> str:
+        """Insert a source record and return its UUID as string"""
         with self.conn.cursor() as cur:
             # Check if source already exists
             cur.execute("""
@@ -408,7 +408,7 @@ class DatabaseManager:
             existing = cur.fetchone()
             if existing:
                 logger.debug(f"Source already exists: {source.source_url}")
-                return existing[0]
+                return str(existing[0])
             
             # Get valid source_type
             valid_source_type = self.get_valid_source_type(source.source_type)
@@ -429,34 +429,34 @@ class DatabaseManager:
             ))
             source_id = cur.fetchone()[0]
             logger.debug(f"Created source {source_id} for {source.title}")
-            return source_id
+            return str(source_id)
     
-    def find_politician_by_name(self, name: str, state_code: str = None, party: str = None) -> Optional[int]:
-        """Find politician by name (with optional state/party matching)"""
+    def find_politician_by_name(self, name: str, state_code: str = None, party: str = None) -> Optional[str]:
+        """Find politician by name (with optional state/party matching). Returns UUID as string."""
         with self.conn.cursor() as cur:
             if state_code and party:
                 cur.execute("""
                     SELECT id FROM politicians 
-                    WHERE name = %s AND state_code = %s AND party = %s
+                    WHERE (name = %s OR full_name = %s) AND (state_code = %s OR state = %s) AND party = %s
                     LIMIT 1
-                """, (name, state_code, party))
+                """, (name, name, state_code, state_code, party))
             elif state_code:
                 cur.execute("""
                     SELECT id FROM politicians 
-                    WHERE name = %s AND state_code = %s
+                    WHERE (name = %s OR full_name = %s) AND (state_code = %s OR state = %s)
                     LIMIT 1
-                """, (name, state_code))
+                """, (name, name, state_code, state_code))
             else:
                 cur.execute("""
                     SELECT id FROM politicians 
-                    WHERE name = %s
+                    WHERE name = %s OR full_name = %s
                     LIMIT 1
-                """, (name,))
+                """, (name, name))
             result = cur.fetchone()
-            return result[0] if result else None
+            return str(result[0]) if result else None
     
-    def upsert_politician(self, member_data: Dict, source_id: int) -> int:
-        """Insert or update politician record"""
+    def upsert_politician(self, member_data: Dict, source_id: str) -> str:
+        """Insert or update politician record. Returns politician UUID as string."""
         with self.conn.cursor() as cur:
             # Extract data from Congress.gov format
             # Try different name fields that Congress.gov API might use
@@ -548,27 +548,27 @@ class DatabaseManager:
                     RETURNING id
                 """, (name, party, state_code, district_number, position, existing_id))
                 logger.info(f"Updated politician {name} ({existing_id})")
-                return existing_id
+                return str(existing_id)
             else:
-                # Insert
+                # Insert with source_id (required by schema)
                 cur.execute("""
-                    INSERT INTO politicians (name, party, state_code, district_number, "position")
-                    VALUES (%s, %s, %s, %s, %s)
+                    INSERT INTO politicians (name, party, state_code, district_number, "position", source_id)
+                    VALUES (%s, %s, %s, %s, %s, %s)
                     RETURNING id
-                """, (name, party, state_code, district_number, position))
+                """, (name, party, state_code, district_number, position, source_id))
                 politician_id = cur.fetchone()[0]
                 logger.info(f"Created politician {name} -> {politician_id}")
-                return politician_id
+                return str(politician_id)
     
-    def get_bill_by_number(self, bill_number: str) -> Optional[int]:
-        """Get bill ID by bill number"""
+    def get_bill_by_number(self, bill_number: str) -> Optional[str]:
+        """Get bill ID (UUID) by bill number"""
         with self.conn.cursor() as cur:
             cur.execute("SELECT id FROM bills WHERE bill_number = %s", (bill_number,))
             result = cur.fetchone()
-            return result[0] if result else None
+            return str(result[0]) if result else None
     
-    def insert_bill(self, bill_data: Dict, source_id: int, sponsor_id: Optional[int] = None) -> Optional[int]:
-        """Insert bill record. Returns bill ID or None if bill_number is missing."""
+    def insert_bill(self, bill_data: Dict, source_id: str, sponsor_id: Optional[str] = None) -> Optional[str]:
+        """Insert bill record. Returns bill ID (UUID) or raises ValueError if bill_number is missing."""
         with self.conn.cursor() as cur:
             # Format bill number (e.g., "HR 1234" or "S. 567")
             bill_type = bill_data.get('type', '').upper()
@@ -606,10 +606,10 @@ class DatabaseManager:
             """, (bill_number, title, topic, introduced_date, source_id))
             bill_id = cur.fetchone()[0]
             logger.info(f"Created bill {bill_number} -> {bill_id}")
-            return bill_id
+            return str(bill_id)
     
-    def insert_vote(self, vote_data: Dict, politician_id: int, bill_id: int, 
-                   source_id: int, roll_call_number: Optional[int] = None):
+    def insert_vote(self, vote_data: Dict, politician_id: str, bill_id: str, 
+                   source_id: str, roll_call_number: Optional[int] = None):
         """Insert vote record"""
         with self.conn.cursor() as cur:
             # Map Congress.gov vote to our schema
