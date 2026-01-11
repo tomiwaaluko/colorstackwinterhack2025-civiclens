@@ -28,6 +28,11 @@ class PoliticianRepo:
         if not self.db_url:
             raise ValueError("DATABASE_URL environment variable not set")
         
+        # Convert asyncpg URL to standard postgresql for psycopg2
+        # psycopg2 doesn't understand postgresql+asyncpg:// format
+        if self.db_url.startswith("postgresql+asyncpg://"):
+            self.db_url = self.db_url.replace("postgresql+asyncpg://", "postgresql://", 1)
+        
         # Test connection
         try:
             conn = psycopg2.connect(self.db_url, connect_timeout=10)

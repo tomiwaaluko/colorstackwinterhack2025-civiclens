@@ -234,7 +234,9 @@ export async function checkAIStatus(): Promise<AIStatusResponse> {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/visualizations/ai/status`);
+    const response = await fetch(
+      `${API_BASE_URL}/api/visualizations/ai/status`
+    );
     if (!response.ok) {
       return { available: false, model: "unavailable" };
     }
