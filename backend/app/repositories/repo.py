@@ -1,33 +1,30 @@
 """
 Repository layer for politicians data.
 
-Now uses PostgreSQL instead of JSON files.
+Uses async SQLAlchemy with PostgreSQL/Supabase.
 Maintains the same interface for backward compatibility.
 """
 
 import os
 from typing import List, Dict, Optional
+from uuid import UUID
 from rapidfuzz import fuzz
-try:
-    import psycopg2
-    PSYCOPG2_AVAILABLE = True
-except ImportError:
-    PSYCOPG2_AVAILABLE = False
-    psycopg2 = None  # type: ignore
+from sqlalchemy import text, select
+from sqlalchemy.ext.asyncio import AsyncSession
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
 class PoliticianRepo:
-    """Repository for accessing politician data from PostgreSQL"""
-    
-    def __init__(self, db_url: str = None):
+    """Repository for accessing politician data from PostgreSQL via async SQLAlchemy"""
+
+    def __init__(self, db_session: AsyncSession = None):
         """
-        Initialize repository with database connection string.
-        
+        Initialize repository with database session.
+
         Args:
-            db_url: PostgreSQL connection string. If not provided, uses DATABASE_URL env var.
+            db_session: SQLAlchemy AsyncSession. If not provided, will be passed in method calls.
         """
         if not PSYCOPG2_AVAILABLE:
             raise RuntimeError(
@@ -65,152 +62,134 @@ class PoliticianRepo:
         
         self._search_cache = {}
 
-    def _get_connection(self):
-        """Get a database connection"""
-        return psycopg2.connect(self.db_url)
-
-    def _politician_row_to_dict(self, row: tuple, columns: List[str]) -> Dict:
+    async def _politician_row_to_dict(self, row, db: AsyncSession) -> Dict:
         """Convert database row to dictionary matching JSON format"""
-        politician = dict(zip(columns, row))
-        
+        # Convert SQLAlchemy Row to dict
+        politician = {
+            'id': str(row.id),  # Convert UUID to string
+            'full_name': row.full_name,
+            'state': row.state,
+            'current_office': row.current_office,
+            'image_url': row.image_url,
+            'party': row.party,
+        }
+
         # Fetch related data
-        politician_id = politician['id']
-        
+        politician_id = row.id
+
         # Get statements and votes
-        statements = self._get_statements(politician_id)
-        votes = self._get_votes(politician_id)
-        
+        statements = await self._get_statements(politician_id, db)
+        votes = await self._get_votes(politician_id, db)
+
         # Build politician_details to match JSON schema
         politician['politician_details'] = {
             'statements': statements,
             'votes': votes
         }
-        
+
         # Map database column names to JSON schema
         politician['name'] = politician.pop('full_name')
-        politician['state_or_district'] = politician.pop('state')
-        politician['position'] = politician.pop('current_office')
-        
+        politician['state_or_district'] = politician.pop('state') or 'National'
+        politician['position'] = politician.pop('current_office') or 'Unknown'
+
         # Add counts for compatibility
         politician['vote_count'] = len(votes)
         politician['statement_count'] = len(statements)
-        
-        # Remove internal fields
-        for key in ['external_id', 'external_id_source', 'bio_text', 'source_id', 'created_at', 'updated_at']:
-            politician.pop(key, None)
-        
+
         return politician
 
-    def _get_statements(self, politician_id: int) -> List[str]:
+    async def _get_statements(self, politician_id: UUID, db: AsyncSession) -> List[str]:
         """Get all statements for a politician"""
-        conn = self._get_connection()
-        cur = conn.cursor()
-        
-        try:
-            cur.execute("""
-                SELECT statement_text FROM statements 
-                WHERE politician_id = %s 
+        result = await db.execute(
+            text("""
+                SELECT statement_text FROM statements
+                WHERE politician_id = :politician_id
                 ORDER BY statement_date DESC NULLS LAST
-            """, (politician_id,))
-            statements = [row[0] for row in cur.fetchall()]
-            return statements
-        finally:
-            cur.close()
-            conn.close()
+            """),
+            {"politician_id": politician_id}
+        )
+        statements = [row[0] for row in result.fetchall()]
+        return statements
 
-    def _get_votes(self, politician_id: int) -> List:
+    async def _get_votes(self, politician_id: UUID, db: AsyncSession) -> List:
         """Get all votes for a politician in [bill_title, vote_value] format"""
-        conn = self._get_connection()
-        cur = conn.cursor()
-        
-        try:
-            # Use bill_id with JOIN to bills table to get bill title
-            # Use COALESCE for vote_value to support both vote_position and vote_value columns
-            cur.execute("""
-                SELECT b.title as bill_title, 
-                       COALESCE(v.vote_position, v.vote_value) as vote_value
+        result = await db.execute(
+            text("""
+                SELECT COALESCE(b.title, v.bill_title, 'Unknown Bill') as bill_title,
+                       COALESCE(v.vote_position, v.vote_value, 'Unknown') as vote_value
                 FROM votes v
                 LEFT JOIN bills b ON v.bill_id = b.id
-                WHERE v.politician_id = %s 
+                WHERE v.politician_id = :politician_id
                 ORDER BY v.vote_date DESC NULLS LAST
-            """, (politician_id,))
-            votes = [list(row) for row in cur.fetchall()]
-            return votes
-        finally:
-            cur.close()
-            conn.close()
+                LIMIT 10
+            """),
+            {"politician_id": politician_id}
+        )
+        votes = [list(row) for row in result.fetchall()]
+        return votes
 
-    def get_all(self) -> List[Dict]:
+    async def get_all(self, db: AsyncSession) -> List[Dict]:
         """Get all politicians"""
-        conn = self._get_connection()
-        cur = conn.cursor()
-        
-        try:
-            cur.execute("""
-                SELECT id, full_name, state, current_office, image_url, party, 
-                       external_id, external_id_source, bio_text, source_id, 
-                       created_at, updated_at
-                FROM politicians 
-                ORDER BY id
+        result = await db.execute(
+            text("""
+                SELECT id, full_name, state, current_office, image_url, party
+                FROM politicians
+                ORDER BY full_name
             """)
-            
-            columns = [desc[0] for desc in cur.description]
-            politicians = []
-            
-            for row in cur.fetchall():
-                politician = self._politician_row_to_dict(row, columns)
-                politicians.append(politician)
-            
-            return politicians
-        finally:
-            cur.close()
-            conn.close()
+        )
 
-    def get_by_id(self, politician_id: int) -> Optional[Dict]:
+        politicians = []
+        for row in result.fetchall():
+            politician = await self._politician_row_to_dict(row, db)
+            politicians.append(politician)
+
+        return politicians
+
+    async def get_by_id(self, politician_id: str, db: AsyncSession) -> Optional[Dict]:
         """Get politician by ID"""
-        conn = self._get_connection()
-        cur = conn.cursor()
-        
         try:
-            cur.execute("""
-                SELECT id, full_name, state, current_office, image_url, party,
-                       external_id, external_id_source, bio_text, source_id,
-                       created_at, updated_at
-                FROM politicians 
-                WHERE id = %s
-            """, (politician_id,))
-            
-            row = cur.fetchone()
-            if not row:
-                return None
-            
-            columns = [desc[0] for desc in cur.description]
-            politician = self._politician_row_to_dict(row, columns)
-            return politician
-        finally:
-            cur.close()
-            conn.close()
+            # Convert string ID to UUID
+            uuid_id = UUID(politician_id) if isinstance(politician_id, str) else politician_id
+        except (ValueError, AttributeError):
+            return None
 
-    def search(self, name: str, zip_code: str = None, limit: int = 10) -> List[Dict]:
+        result = await db.execute(
+            text("""
+                SELECT id, full_name, state, current_office, image_url, party
+                FROM politicians
+                WHERE id = :politician_id
+            """),
+            {"politician_id": uuid_id}
+        )
+
+        row = result.fetchone()
+        if not row:
+            return None
+
+        politician = await self._politician_row_to_dict(row, db)
+        return politician
+
+    async def search(self, name: str, db: AsyncSession, zip_code: str = None, limit: int = 10) -> List[Dict]:
         """
         Search politicians by name with fuzzy matching.
-        
+
         Args:
             name: Politician name to search for
+            db: Database session
             zip_code: Reserved for future use
             limit: Maximum results to return
-        
+
         Returns:
             List of politicians ranked by relevance
         """
         cache_key = (name.lower(), zip_code, limit)
-        
+
         if cache_key in self._search_cache:
             return self._search_cache[cache_key]
 
         # Get all politicians and search in memory (easier for fuzzy matching)
-        all_politicians = self.get_all()
-        
+        all_politicians = await self.get_all(db)
+
         scored_results = []
         name_lower = name.lower()
 
@@ -234,16 +213,18 @@ class PoliticianRepo:
 
         return results
 
-        
-    def get_national_politicians(self):
-        """Get all national-level politicians (President, VP)"""
-        return [p for p in self.politicians if p.get('is_national', False)]
+    async def get_national_politicians(self, db: AsyncSession) -> List[Dict]:
+        """Get all national-level politicians"""
+        # In the database, we can identify national politicians by checking if they have no specific state
+        all_politicians = await self.get_all(db)
+        return [p for p in all_politicians if p.get('state_or_district') == 'National']
 
-    def get_politicians_by_location(self, lat: float = None, lng: float = None, state: str = None):
+    async def get_politicians_by_location(self, db: AsyncSession, lat: float = None, lng: float = None, state: str = None) -> List[Dict]:
         """
         Get politicians by location (state or coordinates).
 
         Args:
+            db: Database session
             lat: Latitude
             lng: Longitude
             state: State abbreviation (e.g., 'CA', 'NY')
@@ -252,13 +233,23 @@ class PoliticianRepo:
             List of politicians serving that location
         """
         if state:
-            # Filter by state
-            return [
-                p for p in self.politicians
-                if not p.get('is_national', False) and
-                state.upper() in p.get('state_or_district', '').upper()
-            ]
+            # Query by state
+            result = await db.execute(
+                text("""
+                    SELECT id, full_name, state, current_office, image_url, party
+                    FROM politicians
+                    WHERE state ILIKE :state
+                    ORDER BY full_name
+                """),
+                {"state": f"%{state}%"}
+            )
 
-        # For now, return all non-national politicians
-        # In production, you'd use reverse geocoding or point-in-polygon checks
-        return [p for p in self.politicians if not p.get('is_national', False)]
+            politicians = []
+            for row in result.fetchall():
+                politician = await self._politician_row_to_dict(row, db)
+                politicians.append(politician)
+
+            return politicians
+
+        # For now, return all politicians
+        return await self.get_all(db)

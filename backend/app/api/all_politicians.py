@@ -1,21 +1,20 @@
 """API endpoint to get all politicians"""
-from fastapi import APIRouter
-from pathlib import Path
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 from ..repositories.repo import PoliticianRepo
 from ..schemas.politician import PoliticianSummary
+from ..core.database import get_db
 
 router = APIRouter()
 
-DATA_PATH = Path(__file__).parent.parent / "data" / "politicians.json"
-repo = PoliticianRepo(str(DATA_PATH))
-
 
 @router.get("/politicians", response_model=list[PoliticianSummary])
-def get_all_politicians():
+async def get_all_politicians(db: AsyncSession = Depends(get_db)):
     """
     Get all politicians in the system.
 
     Returns a complete list of all politicians including national and local officials.
     """
-    politicians = repo.get_all()
+    repo = PoliticianRepo()
+    politicians = await repo.get_all(db)
     return [PoliticianSummary(**p) for p in politicians]

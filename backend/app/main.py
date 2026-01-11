@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# from app.api.rag import router as rag_router  # Requires database
 from app.api.health import router as health_router
 from app.api.search import router as search_router
 from app.api.politicians import router as politicians_router
