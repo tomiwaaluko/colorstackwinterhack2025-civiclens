@@ -6,4 +6,4 @@ frontendvite/
 
 .env
 # Allow .env.example files to be tracked (they're example templates, not secrets)
-!**/.env.example
+!**/.env.example.claude/

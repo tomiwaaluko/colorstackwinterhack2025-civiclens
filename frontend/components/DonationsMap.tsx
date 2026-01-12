@@ -43,6 +43,9 @@ const PARTY_COLORS = {
   independent: "#10b981",
 };
 
+// No data color (light gray that's clearly visible)
+const NO_DATA_COLOR = "#d1d5db";
+
 // Get Mapbox token from environment
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || "";
 
@@ -331,18 +334,22 @@ export default function DonationsMap({
       const stateCode = feature.properties.STATE_CODE;
       const donationData = mapData.values[stateCode];
 
-      let fillColor = "#e5e7eb";
-      let fillOpacity = 0.3;
+      // All states get consistent opacity so they're all visible
+      let fillColor = NO_DATA_COLOR;
+      let fillOpacity = 0.7;
+      let hasData = !!donationData;
 
-      if (viewMode === "total" && donationData) {
-        fillColor = getColorForAmount(donationData.total_amount);
-        fillOpacity = 0.7;
+      if (viewMode === "total") {
+        if (donationData && donationData.total_amount > 0) {
+          fillColor = getColorForAmount(donationData.total_amount);
+        } else {
+          // No data - use distinct gray color
+          fillColor = NO_DATA_COLOR;
+        }
       } else if (viewMode === "party") {
         fillColor = getPartyColor(stateCode);
-        fillOpacity = 0.7;
       } else if (viewMode === "comparative") {
         fillColor = getComparativeColor(stateCode);
-        fillOpacity = 0.7;
       }
 
       return {
@@ -353,6 +360,8 @@ export default function DonationsMap({
           fillOpacity,
           isSelected: selectedState === stateCode,
           isHovered: hoveredState === stateCode,
+          hasData,
+          donationTotal: donationData?.total_amount || 0,
         },
       };
     });
@@ -588,38 +597,41 @@ export default function DonationsMap({
                         f.properties.STATE_CODE === popupInfo.stateCode
                     );
                     const donationData = mapData?.values[popupInfo.stateCode];
-
-                    if (!donationData)
-                      return feature?.properties.NAME || popupInfo.stateCode;
+                    const stateName = feature?.properties.NAME || popupInfo.stateCode;
 
                     if (viewMode === "total") {
-                      return `${
-                        feature?.properties.NAME || popupInfo.stateCode
-                      }: $${donationData.total_amount.toLocaleString()}`;
-                    } else if (viewMode === "party") {
+                      const amount = donationData?.total_amount || 0;
+                      return `${stateName}: $${amount.toLocaleString()}${!donationData ? ' (no data)' : ''}`;
+                    }
+                    if (viewMode === "party") {
                       const statePartyData = partyData[popupInfo.stateCode];
-                      if (statePartyData) {
-                        return (
-                          <div>
-                            <div className="font-semibold">
-                              {feature?.properties.NAME || popupInfo.stateCode}
-                            </div>
-                            <div>
-                              D: $
-                              {Math.round(
-                                statePartyData.democrat
-                              ).toLocaleString()}
-                            </div>
-                            <div>
-                              R: $
-                              {Math.round(
-                                statePartyData.republican
-                              ).toLocaleString()}
-                            </div>
+                      return (
+                        <div>
+                          <div className="font-semibold">
+                            {stateName}
                           </div>
-                        );
-                      }
-                    } else if (viewMode === "comparative") {
+                          {statePartyData ? (
+                            <>
+                              <div>
+                                D: $
+                                {Math.round(
+                                  statePartyData.democrat
+                                ).toLocaleString()}
+                              </div>
+                              <div>
+                                R: $
+                                {Math.round(
+                                  statePartyData.republican
+                                ).toLocaleString()}
+                              </div>
+                            </>
+                          ) : (
+                            <div className="text-gray-500">No data</div>
+                          )}
+                        </div>
+                      );
+                    }
+                    if (viewMode === "comparative") {
                       const amounts = comparativePoliticians
                         .map((pol) => {
                           const amount =
@@ -631,13 +643,13 @@ export default function DonationsMap({
                       return (
                         <div>
                           <div className="font-semibold">
-                            {feature?.properties.NAME || popupInfo.stateCode}
+                            {stateName}
                           </div>
                           <div className="whitespace-pre-line">{amounts}</div>
                         </div>
                       );
                     }
-                    return feature?.properties.NAME || popupInfo.stateCode;
+                    return stateName;
                   })()}
                 </div>
               </Popup>
@@ -854,6 +866,13 @@ export default function DonationsMap({
                   style={{ backgroundColor: getColorForAmount(maxAmount) }}
                 />
                 <span>${maxAmount.toLocaleString()}</span>
+              </div>
+              <div className="flex items-center gap-2 ml-4">
+                <div
+                  className="w-4 h-4 rounded border border-gray-400"
+                  style={{ backgroundColor: NO_DATA_COLOR }}
+                />
+                <span className="text-gray-500">No data</span>
               </div>
             </>
           )}
