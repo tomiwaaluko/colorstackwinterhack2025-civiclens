@@ -210,16 +210,42 @@ function ComparePageContent() {
     setLoadingA(true);
     try {
       const profile = await getPoliticianProfile(politician.id);
-      // Transform API profile to match mock data structure
+
+      // Transform votes data for chart (group by topic and count yes/no/abstain)
+      const votingByTopic: Record<string, { yes: number; no: number; abstain: number }> = {};
+      profile.votes?.forEach((vote) => {
+        const topic = vote.topic || "Other";
+        if (!votingByTopic[topic]) {
+          votingByTopic[topic] = { yes: 0, no: 0, abstain: 0 };
+        }
+        if (vote.vote_position === "yes") votingByTopic[topic].yes++;
+        else if (vote.vote_position === "no") votingByTopic[topic].no++;
+        else if (vote.vote_position === "abstain") votingByTopic[topic].abstain++;
+      });
+
+      const votingData = Object.entries(votingByTopic).map(([category, counts]) => ({
+        category,
+        ...counts,
+      }));
+
+      // Transform donations data for chart
+      const donorData = profile.donations?.map((donation, idx) => ({
+        name: donation.category,
+        value: donation.total_amount,
+        color: `hsl(var(--chart-${(idx % 5) + 1}))`,
+      })) || [];
+
+      const totalDonations = profile.donations?.reduce((sum, d) => sum + d.total_amount, 0) || 0;
+
       setPoliticianA({
         id: profile.politician.id,
         name: profile.politician.name,
         party: profile.politician.party || "Unknown",
         state: profile.politician.state || "N/A",
         position: profile.politician.office || "Unknown",
-        votingData: mockPoliticianA.votingData, // Keep mock data for now
-        donorData: mockPoliticianA.donorData,
-        totalDonations: "$0",
+        votingData: votingData.length > 0 ? votingData : mockPoliticianA.votingData,
+        donorData: donorData.length > 0 ? donorData : mockPoliticianA.donorData,
+        totalDonations: totalDonations > 0 ? `$${totalDonations.toLocaleString()}` : "$0",
         statements:
           profile.statements?.slice(0, 2).map((s) => ({
             text: s.text,
@@ -297,16 +323,42 @@ function ComparePageContent() {
     setLoadingB(true);
     try {
       const profile = await getPoliticianProfile(politician.id);
-      // Transform API profile to match mock data structure
+
+      // Transform votes data for chart (group by topic and count yes/no/abstain)
+      const votingByTopic: Record<string, { yes: number; no: number; abstain: number }> = {};
+      profile.votes?.forEach((vote) => {
+        const topic = vote.topic || "Other";
+        if (!votingByTopic[topic]) {
+          votingByTopic[topic] = { yes: 0, no: 0, abstain: 0 };
+        }
+        if (vote.vote_position === "yes") votingByTopic[topic].yes++;
+        else if (vote.vote_position === "no") votingByTopic[topic].no++;
+        else if (vote.vote_position === "abstain") votingByTopic[topic].abstain++;
+      });
+
+      const votingData = Object.entries(votingByTopic).map(([category, counts]) => ({
+        category,
+        ...counts,
+      }));
+
+      // Transform donations data for chart
+      const donorData = profile.donations?.map((donation, idx) => ({
+        name: donation.category,
+        value: donation.total_amount,
+        color: `hsl(var(--chart-${(idx % 5) + 1}))`,
+      })) || [];
+
+      const totalDonations = profile.donations?.reduce((sum, d) => sum + d.total_amount, 0) || 0;
+
       setPoliticianB({
         id: profile.politician.id,
         name: profile.politician.name,
         party: profile.politician.party || "Unknown",
         state: profile.politician.state || "N/A",
         position: profile.politician.office || "Unknown",
-        votingData: mockPoliticianB.votingData, // Keep mock data for now
-        donorData: mockPoliticianB.donorData,
-        totalDonations: "$0",
+        votingData: votingData.length > 0 ? votingData : mockPoliticianB.votingData,
+        donorData: donorData.length > 0 ? donorData : mockPoliticianB.donorData,
+        totalDonations: totalDonations > 0 ? `$${totalDonations.toLocaleString()}` : "$0",
         statements:
           profile.statements?.slice(0, 2).map((s) => ({
             text: s.text,
@@ -577,6 +629,42 @@ function ComparePageContent() {
                   {politicianA.name}
                 </h3>
                 {politicianA.statements.map((statement, index) => (
+                  <div key={index} className="civic-card p-6">
+                    <Quote className="h-6 w-6 text-accent mb-3" />
+                    <p className="text-foreground mb-4 leading-relaxed">
+                      &quot;{statement.text}&quot;
+                    </p>
+                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+                      <span>{statement.date}</span>
+                      {"url" in statement || "sourceUrl" in statement ? (
+                        <a
+                          href={
+                            (statement as { url?: string; sourceUrl?: string })
+                              .url ||
+                            (statement as { url?: string; sourceUrl?: string })
+                              .sourceUrl
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 hover:text-foreground transition-colors"
+                        >
+                          {statement.source}
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      ) : (
+                        <span>{statement.source}</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Politician B Statements */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-foreground">
+                  {politicianB.name}
+                </h3>
+                {politicianB.statements.map((statement, index) => (
                   <div key={index} className="civic-card p-6">
                     <Quote className="h-6 w-6 text-accent mb-3" />
                     <p className="text-foreground mb-4 leading-relaxed">

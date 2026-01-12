@@ -326,13 +326,12 @@ def parse_date(date_str: Optional[str]) -> Optional[date]:
 
 class DatabaseManager:
     """Database connection and operations manager"""
-    
+
     def __init__(self, connection_string: str):
         try:
-            # Convert asyncpg URL to psycopg2 format if needed
-            if "+asyncpg" in connection_string:
-                connection_string = connection_string.replace("+asyncpg", "")
-            
+            # Clean asyncpg-specific parameters
+            connection_string = self._clean_connection_string(connection_string)
+
             self.conn = psycopg2.connect(connection_string, connect_timeout=10)
             self.conn.autocommit = False
         except psycopg2.OperationalError as e:
@@ -344,10 +343,29 @@ class DatabaseManager:
                 logger.error("  2. Verify the DATABASE_URL hostname is correct")
                 logger.error("  3. Check if your Supabase project is active (not paused)")
             raise
-        
+
+    @staticmethod
+    def _clean_connection_string(url: str) -> str:
+        """Remove asyncpg-specific parameters from connection string"""
+        url = url.replace("+asyncpg", "")
+        if "?" in url:
+            base_url, params = url.split("?", 1)
+            param_pairs = params.split("&")
+            allowed_params = []
+            blocked_params = ["statement_cache_size", "prepared_statement_cache_size", "server_settings"]
+            for param in param_pairs:
+                param_name = param.split("=")[0]
+                if param_name not in blocked_params:
+                    allowed_params.append(param)
+            if allowed_params:
+                url = base_url + "?" + "&".join(allowed_params)
+            else:
+                url = base_url
+        return url
+
     def __enter__(self):
         return self
-    
+
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type:
             self.conn.rollback()

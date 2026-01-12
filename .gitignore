@@ -1,9 +1,19 @@
 # MCP configuration files (may contain sensitive tokens)
 .cursor/mcp.json
 
+# Node/Next build artifacts
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/.turbo/
+
 # Frontend Vite folder (local only)
 frontendvite/
 
+# Logs
+*.log
+
 .env
+.env.local
 # Allow .env.example files to be tracked (they're example templates, not secrets)
 !**/.env.example

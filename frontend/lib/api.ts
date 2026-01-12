@@ -181,10 +181,10 @@ async function fetchApi<T>(
 
 export async function searchPoliticians(
   name?: string,
-  zip?: string,
+  state?: string,
   signal?: AbortSignal
 ): Promise<SearchResult> {
-  const cacheKey = `${name ?? ""}::${zip ?? ""}`;
+  const cacheKey = `${name ?? ""}::${state ?? ""}`;
   if (SEARCH_CACHE.has(cacheKey)) {
     return SEARCH_CACHE.get(cacheKey) as SearchResult;
   }
@@ -203,23 +203,9 @@ export async function searchPoliticians(
       );
     }
 
-    // Filter by zip - Note: Demo data doesn't include zip codes,
-    // so we filter by state as a simplified proxy. In production,
-    // the API would map zip codes to representatives correctly.
-    if (zip) {
-      // Simple state mapping for common zip prefixes (not exhaustive)
-      const zipToState: Record<string, string> = {
-        "9": "CA", // CA zip codes start with 9
-        "7": "TX", // Some TX zip codes start with 7
-        "0": "MA", // MA zip codes start with 0
-        "1": "NY", // Some NY/Northeast zip codes start with 1
-        "2": "VA", // Some VA/DC area zip codes start with 2
-      };
-
-      const stateCode = zipToState[zip.charAt(0)];
-      if (stateCode) {
-        results = results.filter((p) => p.state === stateCode);
-      }
+    // Filter by state
+    if (state) {
+      results = results.filter((p) => p.state === state);
     }
 
     const demoResult = { politicians: results };
@@ -229,7 +215,7 @@ export async function searchPoliticians(
 
   const params = new URLSearchParams();
   if (name) params.append("name", name);
-  if (zip) params.append("zip_code", zip);
+  if (state) params.append("state", state);
 
   const data = await fetchApi<BackendSearchResponse>(
     `/search?${params.toString()}`,
@@ -275,11 +261,57 @@ export async function getPoliticianProfile(
   id: string
 ): Promise<PoliticianProfile> {
   const summary = await getPoliticianSummary(id);
+
+  // Fetch votes, donations, and statements in parallel
+  const [votesData, donationsData] = await Promise.allSettled([
+    getPoliticianVotes(id).catch(() => ({ votes: [] })),
+    getPoliticianDonations(id).catch(() => ({ donations: [] })),
+  ]);
+
+  const votes =
+    votesData.status === "fulfilled" ? votesData.value.votes : [];
+  const rawDonations =
+    donationsData.status === "fulfilled" ? donationsData.value.donations : [];
+
+  // Aggregate donations by category
+  const donationsByCategory: Record<
+    string,
+    { total_amount: number; citations: Citation[] }
+  > = {};
+
+  rawDonations.forEach((donation) => {
+    const category = donation.category;
+    if (!donationsByCategory[category]) {
+      donationsByCategory[category] = { total_amount: 0, citations: [] };
+    }
+    donationsByCategory[category].total_amount += donation.amount;
+    donationsByCategory[category].citations.push(...donation.citations);
+  });
+
+  const donations = Object.entries(donationsByCategory).map(
+    ([category, data]) => ({
+      category,
+      total_amount: data.total_amount,
+      citation_count: data.citations.length,
+      citations: data.citations,
+    })
+  );
+
+  // Extract statements from politician_details if available
+  const statements =
+    summary.politician_details?.statements?.map((text, idx) => ({
+      id: `${id}-statement-${idx}`,
+      text,
+      date: undefined,
+      source_type: undefined,
+      citations: [],
+    })) || [];
+
   return {
     politician: summary,
-    votes: [],
-    donations: [],
-    statements: [],
+    votes,
+    donations,
+    statements,
     source_count: undefined,
   };
 }
