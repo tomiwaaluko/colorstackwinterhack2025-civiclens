@@ -108,7 +108,7 @@ async def get_politician_timeline(
                 title=bill_title or "Vote",
                 outcome=row['outcome'],
                 citations=[Citation(
-                    source_id=row['source_id'],
+                    source_id=str(row['source_id']),
                     source_url=row['source_url'] or "",
                     title=row['source_title'] or "",
                     publisher=row['publisher'] or "",
@@ -148,7 +148,7 @@ async def get_politician_timeline(
                 title=title,
                 outcome=None,
                 citations=[Citation(
-                    source_id=row['source_id'],
+                    source_id=str(row['source_id']),
                     source_url=row['source_url'] or "",
                     title=row['source_title'] or "",
                     publisher=row['publisher'] or "",
@@ -185,7 +185,7 @@ async def get_politician_timeline(
                 title=row['text_preview'] or "Statement",
                 outcome=None,
                 citations=[Citation(
-                    source_id=row['statement_source_id'],
+                    source_id=str(row['statement_source_id']),
                     source_url=row['source_url'] or "",
                     title=row['source_title'] or "",
                     publisher=row['publisher'] or "",

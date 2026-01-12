@@ -83,9 +83,9 @@ export default function DonationsMap({
   // Fit bounds when data loads
   useEffect(() => {
     if (mapData && mapRef.current && Object.keys(mapData.values).length > 0) {
-      const map = mapRef.current.getMap();
-      if (map) {
-        map.fitBounds(
+      // For react-map-gl v8, the ref directly gives us the map instance
+      try {
+        mapRef.current?.fitBounds(
           [
             [-125.0, 24.396308], // Southwest [lng, lat]
             [-66.93457, 49.384358], // Northeast [lng, lat]
@@ -95,6 +95,8 @@ export default function DonationsMap({
             duration: 1000,
           }
         );
+      } catch (err) {
+        console.error("Error fitting bounds:", err);
       }
     }
   }, [mapData]);
@@ -440,9 +442,6 @@ export default function DonationsMap({
             }}
             onMouseLeave={() => setHoveredState(null)}
             onClick={handleFeatureClick}
-            onLoad={(e) => {
-              mapRef.current = e.target;
-            }}
           >
             {styledGeoJson && (
               <Source id="states" type="geojson" data={styledGeoJson}>

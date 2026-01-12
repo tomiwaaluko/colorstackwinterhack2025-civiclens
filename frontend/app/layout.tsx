@@ -41,7 +41,7 @@ export default function RootLayout({
       lang="en"
       className={`${spaceGrotesk.variable} ${lora.variable} ${spaceMono.variable}`}
     >
-      <body className="antialiased bg-background text-foreground min-h-screen flex flex-col font-sans">
+      <body className="antialiased bg-background text-foreground min-h-screen flex flex-col font-sans" suppressHydrationWarning>
         <ErrorBoundary>
           <TooltipProvider>
             <Header />

@@ -60,73 +60,98 @@ async def get_donations_map(
             detail=f"Aggregation level '{aggregation_level}' not supported. Only 'state' is supported."
         )
     
-    # Build WHERE clause based on filters
-    where_conditions = ["d.state_code IS NOT NULL"]
+    # Build WHERE clause based on filters (without table alias for CTE)
+    where_conditions = ["state_code IS NOT NULL"]
     params = {}
     
     if politician_ids:
-        where_conditions.append("d.politician_id = ANY(:politician_ids)")
+        where_conditions.append("politician_id = ANY(:politician_ids)")
         params["politician_ids"] = politician_ids
     
     if category:
-        where_conditions.append("d.donor_category = :category")
+        where_conditions.append("donor_category = :category")
         params["category"] = category
     
     if start_date:
-        where_conditions.append("d.date >= :start_date")
+        where_conditions.append("date >= :start_date")
         params["start_date"] = start_date
     
     if end_date:
-        where_conditions.append("d.date <= :end_date")
+        where_conditions.append("date <= :end_date")
         params["end_date"] = end_date
     
     where_clause = " AND ".join(where_conditions)
     
-    # Main aggregation query
-    # Note: Subqueries for top_donor_category use same filters via WHERE correlation
+    # Main aggregation query using CTE to avoid parameter duplication issues
     sql = text(f"""
+        WITH filtered_donations AS (
+            SELECT 
+                state_code,
+                amount,
+                donor_category
+            FROM donations
+            WHERE {where_clause}
+        ),
+        state_category_totals AS (
+            SELECT 
+                state_code,
+                donor_category,
+                SUM(amount) as category_total
+            FROM filtered_donations
+            GROUP BY state_code, donor_category
+        ),
+        top_categories AS (
+            SELECT DISTINCT ON (state_code)
+                state_code,
+                donor_category as top_donor_category,
+                category_total as top_category_amount
+            FROM state_category_totals
+            ORDER BY state_code, category_total DESC
+        )
         SELECT 
             d.state_code,
             SUM(d.amount) as total_amount,
             COUNT(*) as donation_count,
             AVG(d.amount) as avg_amount,
-            (
-                SELECT donor_category
-                FROM donations d2
-                WHERE d2.state_code = d.state_code
-                  AND d2.state_code IS NOT NULL
-                  {'AND d2.politician_id = ANY(:politician_ids)' if politician_ids else ''}
-                  {'AND d2.donor_category = :category' if category else ''}
-                  {'AND d2.date >= :start_date' if start_date else ''}
-                  {'AND d2.date <= :end_date' if end_date else ''}
-                GROUP BY donor_category
-                ORDER BY SUM(amount) DESC
-                LIMIT 1
-            ) as top_donor_category,
-            (
-                SELECT SUM(amount)
-                FROM donations d2
-                WHERE d2.state_code = d.state_code
-                  AND d2.state_code IS NOT NULL
-                  {'AND d2.politician_id = ANY(:politician_ids)' if politician_ids else ''}
-                  {'AND d2.donor_category = :category' if category else ''}
-                  {'AND d2.date >= :start_date' if start_date else ''}
-                  {'AND d2.date <= :end_date' if end_date else ''}
-                GROUP BY donor_category
-                ORDER BY SUM(amount) DESC
-                LIMIT 1
-            ) as top_category_amount
-        FROM donations d
-        WHERE {where_clause}
-        GROUP BY d.state_code
+            tc.top_donor_category,
+            tc.top_category_amount
+        FROM filtered_donations d
+        LEFT JOIN top_categories tc ON d.state_code = tc.state_code
+        GROUP BY d.state_code, tc.top_donor_category, tc.top_category_amount
         ORDER BY total_amount DESC
     """)
     
     result = await db.execute(sql, params)
     rows = result.mappings().all()
     
+    # Build WHERE clauses for secondary queries
+    pol_where = ["d.state_code IS NOT NULL"]
+    donor_where = ["state_code IS NOT NULL"]
+    cite_where = ["d.state_code IS NOT NULL"]
+    
+    if politician_ids:
+        pol_where.append("d.politician_id = ANY(:politician_ids)")
+        donor_where.append("politician_id = ANY(:politician_ids)")
+        cite_where.append("d.politician_id = ANY(:politician_ids)")
+    if category:
+        pol_where.append("d.donor_category = :category")
+        donor_where.append("donor_category = :category")
+        cite_where.append("d.donor_category = :category")
+    if start_date:
+        pol_where.append("d.date >= :start_date")
+        donor_where.append("date >= :start_date")
+        cite_where.append("d.date >= :start_date")
+    if end_date:
+        pol_where.append("d.date <= :end_date")
+        donor_where.append("date <= :end_date")
+        cite_where.append("d.date <= :end_date")
+    
+    pol_where_str = " AND ".join(pol_where)
+    donor_where_str = " AND ".join(donor_where)
+    cite_where_str = " AND ".join(cite_where)
+    
     # Get top politicians and donors per state
-    top_politicians_sql = text("""
+    top_politicians_sql = text(f"""
         SELECT 
             d.state_code,
             p.id as politician_id,
@@ -134,11 +159,7 @@ async def get_donations_map(
             SUM(d.amount) as total_amount
         FROM donations d
         JOIN politicians p ON d.politician_id = p.id
-        WHERE d.state_code IS NOT NULL
-          AND (:politician_ids IS NULL OR d.politician_id = ANY(:politician_ids))
-          AND (:category IS NULL OR d.donor_category = :category)
-          AND (:start_date IS NULL OR d.date >= :start_date)
-          AND (:end_date IS NULL OR d.date <= :end_date)
+        WHERE {pol_where_str}
         GROUP BY d.state_code, p.id, p.name
         HAVING SUM(d.amount) > 0
         ORDER BY d.state_code, total_amount DESC
@@ -148,18 +169,14 @@ async def get_donations_map(
     politicians_rows = politicians_result.mappings().all()
     
     # Get top donors per state
-    top_donors_sql = text("""
+    top_donors_sql = text(f"""
         SELECT 
             state_code,
             donor_name,
             SUM(amount) as total_amount,
             COUNT(*) as donation_count
         FROM donations
-        WHERE state_code IS NOT NULL
-          AND (:politician_ids IS NULL OR politician_id = ANY(:politician_ids))
-          AND (:category IS NULL OR donor_category = :category)
-          AND (:start_date IS NULL OR date >= :start_date)
-          AND (:end_date IS NULL OR date <= :end_date)
+        WHERE {donor_where_str}
         GROUP BY state_code, donor_name
         HAVING SUM(amount) > 10000
         ORDER BY state_code, total_amount DESC
@@ -170,7 +187,7 @@ async def get_donations_map(
     donors_rows = donors_result.mappings().all()
     
     # Get citations (top sources) per state
-    citations_sql = text("""
+    citations_sql = text(f"""
         SELECT DISTINCT ON (d.state_code, s.id)
             d.state_code,
             s.id as source_id,
@@ -181,12 +198,8 @@ async def get_donations_map(
             COUNT(*) OVER (PARTITION BY d.state_code, s.id) as citation_count
         FROM donations d
         JOIN sources s ON d.source_id = s.id
-        WHERE d.state_code IS NOT NULL
-          AND (:politician_ids IS NULL OR d.politician_id = ANY(:politician_ids))
-          AND (:category IS NULL OR d.donor_category = :category)
-          AND (:start_date IS NULL OR d.date >= :start_date)
-          AND (:end_date IS NULL OR d.date <= :end_date)
-        ORDER BY d.state_code, citation_count DESC, s.id
+        WHERE {cite_where_str}
+        ORDER BY d.state_code, s.id, citation_count DESC
     """)
     
     citations_result = await db.execute(citations_sql, params)
@@ -231,7 +244,7 @@ async def get_donations_map(
             state_citations[state_code] = []
         if len(state_citations[state_code]) < 3:  # Top 3 citations per state
             state_citations[state_code].append(Citation(
-                source_id=row["source_id"],
+                source_id=str(row["source_id"]),
                 source_url=row["source_url"] or "",
                 title=row["title"] or "",
                 publisher=row["publisher"] or "",

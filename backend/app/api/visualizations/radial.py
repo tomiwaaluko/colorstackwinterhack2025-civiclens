@@ -117,7 +117,7 @@ async def get_politician_radial(
             category_citations[category] = []
         if len(category_citations[category]) < 3:  # Top 3 citations per category
             category_citations[category].append(Citation(
-                source_id=row["source_id"],
+                source_id=str(row["source_id"]),
                 source_url=row["source_url"] or "",
                 title=row["title"] or "",
                 publisher=row["publisher"] or "",
