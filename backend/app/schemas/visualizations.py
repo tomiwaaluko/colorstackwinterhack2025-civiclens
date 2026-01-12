@@ -10,7 +10,7 @@ from enum import Enum
 
 class Citation(BaseModel):
     """Citation/evidence bundle for visualizations."""
-    source_id: int
+    source_id: str  # Can be int or UUID depending on database
     source_url: str
     title: str
     publisher: str

@@ -6,6 +6,7 @@ from urllib.parse import urlparse, parse_qs
 
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import declarative_base
+from sqlalchemy.pool import NullPool
 from dotenv import load_dotenv
 from app.core.config import settings
 
@@ -32,18 +33,18 @@ def _should_disable_prepared_statements(database_url: str) -> bool:
 
 
 # Supabase connection pooler (pgbouncer) doesn't support prepared statements
-# Disable statement caching when a pooler is detected.
+# Disable statement caching for all PostgreSQL connections to avoid DuplicatePreparedStatementError
 connect_args = {}
-if _should_disable_prepared_statements(DATABASE_URL):
+if "postgresql" in DATABASE_URL.lower():
     connect_args = {"statement_cache_size": 0, "prepared_statement_cache_size": 0}
 
 # Create async engine
+# Use NullPool when using external connection poolers like pgbouncer
 engine = create_async_engine(
     DATABASE_URL,
     echo=True,  # Set to True for SQL query logging during development
     connect_args=connect_args,
-    # Also disable statement cache at engine level for Supabase
-    pool_pre_ping=True,  # Verify connections before using
+    poolclass=NullPool,  # Don't use SQLAlchemy pooling when pgbouncer handles it
 )
 
 # Create session factory

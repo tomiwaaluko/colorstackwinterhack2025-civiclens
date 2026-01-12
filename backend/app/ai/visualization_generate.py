@@ -34,6 +34,11 @@ class VisualizationGenerationError(RuntimeError):
     pass
 
 
+class RateLimitError(VisualizationGenerationError):
+    """Error when API rate limit is exceeded."""
+    pass
+
+
 def _load_prompt(filename: str) -> str:
     """Load a prompt template from the prompts directory."""
     path = PROMPTS_DIR / filename
@@ -82,21 +87,28 @@ def _call_gemini(
     key = api_key or os.getenv("GEMINI_API_KEY")
     if not key:
         raise VisualizationGenerationError("Missing GEMINI_API_KEY.")
-    
+
     client = genai.Client(api_key=key)
-    
+
     config = types.GenerateContentConfig(
         temperature=temperature,
         max_output_tokens=max_output_tokens,
         response_mime_type="application/json",
     )
-    
-    resp = client.models.generate_content(
-        model=model,
-        contents=[types.Content(role="user", parts=[types.Part(text=prompt)])],
-        config=config,
-    )
-    
+
+    try:
+        resp = client.models.generate_content(
+            model=model,
+            contents=[types.Content(role="user", parts=[types.Part(text=prompt)])],
+            config=config,
+        )
+    except Exception as e:
+        error_str = str(e).lower()
+        # Check for rate limit / quota exceeded errors (429 RESOURCE_EXHAUSTED)
+        if "429" in error_str or "resource_exhausted" in error_str or "quota" in error_str:
+            raise RateLimitError(f"Gemini API rate limit exceeded: {e}")
+        raise VisualizationGenerationError(f"Gemini API call failed: {e}")
+
     return (resp.text or "").strip()
 
 

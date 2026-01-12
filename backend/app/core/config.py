@@ -66,13 +66,13 @@ class Settings:
     def get_database_url(cls) -> str:
         """Get database URL with asyncpg conversion if needed."""
         url = cls.DATABASE_URL
-        
+
         # Convert Supabase connection string format if needed
         # Supabase provides: postgresql://postgres:[PASSWORD]@[HOST]:[PORT]/postgres
         # SQLAlchemy async requires: postgresql+asyncpg://...
         if url.startswith("postgresql://") and "+asyncpg" not in url:
             url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
-        
+
         return url
 
     @classmethod

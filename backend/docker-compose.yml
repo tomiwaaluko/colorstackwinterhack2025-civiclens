@@ -11,6 +11,7 @@ services:
     environment:
       # Load environment variables from .env file
       - DATABASE_URL=${DATABASE_URL}
+      - DISABLE_PREPARED_STATEMENTS=true
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - GEMINI_MODEL=${GEMINI_MODEL:-gemini-2.5-flash}
       - GEMINI_EMBEDDING_MODEL=${GEMINI_EMBEDDING_MODEL:-gemini-embedding-001}
