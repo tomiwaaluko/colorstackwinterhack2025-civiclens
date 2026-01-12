@@ -22,7 +22,7 @@ function SearchPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
-  const initialZip = searchParams.get("zip") || "";
+  const initialState = searchParams.get("state") || "";
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState("relevance");
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
@@ -34,10 +34,10 @@ function SearchPageContent() {
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const performSearch = useCallback(
-    async (query: string, zip: string) => {
+    async (query: string, state: string) => {
       const trimmedQuery = query.trim();
-      const trimmedZip = zip.trim();
-      const searchKey = `${trimmedQuery}::${trimmedZip}`;
+      const trimmedState = state.trim();
+      const searchKey = `${trimmedQuery}::${trimmedState}`;
 
       if (lastSearchKeyRef.current === searchKey) {
         return;
@@ -55,7 +55,7 @@ function SearchPageContent() {
       try {
         const results = await searchPoliticians(
           trimmedQuery || undefined,
-          trimmedZip || undefined,
+          trimmedState || undefined,
           controller.signal
         );
         setPoliticians(results.politicians);
@@ -79,8 +79,8 @@ function SearchPageContent() {
   );
 
   useEffect(() => {
-    performSearch(initialQuery, initialZip);
-  }, [initialQuery, initialZip, performSearch]);
+    performSearch(initialQuery, initialState);
+  }, [initialQuery, initialState, performSearch]);
 
   const filteredPoliticians = useMemo(() => {
     if (activeFilters.length === 0) {
@@ -144,19 +144,19 @@ function SearchPageContent() {
     }
   }, [filteredPoliticians, sortBy]);
 
-  const handleSearch = (query: string, zip: string) => {
+  const handleSearch = (query: string, state: string) => {
     const trimmedQuery = query.trim();
-    const trimmedZip = zip.trim();
+    const trimmedState = state.trim();
     const params = new URLSearchParams();
 
     if (trimmedQuery) params.set("q", trimmedQuery);
-    if (trimmedZip) params.set("zip", trimmedZip);
+    if (trimmedState) params.set("state", trimmedState);
 
     const nextPath = params.toString()
       ? `/search?${params.toString()}`
       : "/search";
     router.push(nextPath);
-    performSearch(trimmedQuery, trimmedZip);
+    performSearch(trimmedQuery, trimmedState);
   };
 
   const toggleFilter = (filter: string) => {
@@ -179,7 +179,7 @@ function SearchPageContent() {
             variant="hero"
             onSearch={handleSearch}
             defaultQuery={initialQuery}
-            defaultZip={initialZip}
+            defaultState={initialState}
           />
         </div>
       </section>
@@ -279,7 +279,7 @@ function SearchPageContent() {
           )}
           {!isLoading && !error && hasSearched && sortedPoliticians.length === 0 && (
             <div className="bg-card border border-border rounded-lg p-6 text-center text-muted-foreground">
-              No politicians found. Try a different name or ZIP code.
+              No politicians found. Try a different name or state.
             </div>
           )}
           {!isLoading && !error && sortedPoliticians.length > 0 && (

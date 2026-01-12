@@ -98,15 +98,17 @@ class PoliticianRepo:
         votes = [list(row) for row in result.fetchall()]
         return votes
 
-    async def get_all(self, db: AsyncSession) -> List[Dict]:
-        """Get all politicians"""
-        result = await db.execute(
-            text("""
-                SELECT id, full_name, state, current_office, image_url, party
-                FROM politicians
-                ORDER BY full_name
-            """)
-        )
+    async def get_all(self, db: AsyncSession, limit: Optional[int] = None) -> List[Dict]:
+        """Get all politicians (optionally limited)"""
+        query = """
+            SELECT id, full_name, state, current_office, image_url, party
+            FROM politicians
+            ORDER BY full_name
+        """
+        if limit is not None:
+            query += " LIMIT :limit"
+
+        result = await db.execute(text(query), {"limit": limit} if limit is not None else {})
 
         politicians = []
         for row in result.fetchall():
@@ -139,33 +141,40 @@ class PoliticianRepo:
         politician = await self._politician_row_to_dict(row, db)
         return politician
 
-    async def search(self, name: str, db: AsyncSession, zip_code: str = None, limit: int = 10) -> List[Dict]:
+    async def search(self, name: str, db: AsyncSession, state: str = None, limit: int = 10) -> List[Dict]:
         """
-        Search politicians by name with fuzzy matching.
+        Search politicians by name and/or state with fuzzy matching.
 
         Args:
-            name: Politician name to search for
+            name: Politician name to search for (can be None if state is provided)
             db: Database session
-            zip_code: Reserved for future use
+            state: Optional state abbreviation for filtering (e.g., "CA", "NY")
             limit: Maximum results to return
 
         Returns:
             List of politicians ranked by relevance
         """
-        cache_key = (name.lower(), zip_code, limit)
+        cache_key = (name.lower() if name else "", state, limit)
 
         if cache_key in self._search_cache:
             return self._search_cache[cache_key]
 
         # Get all politicians and search in memory (easier for fuzzy matching)
         # OPTIMIZATION: Fetch basic info only first to avoid N+1 query problem
-        result = await db.execute(
-            text("""
-                SELECT id, full_name, state, current_office, image_url, party
-                FROM politicians
-                ORDER BY full_name
-            """)
-        )
+        query = """
+            SELECT id, full_name, state, current_office, image_url, party
+            FROM politicians
+        """
+        params = {}
+
+        # Add state filter if provided
+        if state:
+            query += " WHERE state ILIKE :state"
+            params["state"] = f"%{state}%"
+
+        query += " ORDER BY full_name"
+
+        result = await db.execute(text(query), params)
 
         all_politicians = []
         for row in result.fetchall():
@@ -173,23 +182,28 @@ class PoliticianRepo:
             politician = await self._politician_row_to_dict(row, db, fetch_details=False)
             all_politicians.append(politician)
 
-        scored_results = []
-        name_lower = name.lower()
+        # If name is provided, do fuzzy matching
+        if name:
+            scored_results = []
+            name_lower = name.lower()
 
-        for politician in all_politicians:
-            politician_name = politician['name'].lower()
+            for politician in all_politicians:
+                politician_name = politician['name'].lower()
 
-            token_score = fuzz.token_sort_ratio(name_lower, politician_name)
-            partial_score = fuzz.partial_ratio(name_lower, politician_name)
-            word_match = any(name_lower in word.lower() for word in politician['name'].split())
+                token_score = fuzz.token_sort_ratio(name_lower, politician_name)
+                partial_score = fuzz.partial_ratio(name_lower, politician_name)
+                word_match = any(name_lower in word.lower() for word in politician['name'].split())
 
-            combined_score = (token_score * 0.4) + (partial_score * 0.4) + (100 if word_match else 0) * 0.2
+                combined_score = (token_score * 0.4) + (partial_score * 0.4) + (100 if word_match else 0) * 0.2
 
-            if combined_score >= 60:
-                scored_results.append((politician, combined_score))
+                if combined_score >= 60:
+                    scored_results.append((politician, combined_score))
 
-        scored_results.sort(key=lambda x: x[1], reverse=True)
-        results = [politician for politician, _ in scored_results[:limit]]
+            scored_results.sort(key=lambda x: x[1], reverse=True)
+            results = [politician for politician, _ in scored_results[:limit]]
+        else:
+            # If no name provided, just return state-filtered results
+            results = all_politicians[:limit]
 
         # OPTIMIZATION: Fetch details only for the top results
         for politician in results:
@@ -198,7 +212,7 @@ class PoliticianRepo:
                 uuid_id = UUID(politician['id'])
                 statements = await self._get_statements(uuid_id, db)
                 votes = await self._get_votes(uuid_id, db)
-                
+
                 politician['politician_details'] = {
                     'statements': statements,
                     'votes': votes
