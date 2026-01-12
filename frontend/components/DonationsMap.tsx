@@ -5,9 +5,19 @@ import dynamic from "next/dynamic";
 // Import from the mapbox subpath export for react-map-gl v8
 import Map, { Source, Layer, Popup } from "react-map-gl/mapbox";
 import "mapbox-gl/dist/mapbox-gl.css";
-import type { DonationsMapResponse, MapViewMode, ComparativePoliticianData } from "@/lib/types";
+import type {
+  DonationsMapResponse,
+  MapViewMode,
+  ComparativePoliticianData,
+} from "@/lib/types";
 import { getDonationsMap } from "@/lib/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -48,7 +58,6 @@ interface DonationsMapProps {
   onCitationClick?: (citations: any[], stateName?: string) => void;
 }
 
-
 export default function DonationsMap({
   politicianIds,
   category,
@@ -66,25 +75,39 @@ export default function DonationsMap({
   const [error, setError] = useState<string | null>(null);
   const [selectedState, setSelectedState] = useState<string | null>(null);
   const [hoveredState, setHoveredState] = useState<string | null>(null);
-  const [popupInfo, setPopupInfo] = useState<{ stateCode: string; lng: number; lat: number } | null>(null);
-  
+  const [popupInfo, setPopupInfo] = useState<{
+    stateCode: string;
+    lng: number;
+    lat: number;
+  } | null>(null);
+
   // Phase 1 enhancements state
-  const [selectedYear, setSelectedYear] = useState<number>(AVAILABLE_YEARS[AVAILABLE_YEARS.length - 1]);
+  const [selectedYear, setSelectedYear] = useState<number>(
+    AVAILABLE_YEARS[AVAILABLE_YEARS.length - 1]
+  );
   const [isPlaying, setIsPlaying] = useState(false);
   const [viewMode, setViewMode] = useState<MapViewMode>("total");
-  
-  // Cache for comparative data
-  const [comparativeData, setComparativeData] = useState<Record<number, DonationsMapResponse>>({});
-  const [partyData, setPartyData] = useState<Record<string, { democrat: number; republican: number; independent: number }>>({});
 
-  // Map ref for fitBounds
+  // Cache for comparative data
+  const [comparativeData, setComparativeData] = useState<
+    Record<number, DonationsMapResponse>
+  >({});
+  const [partyData, setPartyData] = useState<
+    Record<
+      string,
+      { democrat: number; republican: number; independent: number }
+    >
+  >({});
+
+  // Map ref for fitBounds - stores the mapbox-gl map instance directly
   const mapRef = useRef<any>(null);
 
   // Fit bounds when data loads
   useEffect(() => {
     if (mapData && mapRef.current && Object.keys(mapData.values).length > 0) {
-      const map = mapRef.current.getMap();
-      if (map) {
+      // mapRef.current is the map instance directly (set in onLoad)
+      const map = mapRef.current;
+      if (map && typeof map.fitBounds === "function") {
         map.fitBounds(
           [
             [-125.0, 24.396308], // Southwest [lng, lat]
@@ -125,7 +148,9 @@ export default function DonationsMap({
     setIsLoading(true);
     setError(null);
 
-    const dateRange = showTimeSlider ? getDateRangeForYear(selectedYear) : { start: startDate, end: endDate };
+    const dateRange = showTimeSlider
+      ? getDateRangeForYear(selectedYear)
+      : { start: startDate, end: endDate };
 
     getDonationsMap({
       politician_ids: politicianIds,
@@ -142,13 +167,24 @@ export default function DonationsMap({
         setError(err.message || "Failed to load donation data");
         setIsLoading(false);
       });
-  }, [politicianIds, category, startDate, endDate, selectedYear, showTimeSlider, getDateRangeForYear]);
+  }, [
+    politicianIds,
+    category,
+    startDate,
+    endDate,
+    selectedYear,
+    showTimeSlider,
+    getDateRangeForYear,
+  ]);
 
   // Load comparative data for multiple politicians
   useEffect(() => {
-    if (viewMode !== "comparative" || comparativePoliticians.length === 0) return;
+    if (viewMode !== "comparative" || comparativePoliticians.length === 0)
+      return;
 
-    const dateRange = showTimeSlider ? getDateRangeForYear(selectedYear) : { start: startDate, end: endDate };
+    const dateRange = showTimeSlider
+      ? getDateRangeForYear(selectedYear)
+      : { start: startDate, end: endDate };
 
     Promise.all(
       comparativePoliticians.map((pol) =>
@@ -165,27 +201,38 @@ export default function DonationsMap({
       });
       setComparativeData(newComparativeData);
     });
-  }, [viewMode, comparativePoliticians, selectedYear, startDate, endDate, showTimeSlider, getDateRangeForYear]);
+  }, [
+    viewMode,
+    comparativePoliticians,
+    selectedYear,
+    startDate,
+    endDate,
+    showTimeSlider,
+    getDateRangeForYear,
+  ]);
 
   // Calculate party aggregation from map data
   useEffect(() => {
     if (viewMode !== "party" || !mapData) return;
 
-    const partyAggregation: Record<string, { democrat: number; republican: number; independent: number }> = {};
-    
+    const partyAggregation: Record<
+      string,
+      { democrat: number; republican: number; independent: number }
+    > = {};
+
     Object.entries(mapData.values).forEach(([stateCode, stateData]) => {
       partyAggregation[stateCode] = {
         democrat: 0,
         republican: 0,
         independent: 0,
       };
-      
+
       stateData.top_politicians.forEach((pol) => {
         const amount = pol.total_amount;
         const partyGuess = Math.random() > 0.5 ? "democrat" : "republican";
         partyAggregation[stateCode][partyGuess] += amount;
       });
-      
+
       if (stateData.top_politicians.length === 0) {
         const total = stateData.total_amount;
         partyAggregation[stateCode].democrat = total * 0.45;
@@ -193,7 +240,7 @@ export default function DonationsMap({
         partyAggregation[stateCode].independent = total * 0.1;
       }
     });
-    
+
     setPartyData(partyAggregation);
   }, [viewMode, mapData]);
 
@@ -209,55 +256,72 @@ export default function DonationsMap({
   }, [mapData]);
 
   // Color interpolation function for total view
-  const getColorForAmount = useCallback((amount: number): string => {
-    if (maxAmount === minAmount) return "#3b82f6";
-    const ratio = (amount - minAmount) / (maxAmount - minAmount);
-    const r = Math.round(59 + ratio * 196);
-    const g = Math.round(130 - ratio * 130);
-    const b = Math.round(246 - ratio * 246);
-    return `rgb(${r}, ${g}, ${b})`;
-  }, [minAmount, maxAmount]);
+  const getColorForAmount = useCallback(
+    (amount: number): string => {
+      if (maxAmount === minAmount) return "#3b82f6";
+      const ratio = (amount - minAmount) / (maxAmount - minAmount);
+      const r = Math.round(59 + ratio * 196);
+      const g = Math.round(130 - ratio * 130);
+      const b = Math.round(246 - ratio * 246);
+      return `rgb(${r}, ${g}, ${b})`;
+    },
+    [minAmount, maxAmount]
+  );
 
   // Color function for party view
-  const getPartyColor = useCallback((stateCode: string): string => {
-    const statePartyData = partyData[stateCode];
-    if (!statePartyData) return "#e5e7eb";
-    
-    const { democrat, republican, independent } = statePartyData;
-    const total = democrat + republican + independent;
-    if (total === 0) return "#e5e7eb";
-    
-    const dRatio = democrat / total;
-    const rRatio = republican / total;
-    
-    if (dRatio > 0.6) return PARTY_COLORS.democrat;
-    if (rRatio > 0.6) return PARTY_COLORS.republican;
-    
-    const r = Math.round(59 * dRatio + 239 * rRatio + 16 * (1 - dRatio - rRatio));
-    const g = Math.round(130 * dRatio + 68 * rRatio + 185 * (1 - dRatio - rRatio));
-    const b = Math.round(246 * dRatio + 68 * rRatio + 129 * (1 - dRatio - rRatio));
-    return `rgb(${r}, ${g}, ${b})`;
-  }, [partyData]);
+  const getPartyColor = useCallback(
+    (stateCode: string): string => {
+      const statePartyData = partyData[stateCode];
+      if (!statePartyData) return "#e5e7eb";
+
+      const { democrat, republican, independent } = statePartyData;
+      const total = democrat + republican + independent;
+      if (total === 0) return "#e5e7eb";
+
+      const dRatio = democrat / total;
+      const rRatio = republican / total;
+
+      if (dRatio > 0.6) return PARTY_COLORS.democrat;
+      if (rRatio > 0.6) return PARTY_COLORS.republican;
+
+      const r = Math.round(
+        59 * dRatio + 239 * rRatio + 16 * (1 - dRatio - rRatio)
+      );
+      const g = Math.round(
+        130 * dRatio + 68 * rRatio + 185 * (1 - dRatio - rRatio)
+      );
+      const b = Math.round(
+        246 * dRatio + 68 * rRatio + 129 * (1 - dRatio - rRatio)
+      );
+      return `rgb(${r}, ${g}, ${b})`;
+    },
+    [partyData]
+  );
 
   // Color function for comparative view
-  const getComparativeColor = useCallback((stateCode: string): string => {
-    if (comparativePoliticians.length === 0) return "#e5e7eb";
-    
-    let maxAmount = 0;
-    let dominantPoliticianIndex = -1;
-    
-    comparativePoliticians.forEach((pol, index) => {
-      const polData = comparativeData[pol.id];
-      const stateAmount = polData?.values[stateCode]?.total_amount || 0;
-      if (stateAmount > maxAmount) {
-        maxAmount = stateAmount;
-        dominantPoliticianIndex = index;
-      }
-    });
-    
-    if (dominantPoliticianIndex === -1 || maxAmount === 0) return "#e5e7eb";
-    return POLITICIAN_COLORS[dominantPoliticianIndex % POLITICIAN_COLORS.length];
-  }, [comparativePoliticians, comparativeData]);
+  const getComparativeColor = useCallback(
+    (stateCode: string): string => {
+      if (comparativePoliticians.length === 0) return "#e5e7eb";
+
+      let maxAmount = 0;
+      let dominantPoliticianIndex = -1;
+
+      comparativePoliticians.forEach((pol, index) => {
+        const polData = comparativeData[pol.id];
+        const stateAmount = polData?.values[stateCode]?.total_amount || 0;
+        if (stateAmount > maxAmount) {
+          maxAmount = stateAmount;
+          dominantPoliticianIndex = index;
+        }
+      });
+
+      if (dominantPoliticianIndex === -1 || maxAmount === 0) return "#e5e7eb";
+      return POLITICIAN_COLORS[
+        dominantPoliticianIndex % POLITICIAN_COLORS.length
+      ];
+    },
+    [comparativePoliticians, comparativeData]
+  );
 
   // Create styled GeoJSON with color properties
   useEffect(() => {
@@ -297,7 +361,16 @@ export default function DonationsMap({
       type: "FeatureCollection",
       features: styledFeatures,
     });
-  }, [geoJson, mapData, viewMode, selectedState, hoveredState, getColorForAmount, getPartyColor, getComparativeColor]);
+  }, [
+    geoJson,
+    mapData,
+    viewMode,
+    selectedState,
+    hoveredState,
+    getColorForAmount,
+    getPartyColor,
+    getComparativeColor,
+  ]);
 
   // Handle feature click
   const handleFeatureClick = useCallback((event: any) => {
@@ -313,19 +386,24 @@ export default function DonationsMap({
   }, []);
 
   // Handle year change
-  const handleYearChange = useCallback((year: number) => {
-    setSelectedYear(year);
-    if (isPlaying) {
-      setIsPlaying(false);
-    }
-  }, [isPlaying]);
+  const handleYearChange = useCallback(
+    (year: number) => {
+      setSelectedYear(year);
+      if (isPlaying) {
+        setIsPlaying(false);
+      }
+    },
+    [isPlaying]
+  );
 
   if (!MAPBOX_TOKEN) {
     return (
       <Card>
         <CardHeader>
           <CardTitle>Donations by State</CardTitle>
-          <CardDescription>Interactive choropleth map showing donation amounts</CardDescription>
+          <CardDescription>
+            Interactive choropleth map showing donation amounts
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[500px] flex items-center justify-center text-amber-600">
@@ -341,7 +419,9 @@ export default function DonationsMap({
       <Card>
         <CardHeader>
           <CardTitle>Donations by State</CardTitle>
-          <CardDescription>Interactive choropleth map showing donation amounts</CardDescription>
+          <CardDescription>
+            Interactive choropleth map showing donation amounts
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[500px] flex items-center justify-center">
@@ -357,7 +437,9 @@ export default function DonationsMap({
       <Card>
         <CardHeader>
           <CardTitle>Donations by State</CardTitle>
-          <CardDescription>Interactive choropleth map showing donation amounts</CardDescription>
+          <CardDescription>
+            Interactive choropleth map showing donation amounts
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[500px] flex items-center justify-center text-red-600">
@@ -386,14 +468,21 @@ export default function DonationsMap({
       <CardContent className="space-y-4">
         {/* View Mode Toggle */}
         {showViewModeToggle && (
-          <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as MapViewMode)}>
+          <Tabs
+            value={viewMode}
+            onValueChange={(v) => setViewMode(v as MapViewMode)}
+          >
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="total">Total Donations</TabsTrigger>
               <TabsTrigger value="party">By Party</TabsTrigger>
-              <TabsTrigger 
-                value="comparative" 
+              <TabsTrigger
+                value="comparative"
                 disabled={comparativePoliticians.length === 0}
-                title={comparativePoliticians.length === 0 ? "Select politicians to compare" : ""}
+                title={
+                  comparativePoliticians.length === 0
+                    ? "Select politicians to compare"
+                    : ""
+                }
               >
                 Compare Politicians
               </TabsTrigger>
@@ -406,9 +495,12 @@ export default function DonationsMap({
           <div className="flex flex-wrap gap-3 p-3 bg-gray-50 rounded-lg">
             {comparativePoliticians.map((pol, idx) => (
               <div key={pol.id} className="flex items-center gap-2">
-                <div 
+                <div
                   className="w-4 h-4 rounded"
-                  style={{ backgroundColor: POLITICIAN_COLORS[idx % POLITICIAN_COLORS.length] }}
+                  style={{
+                    backgroundColor:
+                      POLITICIAN_COLORS[idx % POLITICIAN_COLORS.length],
+                  }}
                 />
                 <span className="text-sm">{pol.name}</span>
                 <Badge variant="outline" className="text-xs">
@@ -492,33 +584,55 @@ export default function DonationsMap({
                 <div className="text-sm">
                   {(() => {
                     const feature = geoJson.features.find(
-                      (f: any) => f.properties.STATE_CODE === popupInfo.stateCode
+                      (f: any) =>
+                        f.properties.STATE_CODE === popupInfo.stateCode
                     );
                     const donationData = mapData?.values[popupInfo.stateCode];
-                    
-                    if (!donationData) return feature?.properties.NAME || popupInfo.stateCode;
-                    
+
+                    if (!donationData)
+                      return feature?.properties.NAME || popupInfo.stateCode;
+
                     if (viewMode === "total") {
-                      return `${feature?.properties.NAME || popupInfo.stateCode}: $${donationData.total_amount.toLocaleString()}`;
+                      return `${
+                        feature?.properties.NAME || popupInfo.stateCode
+                      }: $${donationData.total_amount.toLocaleString()}`;
                     } else if (viewMode === "party") {
                       const statePartyData = partyData[popupInfo.stateCode];
                       if (statePartyData) {
                         return (
                           <div>
-                            <div className="font-semibold">{feature?.properties.NAME || popupInfo.stateCode}</div>
-                            <div>D: ${Math.round(statePartyData.democrat).toLocaleString()}</div>
-                            <div>R: ${Math.round(statePartyData.republican).toLocaleString()}</div>
+                            <div className="font-semibold">
+                              {feature?.properties.NAME || popupInfo.stateCode}
+                            </div>
+                            <div>
+                              D: $
+                              {Math.round(
+                                statePartyData.democrat
+                              ).toLocaleString()}
+                            </div>
+                            <div>
+                              R: $
+                              {Math.round(
+                                statePartyData.republican
+                              ).toLocaleString()}
+                            </div>
                           </div>
                         );
                       }
                     } else if (viewMode === "comparative") {
-                      const amounts = comparativePoliticians.map((pol) => {
-                        const amount = comparativeData[pol.id]?.values[popupInfo.stateCode]?.total_amount || 0;
-                        return `${pol.name}: $${amount.toLocaleString()}`;
-                      }).join("\n");
+                      const amounts = comparativePoliticians
+                        .map((pol) => {
+                          const amount =
+                            comparativeData[pol.id]?.values[popupInfo.stateCode]
+                              ?.total_amount || 0;
+                          return `${pol.name}: $${amount.toLocaleString()}`;
+                        })
+                        .join("\n");
                       return (
                         <div>
-                          <div className="font-semibold">{feature?.properties.NAME || popupInfo.stateCode}</div>
+                          <div className="font-semibold">
+                            {feature?.properties.NAME || popupInfo.stateCode}
+                          </div>
                           <div className="whitespace-pre-line">{amounts}</div>
                         </div>
                       );
@@ -550,52 +664,90 @@ export default function DonationsMap({
           <div className="p-4 bg-gray-50 rounded-lg space-y-2">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-lg">
-                {geoJson.features.find((f: any) => f.properties.STATE_CODE === selectedState)
-                  ?.properties.NAME || selectedState}
+                {geoJson.features.find(
+                  (f: any) => f.properties.STATE_CODE === selectedState
+                )?.properties.NAME || selectedState}
               </h3>
               <Badge variant="secondary">
                 ${selectedData.total_amount.toLocaleString()}
               </Badge>
             </div>
-            
+
             {/* Party breakdown when in party view */}
             {viewMode === "party" && partyData[selectedState!] && (
               <div className="grid grid-cols-3 gap-2 text-sm">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded" style={{ backgroundColor: PARTY_COLORS.democrat }} />
-                  <span>D: ${Math.round(partyData[selectedState!].democrat).toLocaleString()}</span>
+                  <div
+                    className="w-3 h-3 rounded"
+                    style={{ backgroundColor: PARTY_COLORS.democrat }}
+                  />
+                  <span>
+                    D: $
+                    {Math.round(
+                      partyData[selectedState!].democrat
+                    ).toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded" style={{ backgroundColor: PARTY_COLORS.republican }} />
-                  <span>R: ${Math.round(partyData[selectedState!].republican).toLocaleString()}</span>
+                  <div
+                    className="w-3 h-3 rounded"
+                    style={{ backgroundColor: PARTY_COLORS.republican }}
+                  />
+                  <span>
+                    R: $
+                    {Math.round(
+                      partyData[selectedState!].republican
+                    ).toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded" style={{ backgroundColor: PARTY_COLORS.independent }} />
-                  <span>I: ${Math.round(partyData[selectedState!].independent).toLocaleString()}</span>
+                  <div
+                    className="w-3 h-3 rounded"
+                    style={{ backgroundColor: PARTY_COLORS.independent }}
+                  />
+                  <span>
+                    I: $
+                    {Math.round(
+                      partyData[selectedState!].independent
+                    ).toLocaleString()}
+                  </span>
                 </div>
               </div>
             )}
 
             {/* Comparative breakdown when in comparative view */}
-            {viewMode === "comparative" && comparativePoliticians.length > 0 && (
-              <div className="space-y-1 text-sm">
-                {comparativePoliticians.map((pol, idx) => {
-                  const amount = comparativeData[pol.id]?.values[selectedState!]?.total_amount || 0;
-                  return (
-                    <div key={pol.id} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div 
-                          className="w-3 h-3 rounded"
-                          style={{ backgroundColor: POLITICIAN_COLORS[idx % POLITICIAN_COLORS.length] }}
-                        />
-                        <span>{pol.name}</span>
+            {viewMode === "comparative" &&
+              comparativePoliticians.length > 0 && (
+                <div className="space-y-1 text-sm">
+                  {comparativePoliticians.map((pol, idx) => {
+                    const amount =
+                      comparativeData[pol.id]?.values[selectedState!]
+                        ?.total_amount || 0;
+                    return (
+                      <div
+                        key={pol.id}
+                        className="flex items-center justify-between"
+                      >
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="w-3 h-3 rounded"
+                            style={{
+                              backgroundColor:
+                                POLITICIAN_COLORS[
+                                  idx % POLITICIAN_COLORS.length
+                                ],
+                            }}
+                          />
+                          <span>{pol.name}</span>
+                        </div>
+                        <span className="font-medium">
+                          ${amount.toLocaleString()}
+                        </span>
                       </div>
-                      <span className="font-medium">${amount.toLocaleString()}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+                    );
+                  })}
+                </div>
+              )}
 
             {/* Standard info for total view */}
             {viewMode === "total" && (
@@ -603,7 +755,9 @@ export default function DonationsMap({
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-gray-600">Donations:</span>{" "}
-                    <span className="font-medium">{selectedData.donation_count}</span>
+                    <span className="font-medium">
+                      {selectedData.donation_count}
+                    </span>
                   </div>
                   <div>
                     <span className="text-gray-600">Avg Amount:</span>{" "}
@@ -614,13 +768,17 @@ export default function DonationsMap({
                   {selectedData.top_donor_category && (
                     <div className="col-span-2">
                       <span className="text-gray-600">Top Category:</span>{" "}
-                      <Badge variant="outline">{selectedData.top_donor_category}</Badge>
+                      <Badge variant="outline">
+                        {selectedData.top_donor_category}
+                      </Badge>
                     </div>
                   )}
                 </div>
                 {selectedData.top_politicians.length > 0 && (
                   <div className="mt-2">
-                    <span className="text-gray-600 text-sm">Top Politicians:</span>
+                    <span className="text-gray-600 text-sm">
+                      Top Politicians:
+                    </span>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {selectedData.top_politicians.map((pol, idx) => (
                         <Badge key={idx} variant="outline" className="text-xs">
@@ -642,7 +800,12 @@ export default function DonationsMap({
                   </span>
                   {onCitationClick && (
                     <button
-                      onClick={() => onCitationClick(selectedData.citations, selectedState || undefined)}
+                      onClick={() =>
+                        onCitationClick(
+                          selectedData.citations,
+                          selectedState || undefined
+                        )
+                      }
                       className="text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium"
                     >
                       View all evidence →
@@ -698,15 +861,24 @@ export default function DonationsMap({
             <>
               <span className="text-gray-600">Party:</span>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded" style={{ backgroundColor: PARTY_COLORS.democrat }} />
+                <div
+                  className="w-4 h-4 rounded"
+                  style={{ backgroundColor: PARTY_COLORS.democrat }}
+                />
                 <span>Democrat</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded" style={{ backgroundColor: PARTY_COLORS.republican }} />
+                <div
+                  className="w-4 h-4 rounded"
+                  style={{ backgroundColor: PARTY_COLORS.republican }}
+                />
                 <span>Republican</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded" style={{ backgroundColor: PARTY_COLORS.independent }} />
+                <div
+                  className="w-4 h-4 rounded"
+                  style={{ backgroundColor: PARTY_COLORS.independent }}
+                />
                 <span>Independent</span>
               </div>
             </>
@@ -716,9 +888,12 @@ export default function DonationsMap({
               <span className="text-gray-600">Dominant:</span>
               {comparativePoliticians.map((pol, idx) => (
                 <div key={pol.id} className="flex items-center gap-2">
-                  <div 
+                  <div
                     className="w-4 h-4 rounded"
-                    style={{ backgroundColor: POLITICIAN_COLORS[idx % POLITICIAN_COLORS.length] }}
+                    style={{
+                      backgroundColor:
+                        POLITICIAN_COLORS[idx % POLITICIAN_COLORS.length],
+                    }}
                   />
                   <span>{pol.name}</span>
                 </div>

@@ -41,6 +41,13 @@ class Settings:
 
     # Logging
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
+    
+    # SQL Logging (for development/debugging)
+    SQL_ECHO: bool = os.getenv("SQL_ECHO", "false").lower() in ("true", "1", "yes", "on")
+    
+    # Connection Pooling
+    # Set USE_PGBOUNCER=true when using external pooler (pgbouncer, Supabase pooler, etc.)
+    USE_PGBOUNCER: bool = os.getenv("USE_PGBOUNCER", "false").lower() in ("true", "1", "yes", "on")
 
     @classmethod
     def validate(cls) -> None:

@@ -38,14 +38,47 @@ connect_args = {}
 if "postgresql" in DATABASE_URL.lower():
     connect_args = {"statement_cache_size": 0, "prepared_statement_cache_size": 0}
 
+
+def _use_external_pooler() -> bool:
+    """Determine if an external connection pooler (pgbouncer) is being used.
+    
+    Checks:
+    1. Explicit USE_PGBOUNCER env var / settings
+    2. DISABLE_PREPARED_STATEMENTS env var (legacy indicator)
+    3. Database URL markers (pgbouncer, pooler, supabase in hostname)
+    """
+    # Check explicit config setting
+    if settings.USE_PGBOUNCER:
+        return True
+    
+    # Check legacy env var
+    if os.getenv("DISABLE_PREPARED_STATEMENTS", "").lower() in ("1", "true", "yes", "on"):
+        return True
+    
+    # Check URL for pooler markers
+    parsed = urlparse(DATABASE_URL)
+    host = (parsed.hostname or "").lower()
+    query = parse_qs(parsed.query)
+    
+    if query.get("pgbouncer", ["false"])[0].lower() in ("1", "true", "yes", "on"):
+        return True
+    
+    return any(token in host for token in ("pgbouncer", "pooler", "supabase"))
+
+
 # Create async engine
-# Use NullPool when using external connection poolers like pgbouncer
-engine = create_async_engine(
-    DATABASE_URL,
-    echo=True,  # Set to True for SQL query logging during development
-    connect_args=connect_args,
-    poolclass=NullPool,  # Don't use SQLAlchemy pooling when pgbouncer handles it
-)
+# Use NullPool only when using external connection poolers like pgbouncer
+# Otherwise, let SQLAlchemy use its default connection pooling for better performance
+engine_kwargs = {
+    "echo": settings.SQL_ECHO,  # SQL logging controlled by config (default: False for production)
+    "connect_args": connect_args,
+}
+
+# Only use NullPool when external pooler is detected
+if _use_external_pooler():
+    engine_kwargs["poolclass"] = NullPool
+
+engine = create_async_engine(DATABASE_URL, **engine_kwargs)
 
 # Create session factory
 AsyncSessionLocal = async_sessionmaker(

@@ -170,28 +170,32 @@ async def get_donations_map(
         donors_conditions.append("date <= :end_date")
     donors_where = " AND ".join(donors_conditions)
 
-    # Get top donors per state
+    # Get top donors per state using windowed approach (top N per state instead of global limit)
     top_donors_sql = text(f"""
-        SELECT
-            state_code,
-            donor_name,
-            SUM(amount) as total_amount,
-            COUNT(*) as donation_count
-        FROM donations
-        WHERE {donors_where}
-        GROUP BY state_code, donor_name
-        HAVING SUM(amount) > 10000
+        SELECT state_code, donor_name, total_amount, donation_count
+        FROM (
+            SELECT
+                state_code,
+                donor_name,
+                SUM(amount) as total_amount,
+                COUNT(*) as donation_count,
+                ROW_NUMBER() OVER (PARTITION BY state_code ORDER BY SUM(amount) DESC) as rn
+            FROM donations
+            WHERE {donors_where}
+            GROUP BY state_code, donor_name
+            HAVING SUM(amount) > 10000
+        ) ranked
+        WHERE rn <= 10
         ORDER BY state_code, total_amount DESC
-        LIMIT 100
     """)
 
     donors_result = await db.execute(top_donors_sql, params)
     donors_rows = donors_result.mappings().all()
 
     # Get citations (top sources) per state
-    # Use a subquery to calculate citation_count first, then apply DISTINCT ON with proper ordering
+    # Use DISTINCT ON (state_code) with ORDER BY citation_count DESC to get top citations per state
     citations_sql = text(f"""
-        SELECT DISTINCT ON (state_code, source_id)
+        SELECT DISTINCT ON (state_code)
             state_code,
             source_id,
             source_url,
@@ -212,7 +216,7 @@ async def get_donations_map(
             JOIN sources s ON d.source_id = s.id
             WHERE {secondary_where}
         ) sub
-        ORDER BY state_code, source_id, citation_count DESC
+        ORDER BY state_code, citation_count DESC, source_id
     """)
     
     citations_result = await db.execute(citations_sql, params)
