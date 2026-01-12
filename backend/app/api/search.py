@@ -12,9 +12,9 @@ repo = PoliticianRepo()
 
 @router.get("/search", response_model=SearchResponse)
 async def search_politicians(
-    name: str,
+    name: Optional[str] = None,
     zip_code: Optional[str] = None,
-    limit: int = 10,
+    limit: int = 20,
     db: AsyncSession = Depends(get_db),
 ):
     """
@@ -31,6 +31,9 @@ async def search_politicians(
     # Limit the maximum number of results to prevent abuse
     limit = min(limit, 50)
 
-    results = await repo.search(name, db, zip_code, limit)
+    if not name:
+        results = await repo.get_all(db, limit=limit)
+    else:
+        results = await repo.search(name, db, zip_code, limit)
     politician_summaries = [PoliticianSummary(**politician) for politician in results]
     return SearchResponse(politician_summaries=politician_summaries)

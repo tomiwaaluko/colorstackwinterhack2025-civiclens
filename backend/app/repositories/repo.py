@@ -55,7 +55,7 @@ class PoliticianRepo:
         politician['politician_details'] = {
             'statements': statements,
             'votes': votes
-        }
+        }    
 
         # Map database column names to JSON schema
         politician['name'] = politician.pop('full_name')
@@ -98,15 +98,17 @@ class PoliticianRepo:
         votes = [list(row) for row in result.fetchall()]
         return votes
 
-    async def get_all(self, db: AsyncSession) -> List[Dict]:
-        """Get all politicians"""
-        result = await db.execute(
-            text("""
-                SELECT id, full_name, state, current_office, image_url, party
-                FROM politicians
-                ORDER BY full_name
-            """)
-        )
+    async def get_all(self, db: AsyncSession, limit: Optional[int] = None) -> List[Dict]:
+        """Get all politicians (optionally limited)"""
+        query = """
+            SELECT id, full_name, state, current_office, image_url, party
+            FROM politicians
+            ORDER BY full_name
+        """
+        if limit is not None:
+            query += " LIMIT :limit"
+
+        result = await db.execute(text(query), {"limit": limit} if limit is not None else {})
 
         politicians = []
         for row in result.fetchall():
@@ -139,7 +141,7 @@ class PoliticianRepo:
         politician = await self._politician_row_to_dict(row, db)
         return politician
 
-    async def search(self, name: str, db: AsyncSession, zip_code: str = None, limit: int = 10) -> List[Dict]:
+    async def search(self, name: str, db: AsyncSession, zip_code: str = None, limit: int = 20) -> List[Dict]:
         """
         Search politicians by name with fuzzy matching.
 

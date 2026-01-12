@@ -4,7 +4,7 @@ from .politician import PoliticianSummary
 
 
 class SearchRequest(BaseModel):
-    name: str
+    name: Optional[str] = None
     zip_code: Optional[str] = None
 
 class SearchResponse(BaseModel):

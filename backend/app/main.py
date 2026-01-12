@@ -1,3 +1,4 @@
+import os
 import time
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -29,13 +30,20 @@ def create_app() -> FastAPI:
     )
 
     # CORS middleware
+    default_origins = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://civiclensai.vercel.app",  # Production Vercel domain
+        "http://192.168.65.1:3000",  # Docker Desktop host -> container
+    ]
+    extra_origins = os.getenv("CORS_ALLOW_ORIGINS", "")
+    allow_origins = default_origins + [
+        origin.strip() for origin in extra_origins.split(",") if origin.strip()
+    ]
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[
-            "http://localhost:3000",
-            "http://127.0.0.1:3000",
-            "https://civiclensai.vercel.app",  # Production Vercel domain
-        ],
+        allow_origins=allow_origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
