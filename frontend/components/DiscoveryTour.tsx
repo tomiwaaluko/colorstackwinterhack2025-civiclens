@@ -55,7 +55,7 @@ export default function DiscoveryTour({
 
     const findTarget = () => {
       let element: Element | null = null;
-      
+
       // Try ID first
       if (step.target.startsWith("#")) {
         element = document.getElementById(step.target.slice(1));
@@ -67,13 +67,13 @@ export default function DiscoveryTour({
       if (element) {
         const rect = element.getBoundingClientRect();
         setTargetRect(rect);
-        
+
         // Scroll element into view
         element.scrollIntoView({ behavior: "smooth", block: "center" });
-        
+
         // Add highlight class
         element.classList.add("tour-highlight");
-        
+
         return () => {
           element?.classList.remove("tour-highlight");
         };
@@ -81,10 +81,10 @@ export default function DiscoveryTour({
     };
 
     const cleanup = findTarget();
-    
+
     // Also try after a short delay in case of dynamic content
     const timer = setTimeout(findTarget, 500);
-    
+
     return () => {
       cleanup?.();
       clearTimeout(timer);
@@ -224,7 +224,9 @@ export default function DiscoveryTour({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {step.icon || <Sparkles className="h-5 w-5" />}
-              <span className="font-semibold" id="tour-title">{step.title}</span>
+              <span className="font-semibold" id="tour-title">
+                {step.title}
+              </span>
             </div>
             <button
               onClick={onClose}
@@ -371,7 +373,9 @@ export const VISUALIZATION_TOUR_STEPS: TourStep[] = [
 ];
 
 // Hook to manage tour state
-export function useDiscoveryTour(storageKey: string = "civiclens-tour-completed") {
+export function useDiscoveryTour(
+  storageKey: string = "civiclens-tour-completed"
+) {
   const [showTour, setShowTour] = useState(false);
   const [hasSeenTour, setHasSeenTour] = useState(true); // Default true to prevent flash
 
@@ -379,12 +383,6 @@ export function useDiscoveryTour(storageKey: string = "civiclens-tour-completed"
     // Check localStorage on mount
     const seen = localStorage.getItem(storageKey) === "true";
     setHasSeenTour(seen);
-    
-    // Auto-show for first-time users after a brief delay
-    if (!seen) {
-      const timer = setTimeout(() => setShowTour(true), 1000);
-      return () => clearTimeout(timer);
-    }
   }, [storageKey]);
 
   const startTour = useCallback(() => {
