@@ -72,6 +72,7 @@ def _use_external_pooler() -> bool:
 engine_kwargs = {
     "echo": settings.SQL_ECHO,  # SQL logging controlled by config (default: False for production)
     "connect_args": connect_args,
+    "pool_pre_ping": True,  # Verify connections before using
 }
 
 # Only use NullPool when external pooler is detected
