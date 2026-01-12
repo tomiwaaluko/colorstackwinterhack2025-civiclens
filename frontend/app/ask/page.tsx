@@ -100,12 +100,13 @@ function AskPageContent() {
 
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
-      // Handle error
+      // Handle error with better logging
+      console.error("API Error:", error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
         content:
-          "I apologize, but I encountered an error processing your question. Please try again.",
+          `I apologize, but I encountered an error processing your question: ${error instanceof Error ? error.message : 'Unknown error'}. Please check the console for details.`,
         confidence: "low",
       };
       setMessages((prev) => [...prev, errorMessage]);

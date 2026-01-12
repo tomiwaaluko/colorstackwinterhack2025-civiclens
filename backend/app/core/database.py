@@ -42,8 +42,9 @@ engine = create_async_engine(
     DATABASE_URL,
     echo=True,  # Set to True for SQL query logging during development
     connect_args=connect_args,
-    # Also disable statement cache at engine level for Supabase
     pool_pre_ping=True,  # Verify connections before using
+    # Disable query caching for Supabase/pgbouncer
+    query_cache_size=0 if _should_disable_prepared_statements(DATABASE_URL) else 500,
 )
 
 # Create session factory
