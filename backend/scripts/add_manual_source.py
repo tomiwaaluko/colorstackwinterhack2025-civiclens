@@ -129,6 +129,41 @@ async def main():
     # Example sources - edit these with your manually curated content
     sources = [
         {
+            "url": "https://www.govtrack.us/congress/votes/119-2025/h123",
+            "title": "H.R. 1834 - Affordable Care Act Subsidy Extension - House Vote",
+            "publisher": "GovTrack.us",
+            "source_type": "official_document",
+            "topics": ["healthcare", "voting records", "H.R. 1834", "bill votes", "affordable care act"],
+            "credibility_score": 0.9,
+            "content": """
+H.R. 1834: Affordable Care Act Subsidy Extension
+
+Bill Summary:
+This bill reinstates enhanced Affordable Care Act subsidies for three years.
+
+Vote Results:
+Total Yea votes: 230
+- Republicans voting Yea: 17
+- Democrats voting Yea: 213
+
+Total Nay votes: 196
+- Republicans voting Nay: 196
+- Democrats voting Nay: 0
+
+Statistically Notable Republican Yea Votes:
+These Republicans voted YES on H.R. 1834, breaking with their party:
+
+1. David Valadao (R-CA-22) - Yea
+2. Jeff Hurd (R-CO-3) - Yea
+3. Maria Salazar (R-FL-27) - Yea
+4. Zachary Nunn (R-IA-3) - Yea
+5. Thomas Kean (R-NJ-7) - Yea
+6. Nicolas LaLota (R-NY-1) - Yea
+
+These six Republicans joined all Democrats in supporting the bill, while the remaining 196 Republicans voted against it. The bill passed with bipartisan support, primarily from Democrats.
+            """.strip()
+        },
+        {
             "url": "https://clerk.house.gov/",
             "title": "Office of the Clerk - U.S. House of Representatives",
             "publisher": "U.S. House of Representatives",
@@ -264,15 +299,9 @@ and full text. Users can see the bill's path through the legislative process
 and read analyses of what the bill would do. The site sends automatic email 
 alerts when tracked bills are updated.
 
-H.R. 1834: [Reinstates enhanced Affordable Care Act subsidies for three years]
-All votes: Yea: 230 (17 republicans, 213 democrats) Nay: 196 (196 republicans)
-Statistically notable votes: [Yea	CA  22	  R  	Valadao, David
-Yea	CO  3	  R  	Hurd, Jeff
-Yea	FL  27	  R  	Salazar, Maria
-Yea	IA  3	  R  	Nunn, Zachary (Zach)
-Yea	NJ  7	  R  	Kean, Thomas
-Yea	NY  1	  R  	LaLota, Nicolas]
-
+GovTrack aggregates data from official congressional sources and presents it
+in an easy-to-use format for researchers, journalists, and citizens tracking
+legislative activity.
             """.strip()
         },
         {

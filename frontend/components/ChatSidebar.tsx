@@ -1,53 +1,25 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from "react";
-import { MessageSquare, ChevronLeft, ChevronRight } from "lucide-react";
+import { MessageSquare, ChevronLeft, ChevronRight, Trash2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-interface ChatHistory {
+export interface ChatHistory {
   id: string;
   title: string;
   timestamp: Date;
   preview: string;
 }
 
-const mockChats: ChatHistory[] = [
-  {
-    id: "1",
-    title: "Healthcare Legislation",
-    timestamp: new Date(2026, 0, 11, 14, 30),
-    preview: "What is the Affordable Care Act?",
-  },
-  {
-    id: "2",
-    title: "Voting Records",
-    timestamp: new Date(2026, 0, 11, 10, 15),
-    preview: "How did senators vote on climate...",
-  },
-  {
-    id: "3",
-    title: "Campaign Finance",
-    timestamp: new Date(2026, 0, 10, 16, 45),
-    preview: "Who are the top donors to...",
-  },
-  {
-    id: "4",
-    title: "Congressional Process",
-    timestamp: new Date(2026, 0, 10, 9, 20),
-    preview: "How are laws made in Congress?",
-  },
-  {
-    id: "5",
-    title: "Committee Assignments",
-    timestamp: new Date(2026, 0, 9, 11, 0),
-    preview: "What committees is Senator...",
-  },
-];
-
 interface SidebarContextType {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
+  chats: ChatHistory[];
+  currentChatId: string | null;
+  onChatSelect: (chatId: string) => void;
+  onDeleteChat: (chatId: string) => void;
+  onNewChat: () => void;
 }
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
@@ -60,18 +32,27 @@ export function useSidebar() {
   return context;
 }
 
-export function SidebarProvider({ children }: { children: ReactNode }) {
+interface SidebarProviderProps {
+  children: ReactNode;
+  chats: ChatHistory[];
+  currentChatId: string | null;
+  onChatSelect: (chatId: string) => void;
+  onDeleteChat: (chatId: string) => void;
+  onNewChat: () => void;
+}
+
+export function SidebarProvider({ children, chats, currentChatId, onChatSelect, onDeleteChat, onNewChat }: SidebarProviderProps) {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <SidebarContext.Provider value={{ isOpen, setIsOpen }}>
+    <SidebarContext.Provider value={{ isOpen, setIsOpen, chats, currentChatId, onChatSelect, onDeleteChat, onNewChat }}>
       {children}
     </SidebarContext.Provider>
   );
 }
 
 export function ChatSidebar() {
-  const { isOpen, setIsOpen } = useSidebar();
+  const { isOpen, setIsOpen, chats, currentChatId, onChatSelect, onDeleteChat, onNewChat } = useSidebar();
 
   const formatTimestamp = (date: Date) => {
     const now = new Date();
@@ -98,7 +79,7 @@ export function ChatSidebar() {
         <div className="flex flex-col h-full w-[280px]">
           {/* Header */}
           <div className="p-4 border-b border-border">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-3">
               <h2 className="font-semibold text-foreground flex items-center gap-2">
                 <MessageSquare className="h-5 w-5 text-accent" />
                 Saved Chats
@@ -112,38 +93,74 @@ export function ChatSidebar() {
                 <ChevronLeft className="h-4 w-4" />
               </Button>
             </div>
+            <Button
+              onClick={onNewChat}
+              variant="outline"
+              size="sm"
+              className="w-full"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              New Chat
+            </Button>
           </div>
 
           {/* Chat List */}
           <ScrollArea className="flex-1">
             <div className="p-2">
-              {mockChats.map((chat) => (
-                <button
-                  key={chat.id}
-                  className="w-full text-left p-3 rounded-lg hover:bg-muted/50 transition-colors mb-1 group"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-sm text-foreground truncate">
-                        {chat.title}
-                      </h3>
-                      <p className="text-xs text-muted-foreground truncate mt-1">
-                        {chat.preview}
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    {formatTimestamp(chat.timestamp)}
+              {chats.length === 0 ? (
+                <div className="text-center py-8 px-4">
+                  <MessageSquare className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">
+                    No saved chats yet
                   </p>
-                </button>
-              ))}
+                </div>
+              ) : (
+                chats.map((chat) => (
+                  <div
+                    key={chat.id}
+                    className={`relative group rounded-lg mb-1 ${
+                      currentChatId === chat.id ? "bg-muted" : ""
+                    }`}
+                  >
+                    <button
+                      onClick={() => onChatSelect(chat.id)}
+                      className="w-full text-left p-3 rounded-lg hover:bg-muted/50 transition-colors"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-medium text-sm text-foreground truncate">
+                            {chat.title}
+                          </h3>
+                          <p className="text-xs text-muted-foreground truncate mt-1">
+                            {chat.preview}
+                          </p>
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        {formatTimestamp(chat.timestamp)}
+                      </p>
+                    </button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteChat(chat.id);
+                      }}
+                      className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))
+              )}
             </div>
           </ScrollArea>
 
           {/* Footer */}
           <div className="p-4 border-t border-border">
             <p className="text-xs text-muted-foreground text-center">
-              Chat history is local to this session
+              Chats saved in browser storage
             </p>
           </div>
         </div>

@@ -120,6 +120,9 @@ async def ask_question(payload: QARequest, db: AsyncSession = Depends(get_db)):
                 if rows:
                     print(f"   Top similarity: {rows[0][8]:.4f}")
                     print(f"   Top result: {rows[0][4]} - {rows[0][5]}")
+                    # Debug: Show all results
+                    for i, row in enumerate(rows):
+                        print(f"   [{i+1}] {row[8]:.4f} - {row[4]} - {row[1][:100]}...")
                 
                 if rows and rows[0][8] > 0.3:  # similarity threshold
                     # We found relevant sources!
@@ -153,17 +156,27 @@ async def ask_question(payload: QARequest, db: AsyncSession = Depends(get_db)):
     
     try:
         # Generate answer with Gemini
-        system_prompt = """You are CivicLens AI, a helpful assistant that provides factual information about US politicians and politics.
+        system_prompt = """You are CivicLens AI, a data extraction assistant that finds and presents specific information from provided sources.
 
-When answering questions:
-- Be concise and factual
+Your PRIMARY TASK:
+1. CAREFULLY read through ALL provided database sources
+2. EXTRACT any specific data that answers the user's question (bills, votes, names, numbers, statistics)
+3. Present that extracted data in a clear, structured format
+4. DO NOT say "sources don't contain" unless you've checked EVERY source thoroughly
+
+Formatting rules:
 - Write in plain text without using markdown formatting (no **, *, #, etc.)
-- If you're not certain about specific details, acknowledge limitations
-- Focus on publicly verifiable information
-- Avoid speculation or opinions
-- Use bullet points with • or - instead of asterisks
+- Use bullet points with • or - for lists
+- Include ALL specific details: bill numbers, vote counts, politician names, party affiliations
 
-Format your response as a clear, structured answer in plain text."""
+CRITICAL RULES:
+- If database sources mention bill numbers (like H.R. 1834), voting records, or politician names, YOU MUST include them in your answer
+- If you find vote counts, party breakdowns, or specific names in the sources, EXTRACT and PRESENT them
+- DO NOT ignore data just because it's embedded in a longer paragraph
+- Look for patterns like "Yea: X", "Nay: Y", "republicans", "democrats", politician names
+- If the information IS in the sources (even partially), use it - don't say it's not there
+
+Format your response as a clear answer using the extracted data."""
 
         user_prompt = f"Question: {payload.question}"
         
@@ -172,7 +185,11 @@ Format your response as a clear, structured answer in plain text."""
         
         # Add context from database if available
         if context_text:
-            user_prompt += f"\n\nUse the following verified sources to answer:\n{context_text}"
+            user_prompt += f"\n\n=== VERIFIED DATABASE SOURCES (READ CAREFULLY) ===\n{context_text}\n=== END OF DATABASE SOURCES ==="
+            user_prompt += f"\n\nTASK: Read through ALL the sources above and EXTRACT any information that answers this question: {payload.question}\n"
+            user_prompt += "Look for: bill numbers (H.R. XXX), voting records (Yea/Nay counts), politician names, party breakdowns (republicans/democrats), vote tallies, or any related data.\n"
+            user_prompt += "If you find relevant data (even if partial), extract it and present it. DO NOT say information is missing if it's in the sources.\n"
+            user_prompt += "Format the data clearly with the specific details you found."
         
         response = client.models.generate_content(
             model="gemini-2.5-flash",

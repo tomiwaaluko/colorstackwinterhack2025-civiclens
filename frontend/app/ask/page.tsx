@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { CitationBadge } from "@/components/CitationBadge";
-import { ChatSidebar, SidebarProvider } from "@/components/ChatSidebar";
+import { ChatSidebar, SidebarProvider, type ChatHistory } from "@/components/ChatSidebar";
 import { askQuestion } from "@/lib/api";
 import type { AIResponse, Citation as APICitation, Claim } from "@/lib/types";
 import {
@@ -28,6 +28,14 @@ interface Message {
   claims?: Claim[];
 }
 
+interface SavedChat {
+  id: string;
+  title: string;
+  timestamp: Date;
+  preview: string;
+  messages: Message[];
+}
+
 const suggestedQuestions = [
   "What is Elizabeth Warren's stance on healthcare?",
   "How did Marco Rubio vote on climate legislation?",
@@ -35,44 +43,101 @@ const suggestedQuestions = [
   "Who are the top donors to senators from Texas?",
 ];
 
-const mockConversation: Message[] = [
-  {
-    id: "1",
-    role: "user",
-    content: "What is Elizabeth Warren's stance on healthcare?",
-  },
-  {
-    id: "2",
-    role: "assistant",
-    content:
-      "Based on verified voting records and public statements, Senator Elizabeth Warren has consistently supported healthcare expansion legislation. Key findings:\n\n• Voted YES on the Affordable Care Act expansion bill (2021)\n• Co-sponsored Medicare for All legislation (S.1129)\n• Publicly advocated for prescription drug price controls in 47 verified statements\n\nWarren has voted in favor of healthcare-related legislation 94% of the time since taking office in 2013.",
-    citations: [
-      {
-        source_id: "1",
-        url: "https://www.congress.gov/bill/117th-congress/senate-bill/1129",
-        title: "Medicare for All Act",
-        publisher: "Congress.gov",
-        retrieved_at: "2021-04-21T00:00:00Z",
-      },
-      {
-        source_id: "2",
-        url: "https://www.govtrack.us/congress/members/elizabeth_warren/412542",
-        title: "Senator Warren Voting Record",
-        publisher: "GovTrack.us",
-        retrieved_at: "2024-01-15T00:00:00Z",
-      },
-    ],
-    confidence: "high",
-  },
-];
-
 function AskPageContent() {
-  const [messages, setMessages] = useState<Message[]>(mockConversation);
+  const [chatHistory, setChatHistory] = useState<SavedChat[]>([]);
+  const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // Load chats from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("civiclens-chats");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        const chats = parsed.map((chat: SavedChat) => ({
+          ...chat,
+          timestamp: new Date(chat.timestamp),
+        }));
+        setChatHistory(chats);
+      } catch (e) {
+        console.error("Failed to load chats:", e);
+      }
+    }
+  }, []);
+
+  // Save chats to localStorage whenever they change
+  useEffect(() => {
+    if (chatHistory.length > 0) {
+      localStorage.setItem("civiclens-chats", JSON.stringify(chatHistory));
+    }
+  }, [chatHistory]);
+
+  // Save current chat when messages change
+  useEffect(() => {
+    if (messages.length > 0 && currentChatId) {
+      const firstUserMessage = messages.find(m => m.role === "user")?.content || "New Chat";
+      const title = firstUserMessage.slice(0, 50) + (firstUserMessage.length > 50 ? "..." : "");
+      const preview = firstUserMessage.slice(0, 60) + (firstUserMessage.length > 60 ? "..." : "");
+
+      setChatHistory(prev => {
+        const existing = prev.find(c => c.id === currentChatId);
+        if (existing) {
+          return prev.map(c => 
+            c.id === currentChatId 
+              ? { ...c, messages, title, preview, timestamp: new Date() }
+              : c
+          );
+        } else {
+          return [{
+            id: currentChatId,
+            title,
+            preview,
+            timestamp: new Date(),
+            messages,
+          }, ...prev];
+        }
+      });
+    }
+  }, [messages, currentChatId]);
+
+  const handleNewChat = () => {
+    setCurrentChatId(Date.now().toString());
+    setMessages([]);
+    setInput("");
+  };
+
+  const handleChatSelect = (chatId: string) => {
+    const chat = chatHistory.find(c => c.id === chatId);
+    if (chat) {
+      setCurrentChatId(chatId);
+      setMessages(chat.messages);
+      setInput("");
+    }
+  };
+
+  const handleDeleteChat = (chatId: string) => {
+    setChatHistory(prev => prev.filter(c => c.id !== chatId));
+    if (currentChatId === chatId) {
+      handleNewChat();
+    }
+  };
+
+  const chatsForSidebar: ChatHistory[] = chatHistory.map(chat => ({
+    id: chat.id,
+    title: chat.title,
+    timestamp: chat.timestamp,
+    preview: chat.preview,
+  }));
+
   const handleSend = async () => {
     if (!input.trim()) return;
+
+    // Create new chat if none exists
+    if (!currentChatId) {
+      setCurrentChatId(Date.now().toString());
+    }
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -148,9 +213,16 @@ function AskPageContent() {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Chat Sidebar */}
-      <ChatSidebar />
+    <SidebarProvider
+      chats={chatsForSidebar}
+      currentChatId={currentChatId}
+      onChatSelect={handleChatSelect}
+      onDeleteChat={handleDeleteChat}
+      onNewChat={handleNewChat}
+    >
+      <div className="min-h-screen flex">
+        {/* Chat Sidebar */}
+        <ChatSidebar />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
@@ -360,16 +432,15 @@ function AskPageContent() {
       </section>
       </div>
     </div>
+    </SidebarProvider>
   );
 }
 
 export default function AskPage() {
   return (
-    <SidebarProvider>
-      <Suspense fallback={<div className="py-12 text-center">Loading...</div>}>
-        <AskPageContent />
-      </Suspense>
-    </SidebarProvider>
+    <Suspense fallback={<div className="py-12 text-center">Loading...</div>}>
+      <AskPageContent />
+    </Suspense>
   );
 }
 
