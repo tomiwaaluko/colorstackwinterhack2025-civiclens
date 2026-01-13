@@ -2,9 +2,20 @@
 
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import ReactECharts from "echarts-for-react";
-import type { RadialResponse, CategoryValue, RelatedBill, ComparativeRadialData } from "@/lib/types";
+import type {
+  RadialResponse,
+  CategoryValue,
+  RelatedBill,
+  ComparativeRadialData,
+} from "@/lib/types";
 import { getPoliticianRadial } from "@/lib/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -55,7 +66,11 @@ interface RadialChartProps {
   startDate?: string;
   endDate?: string;
   // Comparative mode
-  comparativePoliticians?: Array<{ id: number | string; name: string; party: string }>;
+  comparativePoliticians?: Array<{
+    id: number | string;
+    name: string;
+    party: string;
+  }>;
   onCitationClick?: (citations: any[]) => void;
 }
 
@@ -69,25 +84,34 @@ export default function RadialChart({
   const [radialData, setRadialData] = useState<RadialResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // View mode
-  const [viewMode, setViewMode] = useState<"single" | "multi-ring" | "comparative">("multi-ring");
-  
+  const [viewMode, setViewMode] = useState<
+    "single" | "multi-ring" | "comparative"
+  >("multi-ring");
+
   // Interactive state
-  const [selectedCategory, setSelectedCategory] = useState<CategoryValue | null>(null);
-  const [highlightedCategory, setHighlightedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] =
+    useState<CategoryValue | null>(null);
+  const [highlightedCategory, setHighlightedCategory] = useState<string | null>(
+    null
+  );
   const [showBillsRing, setShowBillsRing] = useState(true);
   const [showVotesRing, setShowVotesRing] = useState(true);
-  
+
   // Animation state
   const [isAnimating, setIsAnimating] = useState(false);
   const [animationStep, setAnimationStep] = useState(0);
-  const [animationCategory, setAnimationCategory] = useState<string | null>(null);
+  const [animationCategory, setAnimationCategory] = useState<string | null>(
+    null
+  );
   const animationRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Comparative data
-  const [comparativeData, setComparativeData] = useState<Record<string | number, RadialResponse>>({});
-  
+  const [comparativeData, setComparativeData] = useState<
+    Record<string | number, RadialResponse>
+  >({});
+
   const chartRef = useRef<any>(null);
 
   // Load primary data
@@ -112,17 +136,21 @@ export default function RadialChart({
 
   // Load comparative data
   useEffect(() => {
-    if (viewMode !== "comparative" || comparativePoliticians.length === 0) return;
+    if (viewMode !== "comparative" || comparativePoliticians.length === 0)
+      return;
 
     Promise.all(
       comparativePoliticians.map((pol) =>
-        getPoliticianRadial(pol.id, { start_date: startDate, end_date: endDate })
-          .then((data) => ({ id: pol.id, data }))
+        getPoliticianRadial(pol.id, {
+          start_date: startDate,
+          end_date: endDate,
+        }).then((data) => ({ id: pol.id, data }))
       )
     ).then((results) => {
       const newData: Record<number, RadialResponse> = {};
       results.forEach(({ id, data }) => {
-        newData[id] = data;
+        const numericId = typeof id === "string" ? parseInt(id, 10) : id;
+        newData[numericId] = data;
       });
       setComparativeData(newData);
     });
@@ -133,18 +161,18 @@ export default function RadialChart({
     setAnimationCategory(categoryName);
     setAnimationStep(0);
     setIsAnimating(true);
-    
+
     // Clear any existing animation
     if (animationRef.current) {
       clearInterval(animationRef.current);
     }
-    
+
     // Run animation steps
     let step = 0;
     animationRef.current = setInterval(() => {
       step++;
       setAnimationStep(step);
-      
+
       if (step >= 3) {
         clearInterval(animationRef.current!);
         animationRef.current = null;
@@ -173,18 +201,24 @@ export default function RadialChart({
   }, []);
 
   // Get category by name
-  const getCategoryByName = useCallback((name: string): CategoryValue | undefined => {
-    return radialData?.categories.find((c) => c.category === name);
-  }, [radialData]);
+  const getCategoryByName = useCallback(
+    (name: string): CategoryValue | undefined => {
+      return radialData?.categories.find((c) => c.category === name);
+    },
+    [radialData]
+  );
 
   // Handle category click
-  const handleCategoryClick = useCallback((categoryName: string) => {
-    const category = getCategoryByName(categoryName);
-    if (category) {
-      setSelectedCategory(category);
-      setHighlightedCategory(categoryName);
-    }
-  }, [getCategoryByName]);
+  const handleCategoryClick = useCallback(
+    (categoryName: string) => {
+      const category = getCategoryByName(categoryName);
+      if (category) {
+        setSelectedCategory(category);
+        setHighlightedCategory(categoryName);
+      }
+    },
+    [getCategoryByName]
+  );
 
   // Clear selection
   const clearSelection = useCallback(() => {
@@ -206,36 +240,47 @@ export default function RadialChart({
     }
 
     const categories = radialData.categories;
-    
+
     // Inner ring - Donor categories (pie)
     const innerData = categories.map((cat) => ({
       value: cat.total_amount,
       name: cat.category,
       itemStyle: {
-        color: highlightedCategory === cat.category
-          ? CATEGORY_COLORS[cat.category]
-          : highlightedCategory
+        color:
+          highlightedCategory === cat.category
+            ? CATEGORY_COLORS[cat.category]
+            : highlightedCategory
             ? CATEGORY_COLORS[cat.category] + "40"
             : CATEGORY_COLORS[cat.category] || "#6b7280",
       },
     }));
 
     // Middle ring - Related bills
-    const billsData: Array<{ value: number; name: string; itemStyle: any; category: string }> = [];
+    const billsData: Array<{
+      value: number;
+      name: string;
+      itemStyle: any;
+      category: string;
+    }> = [];
     if (showBillsRing) {
       categories.forEach((cat) => {
         const bills = cat.related_bills || [];
         bills.forEach((bill) => {
           const isHighlighted = highlightedCategory === cat.category;
-          const isAnimationTarget = animationCategory === cat.category && animationStep >= 1;
+          const isAnimationTarget =
+            animationCategory === cat.category && animationStep >= 1;
           billsData.push({
             value: cat.total_amount / bills.length,
-            name: bill.title.length > 25 ? bill.title.slice(0, 25) + "..." : bill.title,
+            name:
+              bill.title.length > 25
+                ? bill.title.slice(0, 25) + "..."
+                : bill.title,
             category: cat.category,
             itemStyle: {
-              color: isHighlighted || isAnimationTarget
-                ? CATEGORY_COLORS[cat.category]
-                : CATEGORY_COLORS[cat.category] + "60",
+              color:
+                isHighlighted || isAnimationTarget
+                  ? CATEGORY_COLORS[cat.category]
+                  : CATEGORY_COLORS[cat.category] + "60",
               borderColor: isAnimationTarget ? "#fff" : undefined,
               borderWidth: isAnimationTarget ? 3 : 0,
             },
@@ -245,20 +290,37 @@ export default function RadialChart({
     }
 
     // Outer ring - Vote outcomes
-    const votesData: Array<{ value: number; name: string; itemStyle: any; category: string }> = [];
+    const votesData: Array<{
+      value: number;
+      name: string;
+      itemStyle: any;
+      category: string;
+    }> = [];
     if (showVotesRing) {
       categories.forEach((cat) => {
         const bills = cat.related_bills || [];
         bills.forEach((bill) => {
           const isHighlighted = highlightedCategory === cat.category;
-          const isAnimationTarget = animationCategory === cat.category && animationStep >= 2;
-          const voteColor = bill.vote_outcome ? VOTE_COLORS[bill.vote_outcome] : "#9ca3af";
+          const isAnimationTarget =
+            animationCategory === cat.category && animationStep >= 2;
+          const voteColor = bill.vote_outcome
+            ? VOTE_COLORS[bill.vote_outcome]
+            : "#9ca3af";
           votesData.push({
             value: cat.total_amount / bills.length,
-            name: `${bill.vote_outcome === "yes" ? "✓" : bill.vote_outcome === "no" ? "✗" : "—"} ${bill.title.slice(0, 15)}...`,
+            name: `${
+              bill.vote_outcome === "yes"
+                ? "✓"
+                : bill.vote_outcome === "no"
+                ? "✗"
+                : "—"
+            } ${bill.title.slice(0, 15)}...`,
             category: cat.category,
             itemStyle: {
-              color: isHighlighted || isAnimationTarget ? voteColor : voteColor + "60",
+              color:
+                isHighlighted || isAnimationTarget
+                  ? voteColor
+                  : voteColor + "60",
               borderColor: isAnimationTarget ? "#000" : undefined,
               borderWidth: isAnimationTarget ? 2 : 0,
             },
@@ -367,8 +429,14 @@ export default function RadialChart({
             return `<strong>${params.data.category}</strong><br/>Bill: ${params.name}`;
           }
           if (params.seriesName === "Votes") {
-            const outcome = params.name.startsWith("✓") ? "Yes" : params.name.startsWith("✗") ? "No" : "Abstain";
-            return `<strong>Vote: ${outcome}</strong><br/>${params.name.slice(2)}`;
+            const outcome = params.name.startsWith("✓")
+              ? "Yes"
+              : params.name.startsWith("✗")
+              ? "No"
+              : "Abstain";
+            return `<strong>Vote: ${outcome}</strong><br/>${params.name.slice(
+              2
+            )}`;
           }
           return params.name;
         },
@@ -381,7 +449,15 @@ export default function RadialChart({
       },
       series,
     };
-  }, [radialData, highlightedCategory, showBillsRing, showVotesRing, animationCategory, animationStep, getCategoryByName]);
+  }, [
+    radialData,
+    highlightedCategory,
+    showBillsRing,
+    showVotesRing,
+    animationCategory,
+    animationStep,
+    getCategoryByName,
+  ]);
 
   // Simple donut chart option (original view)
   const simpleChartOption = useMemo(() => {
@@ -439,7 +515,10 @@ export default function RadialChart({
           label: {
             show: true,
             formatter: (params: any) => {
-              const percent = ((params.value / radialData.total_amount) * 100).toFixed(1);
+              const percent = (
+                (params.value / radialData.total_amount) *
+                100
+              ).toFixed(1);
               return `${params.name}\n${percent}%`;
             },
           },
@@ -462,8 +541,9 @@ export default function RadialChart({
 
   // Comparative chart options
   const comparativeChartOptions = useMemo(() => {
-    if (viewMode !== "comparative" || comparativePoliticians.length === 0) return [];
-    
+    if (viewMode !== "comparative" || comparativePoliticians.length === 0)
+      return [];
+
     const allPoliticians = [
       { id: politicianId, name: "Primary", data: radialData },
       ...comparativePoliticians.map((pol) => ({
@@ -472,17 +552,19 @@ export default function RadialChart({
         data: comparativeData[pol.id],
       })),
     ].filter((p) => p.data);
-    
+
     // Normalize categories across all politicians
     const allCategories = new Set<string>();
     allPoliticians.forEach((pol) => {
       pol.data?.categories.forEach((c) => allCategories.add(c.category));
     });
     const sortedCategories = Array.from(allCategories).sort();
-    
+
     return allPoliticians.map((pol) => {
-      const categoryMap = new Map(pol.data?.categories.map((c) => [c.category, c]));
-      
+      const categoryMap = new Map(
+        pol.data?.categories.map((c) => [c.category, c])
+      );
+
       const data = sortedCategories.map((cat) => {
         const catData = categoryMap.get(cat);
         return {
@@ -491,7 +573,7 @@ export default function RadialChart({
           itemStyle: { color: CATEGORY_COLORS[cat] || "#6b7280" },
         };
       });
-      
+
       return {
         title: {
           text: pol.name,
@@ -502,7 +584,8 @@ export default function RadialChart({
         },
         tooltip: {
           trigger: "item",
-          formatter: (params: any) => `${params.name}: $${params.value.toLocaleString()}`,
+          formatter: (params: any) =>
+            `${params.name}: $${params.value.toLocaleString()}`,
         },
         series: [
           {
@@ -515,18 +598,33 @@ export default function RadialChart({
         ],
       };
     });
-  }, [viewMode, politicianId, radialData, comparativePoliticians, comparativeData]);
+  }, [
+    viewMode,
+    politicianId,
+    radialData,
+    comparativePoliticians,
+    comparativeData,
+  ]);
 
   // Handle chart click
-  const handleChartClick = useCallback((params: any) => {
-    if (params.seriesName === "Categories" || params.seriesName === "Donations") {
-      handleCategoryClick(params.name);
-    }
-  }, [handleCategoryClick]);
+  const handleChartClick = useCallback(
+    (params: any) => {
+      if (
+        params.seriesName === "Categories" ||
+        params.seriesName === "Donations"
+      ) {
+        handleCategoryClick(params.name);
+      }
+    },
+    [handleCategoryClick]
+  );
 
   // Handle chart mouse over
   const handleChartMouseOver = useCallback((params: any) => {
-    if (params.seriesName === "Categories" || params.seriesName === "Donations") {
+    if (
+      params.seriesName === "Categories" ||
+      params.seriesName === "Donations"
+    ) {
       setHighlightedCategory(params.name);
     } else if (params.data?.category) {
       setHighlightedCategory(params.data.category);
@@ -545,7 +643,9 @@ export default function RadialChart({
       <Card>
         <CardHeader>
           <CardTitle>Donations by Category</CardTitle>
-          <CardDescription>Radial chart showing donation breakdown</CardDescription>
+          <CardDescription>
+            Radial chart showing donation breakdown
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[500px] flex items-center justify-center">
@@ -561,7 +661,9 @@ export default function RadialChart({
       <Card>
         <CardHeader>
           <CardTitle>Donations by Category</CardTitle>
-          <CardDescription>Radial chart showing donation breakdown</CardDescription>
+          <CardDescription>
+            Radial chart showing donation breakdown
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[500px] flex items-center justify-center text-red-600">
@@ -577,7 +679,9 @@ export default function RadialChart({
       <Card>
         <CardHeader>
           <CardTitle>Donations by Category</CardTitle>
-          <CardDescription>Radial chart showing donation breakdown</CardDescription>
+          <CardDescription>
+            Radial chart showing donation breakdown
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[500px] flex items-center justify-center text-gray-500">
@@ -598,12 +702,15 @@ export default function RadialChart({
               {viewMode === "multi-ring"
                 ? "Multi-ring view: Categories → Bills → Vote Outcomes"
                 : viewMode === "comparative"
-                  ? "Compare donation patterns across politicians"
-                  : "Radial chart showing donation breakdown"}
+                ? "Compare donation patterns across politicians"
+                : "Radial chart showing donation breakdown"}
             </CardDescription>
           </div>
           <div className="flex gap-2">
-            <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as typeof viewMode)}>
+            <Tabs
+              value={viewMode}
+              onValueChange={(v) => setViewMode(v as typeof viewMode)}
+            >
               <TabsList>
                 <TabsTrigger value="single">Simple</TabsTrigger>
                 <TabsTrigger value="multi-ring">
@@ -631,7 +738,9 @@ export default function RadialChart({
             <div className="text-sm text-gray-600">Total Amount</div>
           </div>
           <div className="text-center p-3 bg-green-50 rounded-lg">
-            <div className="text-2xl font-bold text-green-600">{radialData.total_count}</div>
+            <div className="text-2xl font-bold text-green-600">
+              {radialData.total_count}
+            </div>
             <div className="text-sm text-gray-600">Total Donations</div>
           </div>
           <div className="text-center p-3 bg-amber-50 rounded-lg">
@@ -660,7 +769,7 @@ export default function RadialChart({
             >
               Vote Outcomes
             </Button>
-            
+
             <div className="ml-auto flex items-center gap-2">
               <TooltipProvider>
                 <Tooltip>
@@ -680,7 +789,9 @@ export default function RadialChart({
         {isAnimating && animationCategory && (
           <div className="flex items-center gap-3 p-3 bg-purple-50 border border-purple-200 rounded-lg">
             <div className="flex items-center gap-2 flex-1">
-              <span className="font-semibold text-purple-700">Influence Pathway:</span>
+              <span className="font-semibold text-purple-700">
+                Influence Pathway:
+              </span>
               <div className="flex items-center gap-1">
                 <Badge
                   variant={animationStep >= 0 ? "default" : "outline"}
@@ -731,7 +842,13 @@ export default function RadialChart({
 
         {/* Chart */}
         {viewMode === "comparative" ? (
-          <div className={`grid gap-4 ${comparativeChartOptions.length <= 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+          <div
+            className={`grid gap-4 ${
+              comparativeChartOptions.length <= 2
+                ? "grid-cols-2"
+                : "grid-cols-3"
+            }`}
+          >
             {comparativeChartOptions.map((option, idx) => (
               <div key={idx} className="h-[350px] border rounded-lg p-2">
                 <ReactECharts
@@ -745,7 +862,11 @@ export default function RadialChart({
           <div className="h-[500px]">
             <ReactECharts
               ref={chartRef}
-              option={viewMode === "multi-ring" ? multiRingChartOption : simpleChartOption}
+              option={
+                viewMode === "multi-ring"
+                  ? multiRingChartOption
+                  : simpleChartOption
+              }
               style={{ height: "100%", width: "100%" }}
               onEvents={{
                 click: handleChartClick,
@@ -763,16 +884,22 @@ export default function RadialChart({
               <div className="flex items-center gap-2">
                 <div
                   className="w-4 h-4 rounded"
-                  style={{ backgroundColor: CATEGORY_COLORS[selectedCategory.category] }}
+                  style={{
+                    backgroundColor: CATEGORY_COLORS[selectedCategory.category],
+                  }}
                 />
-                <h3 className="font-semibold text-lg">{selectedCategory.category}</h3>
+                <h3 className="font-semibold text-lg">
+                  {selectedCategory.category}
+                </h3>
               </div>
               <div className="flex items-center gap-2">
                 {!isAnimating && viewMode === "multi-ring" && (
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => startPathwayAnimation(selectedCategory.category)}
+                    onClick={() =>
+                      startPathwayAnimation(selectedCategory.category)
+                    }
                   >
                     <Play className="h-4 w-4 mr-1" />
                     Show Pathway
@@ -783,70 +910,91 @@ export default function RadialChart({
                 </Button>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-3 gap-4 text-sm">
               <div>
                 <span className="text-gray-500">Total Amount:</span>
-                <div className="font-semibold">${selectedCategory.total_amount.toLocaleString()}</div>
+                <div className="font-semibold">
+                  ${selectedCategory.total_amount.toLocaleString()}
+                </div>
               </div>
               <div>
                 <span className="text-gray-500">Donations:</span>
-                <div className="font-semibold">{selectedCategory.donation_count}</div>
+                <div className="font-semibold">
+                  {selectedCategory.donation_count}
+                </div>
               </div>
               <div>
                 <span className="text-gray-500">Average:</span>
-                <div className="font-semibold">${selectedCategory.avg_amount?.toLocaleString() || "N/A"}</div>
+                <div className="font-semibold">
+                  ${selectedCategory.avg_amount?.toLocaleString() || "N/A"}
+                </div>
               </div>
             </div>
 
             {/* Top Donors */}
-            {selectedCategory.top_donors && selectedCategory.top_donors.length > 0 && (
-              <div>
-                <h4 className="font-medium text-sm mb-2">Top Donors</h4>
-                <div className="space-y-1">
-                  {selectedCategory.top_donors.map((donor, idx) => (
-                    <div key={idx} className="flex justify-between text-sm">
-                      <span>{donor.name}</span>
-                      <span className="font-medium">${donor.amount.toLocaleString()}</span>
-                    </div>
-                  ))}
+            {selectedCategory.top_donors &&
+              selectedCategory.top_donors.length > 0 && (
+                <div>
+                  <h4 className="font-medium text-sm mb-2">Top Donors</h4>
+                  <div className="space-y-1">
+                    {selectedCategory.top_donors.map((donor, idx) => (
+                      <div key={idx} className="flex justify-between text-sm">
+                        <span>{donor.name}</span>
+                        <span className="font-medium">
+                          ${donor.amount.toLocaleString()}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Related Bills */}
-            {selectedCategory.related_bills && selectedCategory.related_bills.length > 0 && (
-              <div>
-                <h4 className="font-medium text-sm mb-2">Related Bills</h4>
-                <div className="space-y-2">
-                  {selectedCategory.related_bills.map((bill, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-2 bg-white rounded border">
-                      <div className="flex items-center gap-2">
-                        {bill.sponsorship && (
-                          <Badge variant="outline" className="text-xs">
-                            {bill.sponsorship === "primary" ? "Sponsor" : "Co-sponsor"}
+            {selectedCategory.related_bills &&
+              selectedCategory.related_bills.length > 0 && (
+                <div>
+                  <h4 className="font-medium text-sm mb-2">Related Bills</h4>
+                  <div className="space-y-2">
+                    {selectedCategory.related_bills.map((bill, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between p-2 bg-white rounded border"
+                      >
+                        <div className="flex items-center gap-2">
+                          {bill.sponsorship && (
+                            <Badge variant="outline" className="text-xs">
+                              {bill.sponsorship === "primary"
+                                ? "Sponsor"
+                                : "Co-sponsor"}
+                            </Badge>
+                          )}
+                          <span className="text-sm">{bill.title}</span>
+                        </div>
+                        {bill.vote_outcome && (
+                          <Badge
+                            variant={
+                              bill.vote_outcome === "yes"
+                                ? "default"
+                                : "destructive"
+                            }
+                            className={
+                              bill.vote_outcome === "yes" ? "bg-green-500" : ""
+                            }
+                          >
+                            {bill.vote_outcome === "yes" ? (
+                              <Check className="h-3 w-3 mr-1" />
+                            ) : (
+                              <XIcon className="h-3 w-3 mr-1" />
+                            )}
+                            {bill.vote_outcome.toUpperCase()}
                           </Badge>
                         )}
-                        <span className="text-sm">{bill.title}</span>
                       </div>
-                      {bill.vote_outcome && (
-                        <Badge
-                          variant={bill.vote_outcome === "yes" ? "default" : "destructive"}
-                          className={bill.vote_outcome === "yes" ? "bg-green-500" : ""}
-                        >
-                          {bill.vote_outcome === "yes" ? (
-                            <Check className="h-3 w-3 mr-1" />
-                          ) : (
-                            <XIcon className="h-3 w-3 mr-1" />
-                          )}
-                          {bill.vote_outcome.toUpperCase()}
-                        </Badge>
-                      )}
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Citations */}
             {selectedCategory.citations.length > 0 && (
@@ -857,7 +1005,9 @@ export default function RadialChart({
                     <Button
                       variant="link"
                       size="sm"
-                      onClick={() => onCitationClick(selectedCategory.citations)}
+                      onClick={() =>
+                        onCitationClick(selectedCategory.citations)
+                      }
                       className="text-xs"
                     >
                       View all
@@ -866,17 +1016,19 @@ export default function RadialChart({
                   )}
                 </div>
                 <div className="flex flex-wrap gap-1 mt-1">
-                  {selectedCategory.citations.slice(0, 3).map((citation, idx) => (
-                    <a
-                      key={idx}
-                      href={citation.source_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs text-blue-600 hover:underline"
-                    >
-                      {citation.title}
-                    </a>
-                  ))}
+                  {selectedCategory.citations
+                    .slice(0, 3)
+                    .map((citation, idx) => (
+                      <a
+                        key={idx}
+                        href={citation.source_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-blue-600 hover:underline"
+                      >
+                        {citation.title}
+                      </a>
+                    ))}
                 </div>
               </div>
             )}
@@ -889,29 +1041,35 @@ export default function RadialChart({
             <h3 className="font-semibold text-sm">Category Breakdown</h3>
             <div className="space-y-2 max-h-[200px] overflow-y-auto">
               {radialData.categories.map((category) => {
-                const percentage = (category.total_amount / radialData.total_amount) * 100;
+                const percentage =
+                  (category.total_amount / radialData.total_amount) * 100;
                 return (
                   <div
                     key={category.category}
                     onClick={() => handleCategoryClick(category.category)}
                     className={`p-3 border rounded hover:bg-gray-50 transition-colors cursor-pointer ${
-                      highlightedCategory === category.category ? "ring-2 ring-blue-500 bg-blue-50" : ""
+                      highlightedCategory === category.category
+                        ? "ring-2 ring-blue-500 bg-blue-50"
+                        : ""
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <div
                           className="w-3 h-3 rounded"
-                          style={{ backgroundColor: CATEGORY_COLORS[category.category] }}
+                          style={{
+                            backgroundColor: CATEGORY_COLORS[category.category],
+                          }}
                         />
                         <Badge variant="outline" className="font-medium">
                           {category.category}
                         </Badge>
-                        {category.related_bills && category.related_bills.length > 0 && (
-                          <span className="text-xs text-gray-500">
-                            {category.related_bills.length} bills
-                          </span>
-                        )}
+                        {category.related_bills &&
+                          category.related_bills.length > 0 && (
+                            <span className="text-xs text-gray-500">
+                              {category.related_bills.length} bills
+                            </span>
+                          )}
                       </div>
                       <span className="text-lg font-semibold">
                         ${category.total_amount.toLocaleString()}
@@ -927,7 +1085,8 @@ export default function RadialChart({
                       />
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
-                      {percentage.toFixed(1)}% • {category.donation_count} donations
+                      {percentage.toFixed(1)}% • {category.donation_count}{" "}
+                      donations
                     </div>
                   </div>
                 );
