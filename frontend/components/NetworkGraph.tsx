@@ -61,6 +61,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import LoadingSpinner from "./LoadingSpinner";
+import NetworkControls from "./NetworkControls";
 import {
   Search,
   Filter,
@@ -75,6 +76,7 @@ import {
   EyeOff,
   Info,
   ChevronRight,
+  Users,
 } from "lucide-react";
 
 // Node type colors
@@ -102,14 +104,16 @@ const EDGE_COLORS = {
 };
 
 interface NetworkGraphProps {
-  politicianIds?: number[];
+  selectedPoliticianId?: string;
+  selectedPoliticianName?: string;
   includeIndirect?: boolean;
   initialMinAmount?: number;
   initialCategory?: string;
 }
 
 export default function NetworkGraph({
-  politicianIds,
+  selectedPoliticianId,
+  selectedPoliticianName,
   includeIndirect = false,
   initialMinAmount = 0,
   initialCategory,
@@ -162,12 +166,27 @@ export default function NetworkGraph({
     new Set(["politician", "donor", "bill"])
   );
 
+  // Connection depth for progressive disclosure (1 = immediate connections only)
+  const [connectionDepth, setConnectionDepth] = useState(1);
+  const MAX_DEPTH = 3;
+
   const graphRef = useRef<any>(null);
 
-  // Load graph data
+  // Load graph data - only fetch when we have all the data we need
   useEffect(() => {
+    // Don't fetch if no politician is selected - we'll show empty state
+    if (!selectedPoliticianId) {
+      setGraphData(null);
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
+
+    // Convert string ID to number array for the API
+    const politicianIdNum = parseInt(selectedPoliticianId, 10);
+    const politicianIds = !isNaN(politicianIdNum) ? [politicianIdNum] : undefined;
 
     getNetworkGraph({
       politician_ids: politicianIds,
@@ -184,7 +203,7 @@ export default function NetworkGraph({
         setError(err.message || "Failed to load network graph data");
         setIsLoading(false);
       });
-  }, [politicianIds, includeIndirect, minAmount, categoryFilter]);
+  }, [selectedPoliticianId, includeIndirect, minAmount, categoryFilter]);
 
   // Search functionality
   useEffect(() => {
@@ -205,24 +224,114 @@ export default function NetworkGraph({
     setHighlightedNodes(new Set(results.map((n) => n.id)));
   }, [searchQuery, graphData]);
 
-  // Filter visible nodes based on types
+  // BFS to find all nodes within a given depth from start nodes
+  const getNodesWithinDepth = useCallback(
+    (startNodeIds: string[], depth: number, edges: NetworkEdge[]): Set<string> => {
+      const visited = new Set<string>(startNodeIds);
+      let frontier = new Set<string>(startNodeIds);
+
+      for (let d = 0; d < depth; d++) {
+        const nextFrontier = new Set<string>();
+
+        for (const nodeId of frontier) {
+          // Find all edges connected to this node (both directions)
+          for (const edge of edges) {
+            if (edge.source === nodeId && !visited.has(edge.target)) {
+              nextFrontier.add(edge.target);
+              visited.add(edge.target);
+            }
+            if (edge.target === nodeId && !visited.has(edge.source)) {
+              nextFrontier.add(edge.source);
+              visited.add(edge.source);
+            }
+          }
+        }
+
+        frontier = nextFrontier;
+
+        // Stop if no new nodes found
+        if (frontier.size === 0) break;
+      }
+
+      return visited;
+    },
+    []
+  );
+
+  // Find the politician node ID in the graph data
+  const selectedPoliticianNodeId = useMemo(() => {
+    if (!graphData || !selectedPoliticianId) return null;
+
+    // Try to find the politician node by matching the ID
+    // The node ID might be formatted differently (e.g., "politician-1" or just "1")
+    const politicianNode = graphData.nodes.find((n) => {
+      if (n.type !== "politician") return false;
+      // Check various ID formats
+      const nodeIdStr = String(n.id);
+      const selectedIdStr = String(selectedPoliticianId);
+      return (
+        nodeIdStr === selectedIdStr ||
+        nodeIdStr === `politician-${selectedIdStr}` ||
+        nodeIdStr.endsWith(`-${selectedIdStr}`) ||
+        (n.metadata?.id && String(n.metadata.id) === selectedIdStr)
+      );
+    });
+
+    return politicianNode?.id || null;
+  }, [graphData, selectedPoliticianId]);
+
+  // Filter visible nodes based on types AND connection depth
   const filteredGraphData = useMemo(() => {
+    // If no politician selected, return empty graph
+    if (!selectedPoliticianId) {
+      return { nodes: [], edges: [], clusters: [] };
+    }
+
     if (!graphData) return null;
 
-    const visibleNodes = graphData.nodes.filter((n) =>
-      visibleNodeTypes.has(n.type)
+    let visibleNodeIds: Set<string>;
+
+    // If we found the politician node, filter by depth
+    if (selectedPoliticianNodeId) {
+      visibleNodeIds = getNodesWithinDepth(
+        [selectedPoliticianNodeId],
+        connectionDepth,
+        graphData.edges
+      );
+    } else {
+      // Fallback: show all nodes of type politician as potential matches
+      // This handles cases where the ID format doesn't match
+      const politicianNodes = graphData.nodes.filter((n) => n.type === "politician");
+      if (politicianNodes.length > 0) {
+        // Use the first politician as the center
+        visibleNodeIds = getNodesWithinDepth(
+          [politicianNodes[0].id],
+          connectionDepth,
+          graphData.edges
+        );
+      } else {
+        visibleNodeIds = new Set(graphData.nodes.map((n) => n.id));
+      }
+    }
+
+    // Also filter by node type visibility
+    const visibleNodes = graphData.nodes.filter(
+      (n) => visibleNodeIds.has(n.id) && visibleNodeTypes.has(n.type)
     );
-    const visibleNodeIds = new Set(visibleNodes.map((n) => n.id));
+
+    const filteredNodeIds = new Set(visibleNodes.map((n) => n.id));
     const visibleEdges = graphData.edges.filter(
-      (e) => visibleNodeIds.has(e.source) && visibleNodeIds.has(e.target)
+      (e) => filteredNodeIds.has(e.source) && filteredNodeIds.has(e.target)
     );
 
     return {
       nodes: visibleNodes,
       edges: visibleEdges,
-      clusters: graphData.clusters,
+      clusters: graphData.clusters?.filter((c) =>
+        c.node_ids.some((id) => filteredNodeIds.has(id))
+      ) || [],
     };
-  }, [graphData, visibleNodeTypes]);
+  }, [graphData, visibleNodeTypes, selectedPoliticianId, selectedPoliticianNodeId, connectionDepth, getNodesWithinDepth]);
 
   // Get node color with highlighting
   const getNodeColor = useCallback(
@@ -435,6 +544,37 @@ export default function NetworkGraph({
     setPathSteps([]);
   }, []);
 
+  // Auto zoom-to-fit when filtered data changes
+  useEffect(() => {
+    if (graphRef.current && filteredGraphData && filteredGraphData.nodes.length > 0) {
+      // Small delay to allow the graph to stabilize
+      const timeoutId = setTimeout(() => {
+        graphRef.current?.zoomToFit(400, 50);
+      }, 500);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [filteredGraphData?.nodes.length, selectedPoliticianId, connectionDepth]);
+
+  // Reset depth when politician changes
+  useEffect(() => {
+    setConnectionDepth(1);
+  }, [selectedPoliticianId]);
+
+  // Depth control handlers
+  const handleDepthChange = useCallback((depth: number) => {
+    setConnectionDepth(Math.max(1, Math.min(MAX_DEPTH, depth)));
+  }, []);
+
+  const handleExpandNetwork = useCallback(() => {
+    if (connectionDepth < MAX_DEPTH) {
+      setConnectionDepth((prev) => prev + 1);
+    }
+  }, [connectionDepth]);
+
+  const handleResetToImmediate = useCallback(() => {
+    setConnectionDepth(1);
+  }, []);
+
   // Focus on search result
   const focusOnNode = useCallback(
     (nodeId: string) => {
@@ -515,6 +655,33 @@ export default function NetworkGraph({
     );
   }
 
+  // Empty state when no politician selected
+  if (!selectedPoliticianId) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Network Graph</CardTitle>
+          <CardDescription>
+            Relationships between politicians, donors, and bills
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[600px] flex flex-col items-center justify-center text-gray-500 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+            <Users className="h-16 w-16 text-gray-300 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-600 mb-2">
+              Select a Politician to Explore
+            </h3>
+            <p className="text-sm text-gray-500 text-center max-w-md">
+              Use the dropdown above to select a politician and explore their network
+              of donors, bills, and connections. You can adjust the connection depth
+              to see more or fewer relationships.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   if (!filteredGraphData || filteredGraphData.nodes.length === 0) {
     return (
       <Card>
@@ -525,8 +692,20 @@ export default function NetworkGraph({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="h-[600px] flex items-center justify-center text-gray-500">
-            No network data available. Try adjusting filters.
+          {/* Network Controls */}
+          <NetworkControls
+            selectedPoliticianName={selectedPoliticianName || null}
+            connectionDepth={connectionDepth}
+            maxDepth={MAX_DEPTH}
+            nodeCount={0}
+            edgeCount={0}
+            onDepthChange={handleDepthChange}
+            onExpand={handleExpandNetwork}
+            onReset={handleResetToImmediate}
+            isLoading={isLoading}
+          />
+          <div className="h-[500px] flex items-center justify-center text-gray-500 mt-4">
+            No network data available for this politician. Try adjusting filters or selecting a different politician.
           </div>
         </CardContent>
       </Card>
@@ -564,11 +743,24 @@ export default function NetworkGraph({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Network Controls - Depth and Stats */}
+        <NetworkControls
+          selectedPoliticianName={selectedPoliticianName || null}
+          connectionDepth={connectionDepth}
+          maxDepth={MAX_DEPTH}
+          nodeCount={filteredGraphData.nodes.length}
+          edgeCount={filteredGraphData.edges.length}
+          onDepthChange={handleDepthChange}
+          onExpand={handleExpandNetwork}
+          onReset={handleResetToImmediate}
+          isLoading={isLoading}
+        />
+
         {/* Search Bar */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
-            placeholder="Search politicians, donors, bills..."
+            placeholder="Search within network..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"

@@ -278,7 +278,7 @@ export default function VisualizationsPage() {
 
   const [networkFilters, setNetworkFilters] = useState({
     includeIndirect: false,
-    politicianIds: [] as number[],
+    selectedPoliticianId: "" as string,
   });
 
   const [radialFilters, setRadialFilters] = useState({
@@ -326,6 +326,9 @@ export default function VisualizationsPage() {
       case "network":
         return {
           filters: networkFilters,
+          selectedPolitician: allPoliticians.find(
+            (p) => p.id === networkFilters.selectedPoliticianId
+          )?.name,
           tab: "network_graph",
         };
       case "radial":
@@ -344,6 +347,7 @@ export default function VisualizationsPage() {
     radialFilters,
     comparativePoliticians,
     timelineComparePoliticians,
+    allPoliticians,
   ]);
 
   // Handle AI suggestion click
@@ -446,15 +450,6 @@ export default function VisualizationsPage() {
     setTimelineComparePoliticians(
       timelineComparePoliticians.filter((p) => p.id !== id)
     );
-  };
-
-  // Parse politician IDs from comma-separated string
-  const parsePoliticianIds = (value: string): number[] => {
-    if (!value.trim()) return [];
-    return value
-      .split(",")
-      .map((id) => parseInt(id.trim(), 10))
-      .filter((id) => !isNaN(id));
   };
 
   // Evidence Drawer state
@@ -1058,26 +1053,44 @@ export default function VisualizationsPage() {
             <TabsContent value="network" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Filters</CardTitle>
-                  <CardDescription>Filter network graph data</CardDescription>
+                  <CardTitle>Network Filters</CardTitle>
+                  <CardDescription>
+                    Select a politician to explore their network of donors, bills, and connections
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="network-politician-ids">
-                        Politician IDs (comma-separated)
+                      <Label htmlFor="network-politician">
+                        Select Politician
                       </Label>
-                      <Input
-                        id="network-politician-ids"
-                        placeholder="1, 2, 3"
-                        value={networkFilters.politicianIds.join(", ")}
-                        onChange={(e) =>
+                      <Select
+                        value={networkFilters.selectedPoliticianId}
+                        onValueChange={(value) =>
                           setNetworkFilters({
                             ...networkFilters,
-                            politicianIds: parsePoliticianIds(e.target.value),
+                            selectedPoliticianId: value,
                           })
                         }
-                      />
+                        disabled={loadingPoliticians}
+                      >
+                        <SelectTrigger id="network-politician">
+                          <SelectValue
+                            placeholder={
+                              loadingPoliticians
+                                ? "Loading politicians..."
+                                : "Select a politician to explore..."
+                            }
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {allPoliticians.map((pol) => (
+                            <SelectItem key={pol.id} value={pol.id}>
+                              {pol.name} ({pol.party})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div>
                       <Label htmlFor="network-include-indirect">
@@ -1106,10 +1119,9 @@ export default function VisualizationsPage() {
               </Card>
 
               <NetworkGraph
-                politicianIds={
-                  networkFilters.politicianIds.length > 0
-                    ? networkFilters.politicianIds
-                    : undefined
+                selectedPoliticianId={networkFilters.selectedPoliticianId || undefined}
+                selectedPoliticianName={
+                  allPoliticians.find((p) => p.id === networkFilters.selectedPoliticianId)?.name
                 }
                 includeIndirect={networkFilters.includeIndirect}
               />
