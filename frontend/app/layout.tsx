@@ -26,9 +26,74 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CivicLens | Evidence-Based Political Insight",
+  title: {
+    default: "CivicLens",
+    template: "%s | CivicLens",
+  },
   description:
-    "Search, compare, and understand politicians through evidence-based information with citations. No rankings, just facts.",
+    "Transparent, evidence-based political information. Search politicians, compare voting records, explore campaign donations, and ask AI-powered questions with verified citations. No rankings, just facts.",
+  keywords: [
+    "politics",
+    "politicians",
+    "voting records",
+    "campaign finance",
+    "congress",
+    "senate",
+    "house of representatives",
+    "political transparency",
+    "civic engagement",
+    "evidence-based politics",
+  ],
+  authors: [{ name: "CivicLens" }],
+  creator: "CivicLens",
+  publisher: "CivicLens",
+  metadataBase: new URL("https://civiclens.vercel.app"),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    title: "CivicLens - Evidence-Based Political Insight",
+    description:
+      "Transparent, evidence-based political information. Search politicians, compare voting records, explore donations, and ask AI questions with verified sources.",
+    siteName: "CivicLens",
+    images: [
+      {
+        url: "/og-image.svg",
+        width: 1200,
+        height: 630,
+        alt: "CivicLens - Evidence-Based Political Insight",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "CivicLens - Evidence-Based Political Insight",
+    description:
+      "Transparent political information with verified sources. Search politicians, compare voting records, and ask AI-powered questions.",
+    images: ["/og-image.svg"],
+    creator: "@civiclens",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.svg", type: "image/svg+xml", sizes: "any" },
+    ],
+    apple: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+  },
 };
 
 export default function RootLayout({
