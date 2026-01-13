@@ -89,5 +89,5 @@ export async function GET() {
   }
 }
 
-// Revalidate every 10 minutes (ISR)
-export const revalidate = 600;
+// Force dynamic to ensure handler runs on every request
+export const dynamic = "force-dynamic";

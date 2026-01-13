@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+// Validate required environment variables
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    "Missing required Supabase environment variables: " +
+      "NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be set"
+  );
+}
+
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Revalidate data every hour
@@ -20,7 +29,6 @@ function createCachedResponse(data: any) {
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const politicianIds = searchParams.getAll("politician_ids");
-  const includeIndirect = searchParams.get("include_indirect") === "true";
   const minAmount = parseInt(searchParams.get("min_amount") || "0", 10);
   const category = searchParams.get("category");
 
@@ -40,13 +48,17 @@ export async function GET(request: NextRequest) {
     const { data: politicians, error: polError } = await politiciansQuery;
 
     if (polError || !politicians || politicians.length === 0) {
-      return createCachedResponse(generateDemoNetworkGraph(politicianIds.map(id => parseInt(id, 10)), includeIndirect, minAmount, category));
+      return createCachedResponse(
+        generateDemoNetworkGraph(
+          politicianIds.map((id) => parseInt(id, 10)),
+          minAmount,
+          category
+        )
+      );
     }
 
     // Fetch donations for these politicians
-    let donationsQuery = supabase
-      .from("donations")
-      .select("*");
+    let donationsQuery = supabase.from("donations").select("*");
 
     if (hasPoliticianFilter) {
       donationsQuery = donationsQuery.in("politician_id", politicianIds);
@@ -58,7 +70,14 @@ export async function GET(request: NextRequest) {
       donationsQuery = donationsQuery.eq("category", category);
     }
 
-    const { data: donations } = await donationsQuery;
+    const { data: donations, error: donationsError } = await donationsQuery;
+
+    if (donationsError) {
+      console.error(
+        "Error fetching donations for network graph:",
+        donationsError
+      );
+    }
 
     // Build network graph
     const nodes: any[] = [];
@@ -82,8 +101,18 @@ export async function GET(request: NextRequest) {
 
     // Add donor nodes and donation edges
     if (donations && donations.length > 0) {
-      const donorTotals: Record<string, { name: string; amount: number; category: string }> = {};
+      const donorTotals: Record<
+        string,
+        { name: string; amount: number; category: string }
+      > = {};
+      const pendingEdges: Array<{
+        donorId: string;
+        politicianId: string;
+        amount: number;
+        category: string;
+      }> = [];
 
+      // First pass: calculate donor totals and collect pending edges
       donations.forEach((donation: any) => {
         const donorName = donation.donor_name || "Unknown Donor";
         const donorId = `donor-${donorName.replace(/\s+/g, "-").toLowerCase()}`;
@@ -97,20 +126,26 @@ export async function GET(request: NextRequest) {
         }
         donorTotals[donorId].amount += donation.amount || 0;
 
-        // Add edge
-        edges.push({
-          source: donorId,
-          target: `pol-${donation.politician_id}`,
-          type: "donation",
-          weight: donation.amount || 0,
+        // Collect edge for later (will filter by minAmount)
+        pendingEdges.push({
+          donorId,
+          politicianId: `pol-${donation.politician_id}`,
+          amount: donation.amount || 0,
           category: donation.category || "Other",
-          metadata: { amount: donation.amount, category: donation.category },
         });
       });
 
-      // Add donor nodes
+      // Build set of valid donor IDs (those meeting minAmount threshold)
+      const validDonorIds = new Set<string>();
       Object.entries(donorTotals).forEach(([donorId, data]) => {
-        if (!nodeIds.has(donorId) && data.amount >= minAmount) {
+        if (data.amount >= minAmount) {
+          validDonorIds.add(donorId);
+        }
+      });
+
+      // Add donor nodes (only those meeting threshold)
+      Object.entries(donorTotals).forEach(([donorId, data]) => {
+        if (!nodeIds.has(donorId) && validDonorIds.has(donorId)) {
           nodeIds.add(donorId);
           nodes.push({
             id: donorId,
@@ -122,15 +157,37 @@ export async function GET(request: NextRequest) {
           });
         }
       });
+
+      // Add edges only for donors meeting the threshold
+      pendingEdges.forEach((edge) => {
+        if (validDonorIds.has(edge.donorId)) {
+          edges.push({
+            source: edge.donorId,
+            target: edge.politicianId,
+            type: "donation",
+            weight: edge.amount,
+            category: edge.category,
+            metadata: { amount: edge.amount, category: edge.category },
+          });
+        }
+      });
     }
 
     // If we have very few nodes, return demo data
     if (nodes.length < 3) {
-      return createCachedResponse(generateDemoNetworkGraph(politicianIds.map(id => parseInt(id, 10)), includeIndirect, minAmount, category));
+      return createCachedResponse(
+        generateDemoNetworkGraph(
+          politicianIds.map((id) => parseInt(id, 10)),
+          minAmount,
+          category
+        )
+      );
     }
 
     // Generate clusters by category
-    const categories = [...new Set(nodes.filter(n => n.category).map(n => n.category))];
+    const categories = [
+      ...new Set(nodes.filter((n) => n.category).map((n) => n.category)),
+    ];
     const categoryColors: Record<string, string> = {
       Healthcare: "#ef4444",
       Energy: "#f59e0b",
@@ -150,13 +207,18 @@ export async function GET(request: NextRequest) {
     return createCachedResponse({ nodes, edges, clusters });
   } catch (error) {
     console.error("Error fetching network graph data:", error);
-    return createCachedResponse(generateDemoNetworkGraph(politicianIds.map(id => parseInt(id, 10)), includeIndirect, minAmount, category));
+    return createCachedResponse(
+      generateDemoNetworkGraph(
+        politicianIds.map((id) => parseInt(id, 10)),
+        minAmount,
+        category
+      )
+    );
   }
 }
 
 function generateDemoNetworkGraph(
   politicianIds?: number[],
-  includeIndirect?: boolean,
   minAmount?: number,
   category?: string | null
 ) {
@@ -181,24 +243,80 @@ function generateDemoNetworkGraph(
 
   // Donors by category
   const donors = [
-    { id: "donor-pharma", name: "PhRMA Association", category: "Healthcare", amount: 150000 },
-    { id: "donor-hospital", name: "American Hospital Assoc.", category: "Healthcare", amount: 85000 },
-    { id: "donor-oil", name: "American Petroleum Institute", category: "Energy", amount: 200000 },
-    { id: "donor-solar", name: "Solar Energy Industries", category: "Energy", amount: 75000 },
-    { id: "donor-banks", name: "American Bankers Assoc.", category: "Finance", amount: 180000 },
-    { id: "donor-wallstreet", name: "Wall Street PAC", category: "Finance", amount: 250000 },
-    { id: "donor-tech", name: "TechNet", category: "Technology", amount: 175000 },
-    { id: "donor-defense", name: "Defense Contractors PAC", category: "Defense", amount: 220000 },
+    {
+      id: "donor-pharma",
+      name: "PhRMA Association",
+      category: "Healthcare",
+      amount: 150000,
+    },
+    {
+      id: "donor-hospital",
+      name: "American Hospital Assoc.",
+      category: "Healthcare",
+      amount: 85000,
+    },
+    {
+      id: "donor-oil",
+      name: "American Petroleum Institute",
+      category: "Energy",
+      amount: 200000,
+    },
+    {
+      id: "donor-solar",
+      name: "Solar Energy Industries",
+      category: "Energy",
+      amount: 75000,
+    },
+    {
+      id: "donor-banks",
+      name: "American Bankers Assoc.",
+      category: "Finance",
+      amount: 180000,
+    },
+    {
+      id: "donor-wallstreet",
+      name: "Wall Street PAC",
+      category: "Finance",
+      amount: 250000,
+    },
+    {
+      id: "donor-tech",
+      name: "TechNet",
+      category: "Technology",
+      amount: 175000,
+    },
+    {
+      id: "donor-defense",
+      name: "Defense Contractors PAC",
+      category: "Defense",
+      amount: 220000,
+    },
   ];
 
   // Bills by category
   const bills = [
-    { id: "bill-aca", name: "Affordable Care Act Extension", category: "Healthcare" },
+    {
+      id: "bill-aca",
+      name: "Affordable Care Act Extension",
+      category: "Healthcare",
+    },
     { id: "bill-drug", name: "Drug Pricing Reform", category: "Healthcare" },
-    { id: "bill-energy", name: "Clean Energy Investment Act", category: "Energy" },
+    {
+      id: "bill-energy",
+      name: "Clean Energy Investment Act",
+      category: "Energy",
+    },
     { id: "bill-bank", name: "Banking Regulation Reform", category: "Finance" },
-    { id: "bill-privacy", name: "Data Privacy Protection Act", category: "Technology" },
-    { id: "bill-ndaa", name: "Defense Authorization FY2025", category: "Defense" },
+    {
+      id: "bill-privacy",
+      name: "Data Privacy Protection Act",
+      category: "Technology",
+    },
+    {
+      id: "bill-ndaa",
+      name: "Defense Authorization FY2025",
+      category: "Defense",
+    },
   ];
 
   // Filter by category if provided
@@ -286,10 +404,12 @@ function generateDemoNetworkGraph(
   });
 
   // Generate clusters
-  const categories = [...new Set([
-    ...amountFilteredDonors.map((d) => d.category),
-    ...filteredBills.map((b) => b.category),
-  ])];
+  const categories = [
+    ...new Set([
+      ...amountFilteredDonors.map((d) => d.category),
+      ...filteredBills.map((b) => b.category),
+    ]),
+  ];
   const categoryColors: Record<string, string> = {
     Healthcare: "#ef4444",
     Energy: "#f59e0b",
@@ -303,7 +423,9 @@ function generateDemoNetworkGraph(
     name: cat,
     category: cat,
     node_ids: [
-      ...amountFilteredDonors.filter((d) => d.category === cat).map((d) => d.id),
+      ...amountFilteredDonors
+        .filter((d) => d.category === cat)
+        .map((d) => d.id),
       ...filteredBills.filter((b) => b.category === cat).map((b) => b.id),
     ],
     color: categoryColors[cat] || "#9ca3af",

@@ -13,6 +13,10 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 let pingIntervalId: NodeJS.Timeout | null = null;
 let isInitialized = false;
 
+// Named event handlers for proper cleanup
+let onVisibilityChange: (() => void) | null = null;
+let onBeforeUnload: (() => void) | null = null;
+
 /**
  * Ping the backend health endpoint
  */
@@ -100,8 +104,8 @@ export function startKeepWarm(): void {
   // Then ping every PING_INTERVAL
   pingIntervalId = setInterval(pingBackend, PING_INTERVAL);
 
-  // Also ping when the page becomes visible (user returns to tab)
-  document.addEventListener("visibilitychange", () => {
+  // Define named handler for visibility change
+  onVisibilityChange = () => {
     if (document.visibilityState === "visible") {
       const lastPing = getFromCache<number>(CACHE_KEYS.LAST_BACKEND_PING);
       const now = Date.now();
@@ -111,10 +115,16 @@ export function startKeepWarm(): void {
         pingBackend();
       }
     }
-  });
+  };
 
-  // Cleanup on page unload
-  window.addEventListener("beforeunload", stopKeepWarm);
+  // Define named handler for beforeunload
+  onBeforeUnload = () => {
+    stopKeepWarm();
+  };
+
+  // Register event listeners
+  document.addEventListener("visibilitychange", onVisibilityChange);
+  window.addEventListener("beforeunload", onBeforeUnload);
 }
 
 /**
@@ -125,6 +135,17 @@ export function stopKeepWarm(): void {
     clearInterval(pingIntervalId);
     pingIntervalId = null;
   }
+
+  // Remove event listeners
+  if (onVisibilityChange) {
+    document.removeEventListener("visibilitychange", onVisibilityChange);
+    onVisibilityChange = null;
+  }
+  if (onBeforeUnload) {
+    window.removeEventListener("beforeunload", onBeforeUnload);
+    onBeforeUnload = null;
+  }
+
   isInitialized = false;
 }
 

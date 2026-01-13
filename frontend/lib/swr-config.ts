@@ -307,8 +307,8 @@ export async function prefetchPolitician(id: string | number): Promise<void> {
   const cacheKey = `${CACHE_KEYS.POLITICIAN_PROFILE}${stringId}`;
   if (getFromCache(cacheKey)) return;
 
-  // Prefetch in background
-  mutate(
+  // Prefetch in background and await the result
+  await mutate(
     key,
     async () => {
       const { getPoliticianProfile } = await import("./api");
@@ -335,11 +335,12 @@ export function invalidateAllCache(): void {
  * Invalidate cache for a specific politician
  */
 export function invalidatePoliticianCache(id: string | number): void {
-  mutate(["profile", id]);
-  mutate(["summary", id]);
+  const stringId = String(id);
+  mutate(["profile", stringId]);
+  mutate(["summary", stringId]);
 
   // Clear from localStorage
   import("./cache").then(({ clearCacheEntry, CACHE_KEYS }) => {
-    clearCacheEntry(`${CACHE_KEYS.POLITICIAN_PROFILE}${id}`);
+    clearCacheEntry(`${CACHE_KEYS.POLITICIAN_PROFILE}${stringId}`);
   });
 }

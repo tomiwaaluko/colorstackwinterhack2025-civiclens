@@ -149,6 +149,17 @@ export default function Home() {
               <Button
                 asChild
                 size="lg"
+                className="group bg-yellow-400 text-gray-900 hover:bg-yellow-500 font-bold shadow-2xl border-2 border-yellow-500"
+              >
+                <Link href="/visualizations">
+                  <Globe className="h-5 w-5 mr-2" />
+                  Explore Visualizations
+                  <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
                 variant="outline"
                 className="group bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
               >

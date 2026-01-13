@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+// Validate required environment variables
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    "Missing required Supabase environment variables: " +
+      "NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be set"
+  );
+}
+
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Revalidate data every hour
@@ -33,7 +42,8 @@ export async function GET(
       .select("*")
       .eq("politician_id", politicianId);
 
-    if (startDate) donationsQuery = donationsQuery.gte("donation_date", startDate);
+    if (startDate)
+      donationsQuery = donationsQuery.gte("donation_date", startDate);
     if (endDate) donationsQuery = donationsQuery.lte("donation_date", endDate);
 
     const { data: donations, error } = await donationsQuery;
@@ -43,11 +53,14 @@ export async function GET(
     }
 
     // Aggregate donations by category
-    const categoryData: Record<string, {
-      total_amount: number;
-      donation_count: number;
-      donors: Record<string, number>;
-    }> = {};
+    const categoryData: Record<
+      string,
+      {
+        total_amount: number;
+        donation_count: number;
+        donors: Record<string, number>;
+      }
+    > = {};
 
     donations.forEach((donation: any) => {
       const category = donation.category || "Other";
@@ -63,7 +76,8 @@ export async function GET(
 
       const donorName = donation.donor_name || "Anonymous";
       categoryData[category].donors[donorName] =
-        (categoryData[category].donors[donorName] || 0) + (donation.amount || 0);
+        (categoryData[category].donors[donorName] || 0) +
+        (donation.amount || 0);
     });
 
     // Transform to expected format
@@ -94,13 +108,23 @@ export async function GET(
     });
   } catch (error) {
     console.error("Error fetching radial chart data:", error);
-    return createCachedResponse(generateDemoRadialData(politicianId));
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json(
+      {
+        error: "Failed to fetch radial chart data",
+        message: errorMessage,
+        timestamp: new Date().toISOString(),
+      },
+      { status: 500 }
+    );
   }
 }
 
 function generateDemoRadialData(politicianId: string) {
   // Generate a numeric seed from politician ID
-  const numericId = parseInt(politicianId, 10) ||
+  const numericId =
+    parseInt(politicianId, 10) ||
     politicianId.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const seed = numericId * 11;
 
@@ -197,11 +221,16 @@ function generateDemoRadialData(politicianId: string) {
   const categories = categoryData.map((cat, idx) => {
     const variation = ((seed + idx) % 5) * 10000 - 20000;
     const amount = Math.max(10000, cat.baseAmount + variation);
-    const donations = Math.max(5, cat.baseDonations + Math.floor(variation / 5000));
+    const donations = Math.max(
+      5,
+      cat.baseDonations + Math.floor(variation / 5000)
+    );
 
     const bills = cat.bills.map((bill, billIdx) => ({
       ...bill,
-      vote_outcome: ((seed + idx + billIdx) % 3 === 0 ? "no" : "yes") as "yes" | "no",
+      vote_outcome: ((seed + idx + billIdx) % 3 === 0 ? "no" : "yes") as
+        | "yes"
+        | "no",
       sponsorship: ((seed + idx + billIdx) % 4 === 0
         ? "primary"
         : (seed + idx + billIdx) % 4 === 1

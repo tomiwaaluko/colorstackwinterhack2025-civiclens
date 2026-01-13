@@ -1,9 +1,42 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+// Validate required environment variables
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    "Missing required Supabase environment variables: " +
+      "NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be set"
+  );
+}
+
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Helper to normalize vote positions
+function normalizeVoteOutcome(
+  position: string | null | undefined
+): string | null {
+  if (!position) return null;
+  const normalized = position.toLowerCase().trim();
+  switch (normalized) {
+    case "yea":
+    case "yes":
+    case "aye":
+      return "yes";
+    case "nay":
+    case "no":
+      return "no";
+    case "abstain":
+    case "not voting":
+    case "present":
+    case "absent":
+      return "abstain";
+    default:
+      return "unknown";
+  }
+}
 
 // Revalidate data every 30 minutes
 export const revalidate = 1800;
@@ -31,7 +64,8 @@ export async function GET(
     // Fetch votes for this politician
     let votesQuery = supabase
       .from("votes")
-      .select(`
+      .select(
+        `
         id,
         vote_date,
         vote_position,
@@ -41,7 +75,8 @@ export async function GET(
           bill_type,
           policy_area
         )
-      `)
+      `
+      )
       .eq("politician_id", politicianId);
 
     if (startDate) votesQuery = votesQuery.gte("vote_date", startDate);
@@ -53,7 +88,8 @@ export async function GET(
       .select("*")
       .eq("politician_id", politicianId);
 
-    if (startDate) donationsQuery = donationsQuery.gte("donation_date", startDate);
+    if (startDate)
+      donationsQuery = donationsQuery.gte("donation_date", startDate);
     if (endDate) donationsQuery = donationsQuery.lte("donation_date", endDate);
 
     // Fetch statements
@@ -62,8 +98,10 @@ export async function GET(
       .select("*")
       .eq("politician_id", politicianId);
 
-    if (startDate) statementsQuery = statementsQuery.gte("statement_date", startDate);
-    if (endDate) statementsQuery = statementsQuery.lte("statement_date", endDate);
+    if (startDate)
+      statementsQuery = statementsQuery.gte("statement_date", startDate);
+    if (endDate)
+      statementsQuery = statementsQuery.lte("statement_date", endDate);
 
     const [votesResult, donationsResult, statementsResult] = await Promise.all([
       votesQuery,
@@ -76,14 +114,15 @@ export async function GET(
     // Process votes
     if (votesResult.data) {
       votesResult.data.forEach((vote: any, idx: number) => {
-        const shouldInclude = eventTypes.length === 0 || eventTypes.includes("vote");
+        const shouldInclude =
+          eventTypes.length === 0 || eventTypes.includes("vote");
         if (shouldInclude) {
           events.push({
             id: `vote-${vote.id || idx}`,
             type: "vote",
             date: vote.vote_date || "2024-01-01",
             title: vote.bills?.title || "Vote",
-            outcome: vote.vote_position?.toLowerCase() === "yea" ? "yes" : "no",
+            outcome: normalizeVoteOutcome(vote.vote_position),
             topic: vote.bills?.policy_area || "Other",
             citations: [],
             citation_count: 0,
@@ -95,7 +134,8 @@ export async function GET(
     // Process donations
     if (donationsResult.data) {
       donationsResult.data.forEach((donation: any, idx: number) => {
-        const shouldInclude = eventTypes.length === 0 || eventTypes.includes("donation");
+        const shouldInclude =
+          eventTypes.length === 0 || eventTypes.includes("donation");
         if (shouldInclude) {
           events.push({
             id: `donation-${donation.id || idx}`,
@@ -114,7 +154,8 @@ export async function GET(
     // Process statements
     if (statementsResult.data) {
       statementsResult.data.forEach((statement: any, idx: number) => {
-        const shouldInclude = eventTypes.length === 0 || eventTypes.includes("statement");
+        const shouldInclude =
+          eventTypes.length === 0 || eventTypes.includes("statement");
         if (shouldInclude) {
           events.push({
             id: `statement-${statement.id || idx}`,
@@ -131,11 +172,15 @@ export async function GET(
 
     // If no real data, return demo data
     if (events.length === 0) {
-      return createCachedResponse(generateDemoTimelineData(politicianId, eventTypes, startDate, endDate));
+      return createCachedResponse(
+        generateDemoTimelineData(politicianId, eventTypes, startDate, endDate)
+      );
     }
 
     // Sort events by date
-    events.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    events.sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
 
     return createCachedResponse({
       events,
@@ -143,7 +188,23 @@ export async function GET(
     });
   } catch (error) {
     console.error("Error fetching timeline data:", error);
-    return createCachedResponse(generateDemoTimelineData(politicianId, eventTypes, startDate, endDate));
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json(
+      {
+        error: "Failed to fetch timeline data",
+        message: errorMessage,
+        timestamp: new Date().toISOString(),
+        isDemo: true,
+        fallbackData: generateDemoTimelineData(
+          politicianId,
+          eventTypes,
+          startDate,
+          endDate
+        ),
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -153,13 +214,21 @@ function generateDemoTimelineData(
   startDate: string | null,
   endDate: string | null
 ) {
-  const topics = ["Healthcare", "Energy", "Technology", "Finance", "Environment", "Defense"];
+  const topics = [
+    "Healthcare",
+    "Energy",
+    "Technology",
+    "Finance",
+    "Environment",
+    "Defense",
+  ];
   const baseYear = 2024;
   const events: any[] = [];
   let eventId = 1;
 
   // Generate a numeric seed from politician ID
-  const numericId = parseInt(politicianId, 10) ||
+  const numericId =
+    parseInt(politicianId, 10) ||
     politicianId.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const seed = numericId * 7;
 

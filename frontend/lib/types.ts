@@ -121,6 +121,11 @@ export interface StateDonationValue {
   avg_amount?: number | null;
   top_donor_category?: string | null;
   top_category_amount?: number | null;
+  party_breakdown?: {
+    democrat: number;
+    republican: number;
+    independent: number;
+  };
   citations: VisualizationCitation[];
   top_politicians: Array<{
     politician_id: number;

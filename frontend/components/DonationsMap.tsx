@@ -219,7 +219,7 @@ export default function DonationsMap({
     getDateRangeForYear,
   ]);
 
-  // Calculate party aggregation from map data
+  // Use party breakdown data from API
   useEffect(() => {
     if (viewMode !== "party" || !mapData) return;
 
@@ -229,23 +229,20 @@ export default function DonationsMap({
     > = {};
 
     Object.entries(mapData.values).forEach(([stateCode, stateData]) => {
-      partyAggregation[stateCode] = {
-        democrat: 0,
-        republican: 0,
-        independent: 0,
-      };
-
-      stateData.top_politicians.forEach((pol) => {
-        const amount = pol.total_amount;
-        const partyGuess = Math.random() > 0.5 ? "democrat" : "republican";
-        partyAggregation[stateCode][partyGuess] += amount;
-      });
-
-      if (stateData.top_politicians.length === 0) {
-        const total = stateData.total_amount;
-        partyAggregation[stateCode].democrat = total * 0.45;
-        partyAggregation[stateCode].republican = total * 0.45;
-        partyAggregation[stateCode].independent = total * 0.1;
+      // Use party_breakdown from API if available
+      if (stateData.party_breakdown) {
+        partyAggregation[stateCode] = {
+          democrat: stateData.party_breakdown.democrat || 0,
+          republican: stateData.party_breakdown.republican || 0,
+          independent: stateData.party_breakdown.independent || 0,
+        };
+      } else {
+        // Fallback if no party data - shouldn't happen with updated API
+        partyAggregation[stateCode] = {
+          democrat: 0,
+          republican: 0,
+          independent: stateData.total_amount || 0,
+        };
       }
     });
 
