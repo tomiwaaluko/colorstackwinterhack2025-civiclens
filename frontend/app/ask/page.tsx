@@ -155,13 +155,26 @@ function AskPageContent() {
         question: input.trim(),
       });
 
+      // Convert numeric confidence to text label
+      let confidenceLevel: "high" | "medium" | "low" = "medium";
+      if (response.claims && response.claims.length > 0) {
+        const numericConfidence = response.claims[0].confidence || 0.5;
+        if (numericConfidence >= 0.85) {
+          confidenceLevel = "high";
+        } else if (numericConfidence >= 0.6) {
+          confidenceLevel = "medium";
+        } else {
+          confidenceLevel = "low";
+        }
+      }
+
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
         content: response.answer,
         citations: response.citations,
         claims: response.claims,
-        confidence: "high",
+        confidence: confidenceLevel,
       };
 
       setMessages((prev) => [...prev, aiMessage]);

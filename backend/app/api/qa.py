@@ -124,7 +124,9 @@ async def ask_question(payload: QARequest, db: AsyncSession = Depends(get_db)):
                     for i, row in enumerate(rows):
                         print(f"   [{i+1}] {row[8]:.4f} - {row[4]} - {row[1][:100]}...")
                 
-                if rows and rows[0][8] > 0.3:  # similarity threshold
+                # Only use database if we have STRONG match (>= 55% similarity)
+                # This prevents using generic sources for specific questions
+                if rows and rows[0][8] >= 0.55:
                     # We found relevant sources!
                     source_type = "database"
                     limitations_msg = f"Answer based on {len(rows)} verified source(s) from the CivicLens database."
@@ -149,6 +151,9 @@ async def ask_question(payload: QARequest, db: AsyncSession = Depends(get_db)):
                             seen_sources.add(str(src_id))
                         
                         context_text += f"\n\nSource: {title}\n{chunk_text}\n"
+                else:
+                    # Similarity too low - skip database, use AI general knowledge
+                    print(f"   ⚠️ Similarity below threshold (55%), using AI general knowledge instead")
         
         except Exception as e:
             print(f"Error querying database: {e}")
@@ -156,7 +161,9 @@ async def ask_question(payload: QARequest, db: AsyncSession = Depends(get_db)):
     
     try:
         # Generate answer with Gemini
-        system_prompt = """You are CivicLens AI, a data extraction assistant that finds and presents specific information from provided sources.
+        if context_text:
+            # Database sources found - use data extraction mode
+            system_prompt = """You are CivicLens AI, a data extraction assistant that finds and presents specific information from provided sources.
 
 Your PRIMARY TASK:
 1. CAREFULLY read through ALL provided database sources
@@ -178,18 +185,40 @@ CRITICAL RULES:
 
 Format your response as a clear answer using the extracted data."""
 
-        user_prompt = f"Question: {payload.question}"
-        
-        if payload.politician_ids:
-            user_prompt += f"\n\nContext: This question is about politician(s) with ID(s): {', '.join(payload.politician_ids)}"
-        
-        # Add context from database if available
-        if context_text:
+            user_prompt = f"Question: {payload.question}"
+            
+            if payload.politician_ids:
+                user_prompt += f"\n\nContext: This question is about politician(s) with ID(s): {', '.join(payload.politician_ids)}"
+            
             user_prompt += f"\n\n=== VERIFIED DATABASE SOURCES (READ CAREFULLY) ===\n{context_text}\n=== END OF DATABASE SOURCES ==="
             user_prompt += f"\n\nTASK: Read through ALL the sources above and EXTRACT any information that answers this question: {payload.question}\n"
             user_prompt += "Look for: bill numbers (H.R. XXX), voting records (Yea/Nay counts), politician names, party breakdowns (republicans/democrats), vote tallies, or any related data.\n"
+            user_prompt += "IMPORTANT: If the sources contain a LIST of names (like multiple politicians), include ALL of them in your answer, not just the first one.\n"
             user_prompt += "If you find relevant data (even if partial), extract it and present it. DO NOT say information is missing if it's in the sources.\n"
-            user_prompt += "Format the data clearly with the specific details you found."
+            user_prompt += "Format the data clearly with ALL the specific details you found."
+        else:
+            # No database sources - use AI general knowledge
+            system_prompt = """You are CivicLens AI, a helpful assistant that provides factual information about US politicians and politics.
+
+Since no specific database sources were found for this question, you will use your general knowledge to answer.
+
+Guidelines:
+- Be concise and factual
+- Write in plain text without using markdown formatting (no **, *, #, etc.)
+- DO NOT mention "database sources" or say "sources don't contain" - simply provide the answer
+- Focus on publicly verifiable, well-established information
+- Avoid speculation, predictions, or opinions
+- Use bullet points with • or - for lists
+- If unsure about specific details, acknowledge limitations
+
+Format your response as a clear, informative answer using your knowledge."""
+
+            user_prompt = f"Question: {payload.question}"
+            
+            if payload.politician_ids:
+                user_prompt += f"\n\nContext: This question is about politician(s) with ID(s): {', '.join(payload.politician_ids)}"
+            
+            user_prompt += "\n\nPlease answer this question directly using your general knowledge of US politics and government. Provide a helpful, factual answer without mentioning database sources or limitations."
         
         response = client.models.generate_content(
             model="gemini-2.5-flash",
