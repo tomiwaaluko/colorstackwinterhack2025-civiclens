@@ -50,14 +50,18 @@ const NO_DATA_COLOR = "#d1d5db";
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || "";
 
 interface DonationsMapProps {
-  politicianIds?: number[];
+  politicianIds?: (number | string)[];
   category?: string;
   startDate?: string;
   endDate?: string;
   // New props for enhanced features
   showTimeSlider?: boolean;
   showViewModeToggle?: boolean;
-  comparativePoliticians?: Array<{ id: number; name: string; party: string }>;
+  comparativePoliticians?: Array<{
+    id: number | string;
+    name: string;
+    party: string;
+  }>;
   onCitationClick?: (citations: any[], stateName?: string) => void;
 }
 
@@ -93,7 +97,7 @@ export default function DonationsMap({
 
   // Cache for comparative data
   const [comparativeData, setComparativeData] = useState<
-    Record<number, DonationsMapResponse>
+    Record<string | number, DonationsMapResponse>
   >({});
   const [partyData, setPartyData] = useState<
     Record<
@@ -198,7 +202,8 @@ export default function DonationsMap({
         }).then((data) => ({ id: pol.id, data }))
       )
     ).then((results) => {
-      const newComparativeData: Record<number, DonationsMapResponse> = {};
+      const newComparativeData: Record<string | number, DonationsMapResponse> =
+        {};
       results.forEach(({ id, data }) => {
         newComparativeData[id] = data;
       });
@@ -597,19 +602,20 @@ export default function DonationsMap({
                         f.properties.STATE_CODE === popupInfo.stateCode
                     );
                     const donationData = mapData?.values[popupInfo.stateCode];
-                    const stateName = feature?.properties.NAME || popupInfo.stateCode;
+                    const stateName =
+                      feature?.properties.NAME || popupInfo.stateCode;
 
                     if (viewMode === "total") {
                       const amount = donationData?.total_amount || 0;
-                      return `${stateName}: $${amount.toLocaleString()}${!donationData ? ' (no data)' : ''}`;
+                      return `${stateName}: $${amount.toLocaleString()}${
+                        !donationData ? " (no data)" : ""
+                      }`;
                     }
                     if (viewMode === "party") {
                       const statePartyData = partyData[popupInfo.stateCode];
                       return (
                         <div>
-                          <div className="font-semibold">
-                            {stateName}
-                          </div>
+                          <div className="font-semibold">{stateName}</div>
                           {statePartyData ? (
                             <>
                               <div>
@@ -642,9 +648,7 @@ export default function DonationsMap({
                         .join("\n");
                       return (
                         <div>
-                          <div className="font-semibold">
-                            {stateName}
-                          </div>
+                          <div className="font-semibold">{stateName}</div>
                           <div className="whitespace-pre-line">{amounts}</div>
                         </div>
                       );

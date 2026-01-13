@@ -145,38 +145,53 @@ function normalizeSearchResponse(data: BackendSearchResponse): SearchResult {
 
 async function fetchApi<T>(
   endpoint: string,
-  options?: RequestInit
+  options?: RequestInit,
+  retries: number = 2
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
 
-  try {
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...options?.headers,
-      },
-    });
+  let lastError: unknown;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          ...options?.headers,
+        },
+      });
 
-    if (!response.ok) {
-      const error: ApiError = await response.json().catch(() => ({
-        code: "HTTP_ERROR",
-        message: `HTTP ${response.status}: ${response.statusText}`,
-      }));
+      if (!response.ok) {
+        const error: ApiError = await response.json().catch(() => ({
+          code: "HTTP_ERROR",
+          message: `HTTP ${response.status}: ${response.statusText}`,
+        }));
+        throw error;
+      }
+
+      return await response.json();
+    } catch (error) {
+      lastError = error;
+      // Retry on network errors (TypeError from fetch)
+      if (error instanceof TypeError && attempt < retries) {
+        // Wait a bit before retrying (exponential backoff)
+        await new Promise((resolve) =>
+          setTimeout(resolve, 500 * (attempt + 1))
+        );
+        continue;
+      }
+      // Treat any TypeError as a network error (fetch throws TypeError for network failures)
+      if (error instanceof TypeError) {
+        throw {
+          code: "NETWORK_ERROR",
+          message:
+            "Unable to connect to the API. Please check your connection.",
+        } as ApiError;
+      }
       throw error;
     }
-
-    return await response.json();
-  } catch (error) {
-    // Treat any TypeError as a network error (fetch throws TypeError for network failures)
-    if (error instanceof TypeError) {
-      throw {
-        code: "NETWORK_ERROR",
-        message: "Unable to connect to the API. Please check your connection.",
-      } as ApiError;
-    }
-    throw error;
   }
+  throw lastError;
 }
 
 export async function searchPoliticians(
@@ -250,10 +265,9 @@ export async function getPoliticianSummary(
     };
   }
 
-  const data = await fetchApi<BackendPoliticianSummary>(
-    `/politicians/${id}`,
-    { signal }
-  );
+  const data = await fetchApi<BackendPoliticianSummary>(`/politicians/${id}`, {
+    signal,
+  });
   return normalizePoliticianSummary(data);
 }
 
@@ -268,8 +282,7 @@ export async function getPoliticianProfile(
     getPoliticianDonations(id).catch(() => ({ donations: [] })),
   ]);
 
-  const votes =
-    votesData.status === "fulfilled" ? votesData.value.votes : [];
+  const votes = votesData.status === "fulfilled" ? votesData.value.votes : [];
   const rawDonations =
     donationsData.status === "fulfilled" ? donationsData.value.donations : [];
 
@@ -425,7 +438,7 @@ export async function askQuestion(request: AskRequest): Promise<AIResponse> {
 // Visualization API functions
 
 export async function getDonationsMap(params?: {
-  politician_ids?: number[];
+  politician_ids?: (number | string)[];
   category?: string;
   start_date?: string;
   end_date?: string;

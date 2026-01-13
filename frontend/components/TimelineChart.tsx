@@ -2,29 +2,40 @@
 
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import ReactECharts from "echarts-for-react";
-import type { 
-  TimelineResponse, 
-  TimelineEvent, 
-  EventType, 
+import type {
+  TimelineResponse,
+  TimelineEvent,
+  EventType,
   TimelineCluster,
-  VisualizationCitation 
+  VisualizationCitation,
 } from "@/lib/types";
 import { getPoliticianTimeline } from "@/lib/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import LoadingSpinner from "./LoadingSpinner";
-import { 
-  ChevronDown, 
-  ChevronRight, 
-  AlertTriangle, 
-  Link2, 
+import {
+  ChevronDown,
+  ChevronRight,
+  AlertTriangle,
+  Link2,
   ExternalLink,
   Users,
   Eye,
-  EyeOff
+  EyeOff,
 } from "lucide-react";
 
 // Event type colors
@@ -65,14 +76,18 @@ const POLITICIAN_COLORS = [
 ];
 
 interface TimelineChartProps {
-  politicianId: number;
+  politicianId: number | string;
   startDate?: string;
   endDate?: string;
   eventTypes?: EventType[];
   // New props for enhanced features
   showClustering?: boolean;
   showCrossReference?: boolean;
-  comparativePoliticians?: Array<{ id: number; name: string; party: string }>;
+  comparativePoliticians?: Array<{
+    id: number | string;
+    name: string;
+    party: string;
+  }>;
   onEventClick?: (event: TimelineEvent) => void;
   onCitationClick?: (citations: VisualizationCitation[]) => void;
 }
@@ -88,21 +103,31 @@ export default function TimelineChart({
   onEventClick,
   onCitationClick,
 }: TimelineChartProps) {
-  const [timelineData, setTimelineData] = useState<TimelineResponse | null>(null);
+  const [timelineData, setTimelineData] = useState<TimelineResponse | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Enhanced state
-  const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
-  const [highlightedEvents, setHighlightedEvents] = useState<Set<string>>(new Set());
-  const [expandedClusters, setExpandedClusters] = useState<Set<string>>(new Set());
+  const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(
+    null
+  );
+  const [highlightedEvents, setHighlightedEvents] = useState<Set<string>>(
+    new Set()
+  );
+  const [expandedClusters, setExpandedClusters] = useState<Set<string>>(
+    new Set()
+  );
   const [viewMode, setViewMode] = useState<"single" | "comparative">("single");
-  const [comparativeData, setComparativeData] = useState<Record<number, TimelineResponse>>({});
+  const [comparativeData, setComparativeData] = useState<
+    Record<number, TimelineResponse>
+  >({});
   const [visibleTypes, setVisibleTypes] = useState<Set<EventType>>(
     new Set(["vote", "donation", "statement", "bill_sponsor"])
   );
   const [showRelatedWarning, setShowRelatedWarning] = useState(false);
-  
+
   const chartRef = useRef<any>(null);
 
   // Load primary politician timeline
@@ -130,7 +155,8 @@ export default function TimelineChart({
 
   // Load comparative data for multiple politicians
   useEffect(() => {
-    if (viewMode !== "comparative" || comparativePoliticians.length === 0) return;
+    if (viewMode !== "comparative" || comparativePoliticians.length === 0)
+      return;
 
     Promise.all(
       comparativePoliticians.map((pol) =>
@@ -152,31 +178,33 @@ export default function TimelineChart({
   // Enrich timeline data with generated clusters
   const enrichTimelineData = (data: TimelineResponse): TimelineResponse => {
     if (data.clusters && data.clusters.length > 0) return data;
-    
+
     // Generate clusters based on topic and date proximity
     const clusters: TimelineCluster[] = [];
     const eventsByTopic: Record<string, TimelineEvent[]> = {};
-    
+
     data.events.forEach((event) => {
       const topic = event.topic || "Other";
       if (!eventsByTopic[topic]) eventsByTopic[topic] = [];
       eventsByTopic[topic].push(event);
     });
-    
+
     Object.entries(eventsByTopic).forEach(([topic, events]) => {
       if (events.length >= 2) {
-        const sortedEvents = [...events].sort((a, b) => 
-          new Date(a.date).getTime() - new Date(b.date).getTime()
+        const sortedEvents = [...events].sort(
+          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
         );
-        
+
         // Group events within 30 days of each other
         let currentCluster: TimelineEvent[] = [sortedEvents[0]];
-        
+
         for (let i = 1; i < sortedEvents.length; i++) {
           const prevDate = new Date(sortedEvents[i - 1].date);
           const currDate = new Date(sortedEvents[i].date);
-          const daysDiff = Math.abs(currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24);
-          
+          const daysDiff =
+            Math.abs(currDate.getTime() - prevDate.getTime()) /
+            (1000 * 60 * 60 * 24);
+
           if (daysDiff <= 30) {
             currentCluster.push(sortedEvents[i]);
           } else {
@@ -194,7 +222,7 @@ export default function TimelineChart({
             currentCluster = [sortedEvents[i]];
           }
         }
-        
+
         if (currentCluster.length >= 2) {
           clusters.push({
             id: `cluster-${topic}-${clusters.length}`,
@@ -208,50 +236,59 @@ export default function TimelineChart({
         }
       }
     });
-    
+
     return { ...data, clusters };
   };
 
   // Find related events (within 14 days, different type)
-  const findRelatedEvents = useCallback((event: TimelineEvent): TimelineEvent[] => {
-    if (!timelineData) return [];
-    
-    const eventDate = new Date(event.date);
-    const related: TimelineEvent[] = [];
-    
-    timelineData.events.forEach((e) => {
-      if (e.id === event.id) return;
-      
-      const eDate = new Date(e.date);
-      const daysDiff = Math.abs(eventDate.getTime() - eDate.getTime()) / (1000 * 60 * 60 * 24);
-      
-      // Related if within 14 days and different type
-      if (daysDiff <= 14 && e.type !== event.type) {
-        related.push(e);
-      }
-    });
-    
-    return related;
-  }, [timelineData]);
+  const findRelatedEvents = useCallback(
+    (event: TimelineEvent): TimelineEvent[] => {
+      if (!timelineData) return [];
+
+      const eventDate = new Date(event.date);
+      const related: TimelineEvent[] = [];
+
+      timelineData.events.forEach((e) => {
+        if (e.id === event.id) return;
+
+        const eDate = new Date(e.date);
+        const daysDiff =
+          Math.abs(eventDate.getTime() - eDate.getTime()) /
+          (1000 * 60 * 60 * 24);
+
+        // Related if within 14 days and different type
+        if (daysDiff <= 14 && e.type !== event.type) {
+          related.push(e);
+        }
+      });
+
+      return related;
+    },
+    [timelineData]
+  );
 
   // Handle event click - highlight related events
-  const handleEventClick = useCallback((event: TimelineEvent) => {
-    setSelectedEvent(event);
-    onEventClick?.(event);
-    
-    if (showCrossReference) {
-      const related = findRelatedEvents(event);
-      setHighlightedEvents(new Set([event.id, ...related.map((e) => e.id)]));
-      
-      // Show correlation warning when highlighting donations + votes
-      if (
-        (event.type === "vote" && related.some((e) => e.type === "donation")) ||
-        (event.type === "donation" && related.some((e) => e.type === "vote"))
-      ) {
-        setShowRelatedWarning(true);
+  const handleEventClick = useCallback(
+    (event: TimelineEvent) => {
+      setSelectedEvent(event);
+      onEventClick?.(event);
+
+      if (showCrossReference) {
+        const related = findRelatedEvents(event);
+        setHighlightedEvents(new Set([event.id, ...related.map((e) => e.id)]));
+
+        // Show correlation warning when highlighting donations + votes
+        if (
+          (event.type === "vote" &&
+            related.some((e) => e.type === "donation")) ||
+          (event.type === "donation" && related.some((e) => e.type === "vote"))
+        ) {
+          setShowRelatedWarning(true);
+        }
       }
-    }
-  }, [showCrossReference, findRelatedEvents, onEventClick]);
+    },
+    [showCrossReference, findRelatedEvents, onEventClick]
+  );
 
   // Clear selection
   const clearSelection = useCallback(() => {
@@ -308,8 +345,10 @@ export default function TimelineChart({
     }
 
     // Filter events by visible types
-    const filteredEvents = timelineData.events.filter((e) => visibleTypes.has(e.type));
-    
+    const filteredEvents = timelineData.events.filter((e) =>
+      visibleTypes.has(e.type)
+    );
+
     // Group events by date and type
     const eventsByDate = filteredEvents.reduce((acc, event) => {
       const date = event.date;
@@ -320,7 +359,9 @@ export default function TimelineChart({
 
     const dates = Object.keys(eventsByDate).sort();
 
-    const series = (["vote", "donation", "statement", "bill_sponsor"] as EventType[])
+    const series = (
+      ["vote", "donation", "statement", "bill_sponsor"] as EventType[]
+    )
       .filter((type) => visibleTypes.has(type))
       .map((type) => ({
         name: TYPE_LABELS[type],
@@ -355,10 +396,18 @@ export default function TimelineChart({
           const events = eventsByDate[date];
           const typeEvents = events.filter((e) => e.type === type);
           if (typeEvents.length === 0) return [];
-          
+
           return typeEvents.map((event, idx) => [
             date,
-            idx + 1 + (type === "vote" ? 0 : type === "donation" ? 0.3 : type === "statement" ? 0.6 : 0.9),
+            idx +
+              1 +
+              (type === "vote"
+                ? 0
+                : type === "donation"
+                ? 0.3
+                : type === "statement"
+                ? 0.6
+                : 0.9),
             typeEvents.length,
             event.title,
             event.id,
@@ -369,7 +418,11 @@ export default function TimelineChart({
       }));
 
     // Add cluster markers if clustering is enabled
-    if (showClustering && timelineData.clusters && timelineData.clusters.length > 0) {
+    if (
+      showClustering &&
+      timelineData.clusters &&
+      timelineData.clusters.length > 0
+    ) {
       const clusterSeries = {
         name: "Clusters",
         type: "scatter",
@@ -416,13 +469,17 @@ export default function TimelineChart({
         },
       },
       legend: {
-        data: [...Object.values(TYPE_LABELS).filter((_, i) => 
-          visibleTypes.has(Object.keys(TYPE_LABELS)[i] as EventType)
-        ), ...(showClustering ? ["Clusters"] : [])],
+        data: [
+          ...Object.values(TYPE_LABELS).filter((_, i) =>
+            visibleTypes.has(Object.keys(TYPE_LABELS)[i] as EventType)
+          ),
+          ...(showClustering ? ["Clusters"] : []),
+        ],
         bottom: 10,
         selected: Object.fromEntries(
           Object.entries(TYPE_LABELS).map(([type, label]) => [
-            label, visibleTypes.has(type as EventType)
+            label,
+            visibleTypes.has(type as EventType),
           ])
         ),
       },
@@ -474,8 +531,9 @@ export default function TimelineChart({
 
   // Chart options for comparative view
   const comparativeChartOption = useMemo(() => {
-    if (viewMode !== "comparative" || comparativePoliticians.length === 0) return null;
-    
+    if (viewMode !== "comparative" || comparativePoliticians.length === 0)
+      return null;
+
     const allPoliticians = [
       { id: politicianId, name: "Primary", events: timelineData?.events || [] },
       ...comparativePoliticians.map((pol) => ({
@@ -484,7 +542,7 @@ export default function TimelineChart({
         events: comparativeData[pol.id]?.events || [],
       })),
     ];
-    
+
     const series = allPoliticians.map((pol, idx) => ({
       name: pol.name,
       type: "scatter",
@@ -502,7 +560,7 @@ export default function TimelineChart({
           event.outcome || "",
         ]),
     }));
-    
+
     return {
       title: {
         text: "Comparative Timeline",
@@ -538,7 +596,8 @@ export default function TimelineChart({
         type: "category",
         data: allPoliticians.map((p) => p.name),
         axisLabel: {
-          formatter: (value: string) => value.length > 15 ? value.slice(0, 15) + "..." : value,
+          formatter: (value: string) =>
+            value.length > 15 ? value.slice(0, 15) + "..." : value,
         },
       },
       series,
@@ -547,25 +606,37 @@ export default function TimelineChart({
         { type: "inside", xAxisIndex: 0 },
       ],
     };
-  }, [viewMode, comparativePoliticians, politicianId, timelineData, comparativeData, visibleTypes]);
+  }, [
+    viewMode,
+    comparativePoliticians,
+    politicianId,
+    timelineData,
+    comparativeData,
+    visibleTypes,
+  ]);
 
   // Handle chart click
-  const handleChartClick = useCallback((params: any) => {
-    if (params.seriesName === "Clusters") return;
-    
-    const eventId = params.value[4];
-    const event = timelineData?.events.find((e) => e.id === eventId);
-    if (event) {
-      handleEventClick(event);
-    }
-  }, [timelineData, handleEventClick]);
+  const handleChartClick = useCallback(
+    (params: any) => {
+      if (params.seriesName === "Clusters") return;
+
+      const eventId = params.value[4];
+      const event = timelineData?.events.find((e) => e.id === eventId);
+      if (event) {
+        handleEventClick(event);
+      }
+    },
+    [timelineData, handleEventClick]
+  );
 
   if (isLoading) {
     return (
       <Card>
         <CardHeader>
           <CardTitle>Timeline</CardTitle>
-          <CardDescription>Chronological view of votes, donations, and statements</CardDescription>
+          <CardDescription>
+            Chronological view of votes, donations, and statements
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[400px] flex items-center justify-center">
@@ -581,7 +652,9 @@ export default function TimelineChart({
       <Card>
         <CardHeader>
           <CardTitle>Timeline</CardTitle>
-          <CardDescription>Chronological view of votes, donations, and statements</CardDescription>
+          <CardDescription>
+            Chronological view of votes, donations, and statements
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[400px] flex items-center justify-center text-red-600">
@@ -604,7 +677,10 @@ export default function TimelineChart({
             </CardDescription>
           </div>
           {comparativePoliticians.length > 0 && (
-            <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as "single" | "comparative")}>
+            <Tabs
+              value={viewMode}
+              onValueChange={(v) => setViewMode(v as "single" | "comparative")}
+            >
               <TabsList>
                 <TabsTrigger value="single">Single</TabsTrigger>
                 <TabsTrigger value="comparative">
@@ -620,27 +696,35 @@ export default function TimelineChart({
         {/* Event Type Filters */}
         <div className="flex flex-wrap gap-2 items-center">
           <span className="text-sm text-gray-600 mr-2">Show:</span>
-          {(Object.entries(TYPE_LABELS) as [EventType, string][]).map(([type, label]) => (
-            <Button
-              key={type}
-              variant={visibleTypes.has(type) ? "default" : "outline"}
-              size="sm"
-              onClick={() => toggleEventType(type)}
-              className="gap-1"
-              style={{
-                backgroundColor: visibleTypes.has(type) ? TYPE_COLORS[type] : undefined,
-                borderColor: TYPE_COLORS[type],
-              }}
-            >
-              {visibleTypes.has(type) ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
-              {label}
-              {eventCounts[type] && (
-                <Badge variant="secondary" className="ml-1 text-xs">
-                  {eventCounts[type]}
-                </Badge>
-              )}
-            </Button>
-          ))}
+          {(Object.entries(TYPE_LABELS) as [EventType, string][]).map(
+            ([type, label]) => (
+              <Button
+                key={type}
+                variant={visibleTypes.has(type) ? "default" : "outline"}
+                size="sm"
+                onClick={() => toggleEventType(type)}
+                className="gap-1"
+                style={{
+                  backgroundColor: visibleTypes.has(type)
+                    ? TYPE_COLORS[type]
+                    : undefined,
+                  borderColor: TYPE_COLORS[type],
+                }}
+              >
+                {visibleTypes.has(type) ? (
+                  <Eye className="h-3 w-3" />
+                ) : (
+                  <EyeOff className="h-3 w-3" />
+                )}
+                {label}
+                {eventCounts[type] && (
+                  <Badge variant="secondary" className="ml-1 text-xs">
+                    {eventCounts[type]}
+                  </Badge>
+                )}
+              </Button>
+            )
+          )}
         </div>
 
         {/* Correlation Warning */}
@@ -648,8 +732,8 @@ export default function TimelineChart({
           <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm">
             <AlertTriangle className="h-4 w-4 text-amber-600 flex-shrink-0" />
             <span className="text-amber-800">
-              <strong>Note:</strong> Correlation does not imply causation. Related events are shown 
-              based on timing proximity only.
+              <strong>Note:</strong> Correlation does not imply causation.
+              Related events are shown based on timing proximity only.
             </span>
             <Button
               variant="ghost"
@@ -666,7 +750,11 @@ export default function TimelineChart({
         <div className="h-[400px] border rounded-lg">
           <ReactECharts
             ref={chartRef}
-            option={viewMode === "comparative" && comparativeChartOption ? comparativeChartOption : chartOption}
+            option={
+              viewMode === "comparative" && comparativeChartOption
+                ? comparativeChartOption
+                : chartOption
+            }
             style={{ height: "100%", width: "100%" }}
             onEvents={{
               click: handleChartClick,
@@ -675,76 +763,100 @@ export default function TimelineChart({
         </div>
 
         {/* Clusters Section */}
-        {showClustering && timelineData?.clusters && timelineData.clusters.length > 0 && (
-          <div className="space-y-2">
-            <h3 className="font-semibold text-sm flex items-center gap-2">
-              <Link2 className="h-4 w-4" />
-              Event Clusters
-            </h3>
+        {showClustering &&
+          timelineData?.clusters &&
+          timelineData.clusters.length > 0 && (
             <div className="space-y-2">
-              {timelineData.clusters.map((cluster) => (
-                <div key={cluster.id} className="border rounded-lg overflow-hidden">
-                  <button
-                    onClick={() => toggleCluster(cluster.id)}
-                    className="w-full flex items-center justify-between p-3 hover:bg-gray-50 transition-colors"
+              <h3 className="font-semibold text-sm flex items-center gap-2">
+                <Link2 className="h-4 w-4" />
+                Event Clusters
+              </h3>
+              <div className="space-y-2">
+                {timelineData.clusters.map((cluster) => (
+                  <div
+                    key={cluster.id}
+                    className="border rounded-lg overflow-hidden"
                   >
-                    <div className="flex items-center gap-2">
-                      {expandedClusters.has(cluster.id) ? (
-                        <ChevronDown className="h-4 w-4" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4" />
-                      )}
-                      <div
-                        className="w-3 h-3 rounded"
-                        style={{ backgroundColor: TOPIC_COLORS[cluster.topic] || TOPIC_COLORS.Other }}
-                      />
-                      <span className="font-medium">{cluster.name}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
-                      <span>{cluster.start_date} - {cluster.end_date}</span>
-                      <Badge variant="outline">{cluster.event_count} events</Badge>
-                    </div>
-                  </button>
-                  
-                  {expandedClusters.has(cluster.id) && (
-                    <div className="border-t p-3 bg-gray-50 space-y-2">
-                      {timelineData.events
-                        .filter((e) => cluster.event_ids.includes(e.id))
-                        .map((event) => (
-                          <div
-                            key={event.id}
-                            onClick={() => handleEventClick(event)}
-                            className={`p-2 bg-white border rounded cursor-pointer hover:border-gray-400 transition-colors ${
-                              selectedEvent?.id === event.id ? "ring-2 ring-blue-500" : ""
-                            }`}
-                          >
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <div
-                                  className="w-2 h-2 rounded-full"
-                                  style={{ backgroundColor: TYPE_COLORS[event.type] }}
-                                />
-                                <span className="text-sm font-medium">{event.title}</span>
+                    <button
+                      onClick={() => toggleCluster(cluster.id)}
+                      className="w-full flex items-center justify-between p-3 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        {expandedClusters.has(cluster.id) ? (
+                          <ChevronDown className="h-4 w-4" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4" />
+                        )}
+                        <div
+                          className="w-3 h-3 rounded"
+                          style={{
+                            backgroundColor:
+                              TOPIC_COLORS[cluster.topic] || TOPIC_COLORS.Other,
+                          }}
+                        />
+                        <span className="font-medium">{cluster.name}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <span>
+                          {cluster.start_date} - {cluster.end_date}
+                        </span>
+                        <Badge variant="outline">
+                          {cluster.event_count} events
+                        </Badge>
+                      </div>
+                    </button>
+
+                    {expandedClusters.has(cluster.id) && (
+                      <div className="border-t p-3 bg-gray-50 space-y-2">
+                        {timelineData.events
+                          .filter((e) => cluster.event_ids.includes(e.id))
+                          .map((event) => (
+                            <div
+                              key={event.id}
+                              onClick={() => handleEventClick(event)}
+                              className={`p-2 bg-white border rounded cursor-pointer hover:border-gray-400 transition-colors ${
+                                selectedEvent?.id === event.id
+                                  ? "ring-2 ring-blue-500"
+                                  : ""
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <div
+                                    className="w-2 h-2 rounded-full"
+                                    style={{
+                                      backgroundColor: TYPE_COLORS[event.type],
+                                    }}
+                                  />
+                                  <span className="text-sm font-medium">
+                                    {event.title}
+                                  </span>
+                                </div>
+                                <span className="text-xs text-gray-500">
+                                  {event.date}
+                                </span>
                               </div>
-                              <span className="text-xs text-gray-500">{event.date}</span>
+                              {event.outcome && (
+                                <Badge
+                                  variant={
+                                    event.outcome === "yes"
+                                      ? "default"
+                                      : "secondary"
+                                  }
+                                  className="mt-1 text-xs"
+                                >
+                                  {event.outcome}
+                                </Badge>
+                              )}
                             </div>
-                            {event.outcome && (
-                              <Badge
-                                variant={event.outcome === "yes" ? "default" : "secondary"}
-                                className="mt-1 text-xs"
-                              >
-                                {event.outcome}
-                              </Badge>
-                            )}
-                          </div>
-                        ))}
-                    </div>
-                  )}
-                </div>
-              ))}
+                          ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Selected Event Detail */}
         {selectedEvent && (
@@ -766,13 +878,17 @@ export default function TimelineChart({
                 Clear
               </Button>
             </div>
-            
+
             {selectedEvent.outcome && (
-              <Badge variant={selectedEvent.outcome === "yes" ? "default" : "secondary"}>
+              <Badge
+                variant={
+                  selectedEvent.outcome === "yes" ? "default" : "secondary"
+                }
+              >
                 Outcome: {selectedEvent.outcome}
               </Badge>
             )}
-            
+
             {/* Related Events */}
             {showCrossReference && highlightedEvents.size > 1 && (
               <div className="pt-2 border-t border-blue-200">
@@ -781,7 +897,10 @@ export default function TimelineChart({
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {timelineData?.events
-                    .filter((e) => highlightedEvents.has(e.id) && e.id !== selectedEvent.id)
+                    .filter(
+                      (e) =>
+                        highlightedEvents.has(e.id) && e.id !== selectedEvent.id
+                    )
                     .slice(0, 5)
                     .map((event) => (
                       <Badge
@@ -797,7 +916,7 @@ export default function TimelineChart({
                 </div>
               </div>
             )}
-            
+
             {/* Citations */}
             {selectedEvent.citations.length > 0 && (
               <div className="pt-2 border-t border-blue-200">
@@ -847,7 +966,9 @@ export default function TimelineChart({
                   key={event.id}
                   onClick={() => handleEventClick(event)}
                   className={`p-2 border rounded text-sm hover:bg-gray-50 transition-colors cursor-pointer ${
-                    highlightedEvents.has(event.id) ? "ring-2 ring-blue-300 bg-blue-50" : ""
+                    highlightedEvents.has(event.id)
+                      ? "ring-2 ring-blue-300 bg-blue-50"
+                      : ""
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -865,7 +986,11 @@ export default function TimelineChart({
                   </div>
                   {event.outcome && (
                     <div className="mt-1">
-                      <Badge variant={event.outcome === "yes" ? "default" : "secondary"}>
+                      <Badge
+                        variant={
+                          event.outcome === "yes" ? "default" : "secondary"
+                        }
+                      >
                         {event.outcome}
                       </Badge>
                     </div>

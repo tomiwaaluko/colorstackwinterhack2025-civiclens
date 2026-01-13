@@ -3,10 +3,74 @@
 import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import dynamic from "next/dynamic";
 
-// react-force-graph needs to be imported dynamically for Next.js
+// Define THREE and AFRAME stubs immediately at module load time
+// This MUST run before any react-force-graph related code is imported
+// react-force-graph has peer dependencies on three.js and aframe for 3D/VR features
+if (typeof window !== "undefined") {
+  // THREE.js stub - required by react-force-graph
+  if (typeof (window as any).THREE === "undefined") {
+    (window as any).THREE = {
+      REVISION: "stub",
+      Vector3: class Vector3 {
+        constructor() {}
+      },
+      Vector2: class Vector2 {
+        constructor() {}
+      },
+      Color: class Color {
+        constructor() {}
+      },
+      Object3D: class Object3D {
+        constructor() {}
+      },
+      Scene: class Scene {
+        constructor() {}
+      },
+      Camera: class Camera {
+        constructor() {}
+      },
+      WebGLRenderer: class WebGLRenderer {
+        constructor() {}
+      },
+    };
+  }
+
+  // AFRAME stub - required by react-force-graph 3D features
+  if (typeof (window as any).AFRAME === "undefined") {
+    (window as any).AFRAME = {
+      registerComponent: () => {},
+      registerSystem: () => {},
+      registerShader: () => {},
+      registerPrimitive: () => {},
+      registerGeometry: () => {},
+      registerState: () => {},
+      components: {},
+      geometries: {},
+      primitives: {},
+      shaders: {},
+      systems: {},
+      utils: {
+        device: {
+          isMobile: () => false,
+          isBrowserEnvironment: true,
+        },
+      },
+      version: "1.0.0-stub",
+    };
+  }
+}
+
+// Dynamically load ForceGraph2D only on client-side
 const ForceGraph2D = dynamic(
   () => import("react-force-graph").then((mod) => mod.ForceGraph2D),
-  { ssr: false }
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[600px] flex items-center justify-center text-gray-500">
+        Loading network visualization...
+      </div>
+    ),
+  }
 );
 
 import type {
@@ -101,34 +165,51 @@ export default function NetworkGraph({
   const [graphData, setGraphData] = useState<NetworkGraphResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Ensure component only renders ForceGraph on client side
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   // Selection state
   const [selectedNode, setSelectedNode] = useState<NetworkNode | null>(null);
   const [selectedEdge, setSelectedEdge] = useState<NetworkEdge | null>(null);
-  
+
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<NetworkNode[]>([]);
   const [minAmount, setMinAmount] = useState(initialMinAmount);
-  const [categoryFilter, setCategoryFilter] = useState<string>(initialCategory || "all");
+  const [categoryFilter, setCategoryFilter] = useState<string>(
+    initialCategory || "all"
+  );
   const [showFilters, setShowFilters] = useState(false);
-  
+
   // Exploration mode state
-  const [explorationMode, setExplorationMode] = useState<ExplorationMode>("default");
-  const [highlightedPath, setHighlightedPath] = useState<NetworkPath | null>(null);
+  const [explorationMode, setExplorationMode] =
+    useState<ExplorationMode>("default");
+  const [highlightedPath, setHighlightedPath] = useState<NetworkPath | null>(
+    null
+  );
   const [pathSteps, setPathSteps] = useState<string[]>([]);
-  
+
   // Clustering state
   const [showClusters, setShowClusters] = useState(true);
-  const [expandedClusters, setExpandedClusters] = useState<Set<string>>(new Set());
-  
+  const [expandedClusters, setExpandedClusters] = useState<Set<string>>(
+    new Set()
+  );
+
   // Visual state
-  const [highlightedNodes, setHighlightedNodes] = useState<Set<string>>(new Set());
-  const [highlightedEdges, setHighlightedEdges] = useState<Set<string>>(new Set());
+  const [highlightedNodes, setHighlightedNodes] = useState<Set<string>>(
+    new Set()
+  );
+  const [highlightedEdges, setHighlightedEdges] = useState<Set<string>>(
+    new Set()
+  );
   const [visibleNodeTypes, setVisibleNodeTypes] = useState<Set<string>>(
     new Set(["politician", "donor", "bill"])
   );
-  
+
   const graphRef = useRef<any>(null);
 
   // Load graph data
@@ -160,7 +241,7 @@ export default function NetworkGraph({
       setHighlightedNodes(new Set());
       return;
     }
-    
+
     const query = searchQuery.toLowerCase();
     const results = graphData.nodes.filter(
       (node) =>
@@ -175,13 +256,15 @@ export default function NetworkGraph({
   // Filter visible nodes based on types
   const filteredGraphData = useMemo(() => {
     if (!graphData) return null;
-    
-    const visibleNodes = graphData.nodes.filter((n) => visibleNodeTypes.has(n.type));
+
+    const visibleNodes = graphData.nodes.filter((n) =>
+      visibleNodeTypes.has(n.type)
+    );
     const visibleNodeIds = new Set(visibleNodes.map((n) => n.id));
     const visibleEdges = graphData.edges.filter(
       (e) => visibleNodeIds.has(e.source) && visibleNodeIds.has(e.target)
     );
-    
+
     return {
       nodes: visibleNodes,
       edges: visibleEdges,
@@ -190,176 +273,205 @@ export default function NetworkGraph({
   }, [graphData, visibleNodeTypes]);
 
   // Get node color with highlighting
-  const getNodeColor = useCallback((node: NetworkNode): string => {
-    const isHighlighted = highlightedNodes.has(node.id);
-    const isInPath = highlightedPath?.nodes.includes(node.id);
-    
-    if (isHighlighted || isInPath) {
-      return "#ec4899"; // Pink for highlighted
-    }
-    
-    if (showClusters && node.category) {
-      return CATEGORY_COLORS[node.category] || NODE_COLORS[node.type as keyof typeof NODE_COLORS] || "#6b7280";
-    }
-    
-    return NODE_COLORS[node.type as keyof typeof NODE_COLORS] || "#6b7280";
-  }, [highlightedNodes, highlightedPath, showClusters]);
+  const getNodeColor = useCallback(
+    (node: NetworkNode): string => {
+      const isHighlighted = highlightedNodes.has(node.id);
+      const isInPath = highlightedPath?.nodes.includes(node.id);
+
+      if (isHighlighted || isInPath) {
+        return "#ec4899"; // Pink for highlighted
+      }
+
+      if (showClusters && node.category) {
+        return (
+          CATEGORY_COLORS[node.category] ||
+          NODE_COLORS[node.type as keyof typeof NODE_COLORS] ||
+          "#6b7280"
+        );
+      }
+
+      return NODE_COLORS[node.type as keyof typeof NODE_COLORS] || "#6b7280";
+    },
+    [highlightedNodes, highlightedPath, showClusters]
+  );
 
   // Get edge color with highlighting
-  const getEdgeColor = useCallback((edge: NetworkEdge): string => {
-    const edgeId = `${edge.source}-${edge.target}`;
-    const isHighlighted = highlightedEdges.has(edgeId);
-    const isInPath = highlightedPath?.edges.some(
-      (e) => e.source === edge.source && e.target === edge.target
-    );
-    
-    if (isHighlighted || isInPath) {
-      return "#ec4899"; // Pink for highlighted
-    }
-    
-    return EDGE_COLORS[edge.type as keyof typeof EDGE_COLORS] || "#6b7280";
-  }, [highlightedEdges, highlightedPath]);
+  const getEdgeColor = useCallback(
+    (edge: NetworkEdge): string => {
+      const edgeId = `${edge.source}-${edge.target}`;
+      const isHighlighted = highlightedEdges.has(edgeId);
+      const isInPath = highlightedPath?.edges.some(
+        (e) => e.source === edge.source && e.target === edge.target
+      );
+
+      if (isHighlighted || isInPath) {
+        return "#ec4899"; // Pink for highlighted
+      }
+
+      return EDGE_COLORS[edge.type as keyof typeof EDGE_COLORS] || "#6b7280";
+    },
+    [highlightedEdges, highlightedPath]
+  );
 
   // Find influence path: donor → politicians → bills
-  const findInfluencePath = useCallback((donorId: string): NetworkPath | null => {
-    if (!graphData) return null;
-    
-    const pathNodes: string[] = [donorId];
-    const pathEdges: Array<{ source: string; target: string }> = [];
-    const descriptions: string[] = [];
-    
-    // Find politicians who received donations from this donor
-    const donationEdges = graphData.edges.filter(
-      (e) => e.source === donorId && e.type === "donation"
-    );
-    
-    if (donationEdges.length === 0) return null;
-    
-    const politicianIds = donationEdges.map((e) => e.target);
-    pathNodes.push(...politicianIds);
-    pathEdges.push(...donationEdges.map((e) => ({ source: e.source, target: e.target })));
-    descriptions.push(`Donated to ${politicianIds.length} politician(s)`);
-    
-    // Find bills those politicians sponsored or voted on
-    const billIds = new Set<string>();
-    politicianIds.forEach((polId) => {
-      const voteEdges = graphData.edges.filter(
-        (e) => e.source === polId && (e.type === "vote" || e.type === "sponsor")
+  const findInfluencePath = useCallback(
+    (donorId: string): NetworkPath | null => {
+      if (!graphData) return null;
+
+      const pathNodes: string[] = [donorId];
+      const pathEdges: Array<{ source: string; target: string }> = [];
+      const descriptions: string[] = [];
+
+      // Find politicians who received donations from this donor
+      const donationEdges = graphData.edges.filter(
+        (e) => e.source === donorId && e.type === "donation"
       );
-      voteEdges.forEach((e) => {
-        billIds.add(e.target);
-        pathEdges.push({ source: e.source, target: e.target });
+
+      if (donationEdges.length === 0) return null;
+
+      const politicianIds = donationEdges.map((e) => e.target);
+      pathNodes.push(...politicianIds);
+      pathEdges.push(
+        ...donationEdges.map((e) => ({ source: e.source, target: e.target }))
+      );
+      descriptions.push(`Donated to ${politicianIds.length} politician(s)`);
+
+      // Find bills those politicians sponsored or voted on
+      const billIds = new Set<string>();
+      politicianIds.forEach((polId) => {
+        const voteEdges = graphData.edges.filter(
+          (e) =>
+            e.source === polId && (e.type === "vote" || e.type === "sponsor")
+        );
+        voteEdges.forEach((e) => {
+          billIds.add(e.target);
+          pathEdges.push({ source: e.source, target: e.target });
+        });
       });
-    });
-    
-    pathNodes.push(...Array.from(billIds));
-    descriptions.push(`Connected to ${billIds.size} bill(s)`);
-    
-    return {
-      nodes: pathNodes,
-      edges: pathEdges,
-      description: descriptions.join(" → "),
-    };
-  }, [graphData]);
+
+      pathNodes.push(...Array.from(billIds));
+      descriptions.push(`Connected to ${billIds.size} bill(s)`);
+
+      return {
+        nodes: pathNodes,
+        edges: pathEdges,
+        description: descriptions.join(" → "),
+      };
+    },
+    [graphData]
+  );
 
   // Find legislative web: bill → sponsors → their donors
-  const findLegislativeWeb = useCallback((billId: string): NetworkPath | null => {
-    if (!graphData) return null;
-    
-    const pathNodes: string[] = [billId];
-    const pathEdges: Array<{ source: string; target: string }> = [];
-    const descriptions: string[] = [];
-    
-    // Find politicians who sponsored/voted on this bill
-    const sponsorEdges = graphData.edges.filter(
-      (e) => e.target === billId && (e.type === "vote" || e.type === "sponsor")
-    );
-    
-    if (sponsorEdges.length === 0) return null;
-    
-    const politicianIds = sponsorEdges.map((e) => e.source);
-    pathNodes.push(...politicianIds);
-    pathEdges.push(...sponsorEdges.map((e) => ({ source: e.source, target: e.target })));
-    descriptions.push(`${politicianIds.length} politician(s) involved`);
-    
-    // Find donors to those politicians
-    const donorIds = new Set<string>();
-    politicianIds.forEach((polId) => {
-      const donationEdges = graphData.edges.filter(
-        (e) => e.target === polId && e.type === "donation"
+  const findLegislativeWeb = useCallback(
+    (billId: string): NetworkPath | null => {
+      if (!graphData) return null;
+
+      const pathNodes: string[] = [billId];
+      const pathEdges: Array<{ source: string; target: string }> = [];
+      const descriptions: string[] = [];
+
+      // Find politicians who sponsored/voted on this bill
+      const sponsorEdges = graphData.edges.filter(
+        (e) =>
+          e.target === billId && (e.type === "vote" || e.type === "sponsor")
       );
-      donationEdges.forEach((e) => {
-        donorIds.add(e.source);
-        pathEdges.push({ source: e.source, target: e.target });
+
+      if (sponsorEdges.length === 0) return null;
+
+      const politicianIds = sponsorEdges.map((e) => e.source);
+      pathNodes.push(...politicianIds);
+      pathEdges.push(
+        ...sponsorEdges.map((e) => ({ source: e.source, target: e.target }))
+      );
+      descriptions.push(`${politicianIds.length} politician(s) involved`);
+
+      // Find donors to those politicians
+      const donorIds = new Set<string>();
+      politicianIds.forEach((polId) => {
+        const donationEdges = graphData.edges.filter(
+          (e) => e.target === polId && e.type === "donation"
+        );
+        donationEdges.forEach((e) => {
+          donorIds.add(e.source);
+          pathEdges.push({ source: e.source, target: e.target });
+        });
       });
-    });
-    
-    pathNodes.push(...Array.from(donorIds));
-    descriptions.push(`Funded by ${donorIds.size} donor(s)`);
-    
-    return {
-      nodes: pathNodes,
-      edges: pathEdges,
-      description: descriptions.join(" ← "),
-    };
-  }, [graphData]);
+
+      pathNodes.push(...Array.from(donorIds));
+      descriptions.push(`Funded by ${donorIds.size} donor(s)`);
+
+      return {
+        nodes: pathNodes,
+        edges: pathEdges,
+        description: descriptions.join(" ← "),
+      };
+    },
+    [graphData]
+  );
 
   // Handle node click based on exploration mode
-  const handleNodeClick = useCallback((node: any) => {
-    const networkNode = graphData?.nodes.find((n) => n.id === node.id);
-    if (!networkNode) return;
-    
-    setSelectedNode(networkNode);
-    setSelectedEdge(null);
-    
-    if (explorationMode === "influence_path" && networkNode.type === "donor") {
-      const path = findInfluencePath(networkNode.id);
-      setHighlightedPath(path);
-      if (path) {
-        setPathSteps([
-          `Donor: ${networkNode.label}`,
-          path.description,
-        ]);
+  const handleNodeClick = useCallback(
+    (node: any) => {
+      const networkNode = graphData?.nodes.find((n) => n.id === node.id);
+      if (!networkNode) return;
+
+      setSelectedNode(networkNode);
+      setSelectedEdge(null);
+
+      if (
+        explorationMode === "influence_path" &&
+        networkNode.type === "donor"
+      ) {
+        const path = findInfluencePath(networkNode.id);
+        setHighlightedPath(path);
+        if (path) {
+          setPathSteps([`Donor: ${networkNode.label}`, path.description]);
+        }
+      } else if (
+        explorationMode === "legislative_web" &&
+        networkNode.type === "bill"
+      ) {
+        const path = findLegislativeWeb(networkNode.id);
+        setHighlightedPath(path);
+        if (path) {
+          setPathSteps([`Bill: ${networkNode.label}`, path.description]);
+        }
+      } else if (explorationMode === "default") {
+        // Highlight connected nodes and edges
+        const connectedEdges =
+          filteredGraphData?.edges.filter(
+            (e) => e.source === networkNode.id || e.target === networkNode.id
+          ) || [];
+        const connectedNodeIds = new Set<string>();
+        connectedEdges.forEach((e) => {
+          connectedNodeIds.add(e.source);
+          connectedNodeIds.add(e.target);
+        });
+
+        setHighlightedNodes(connectedNodeIds);
+        setHighlightedEdges(
+          new Set(connectedEdges.map((e) => `${e.source}-${e.target}`))
+        );
       }
-    } else if (explorationMode === "legislative_web" && networkNode.type === "bill") {
-      const path = findLegislativeWeb(networkNode.id);
-      setHighlightedPath(path);
-      if (path) {
-        setPathSteps([
-          `Bill: ${networkNode.label}`,
-          path.description,
-        ]);
-      }
-    } else if (explorationMode === "default") {
-      // Highlight connected nodes and edges
-      const connectedEdges = graphData?.edges.filter(
-        (e) => e.source === networkNode.id || e.target === networkNode.id
-      ) || [];
-      const connectedNodeIds = new Set<string>();
-      connectedEdges.forEach((e) => {
-        connectedNodeIds.add(e.source);
-        connectedNodeIds.add(e.target);
-      });
-      
-      setHighlightedNodes(connectedNodeIds);
-      setHighlightedEdges(
-        new Set(connectedEdges.map((e) => `${e.source}-${e.target}`))
-      );
-    }
-  }, [graphData, explorationMode, findInfluencePath, findLegislativeWeb]);
+    },
+    [graphData, explorationMode, findInfluencePath, findLegislativeWeb]
+  );
 
   // Handle edge click
-  const handleEdgeClick = useCallback((link: any) => {
-    const edge = graphData?.edges.find(
-      (e) =>
-        (e.source === link.source?.id || e.source === link.source) &&
-        (e.target === link.target?.id || e.target === link.target)
-    );
-    if (edge) {
-      setSelectedEdge(edge);
-      setSelectedNode(null);
-    }
-  }, [graphData]);
+  const handleEdgeClick = useCallback(
+    (link: any) => {
+      const edge = graphData?.edges.find(
+        (e) =>
+          (e.source === link.source?.id || e.source === link.source) &&
+          (e.target === link.target?.id || e.target === link.target)
+      );
+      if (edge) {
+        setSelectedEdge(edge);
+        setSelectedNode(null);
+      }
+    },
+    [graphData]
+  );
 
   // Clear all selections
   const clearSelection = useCallback(() => {
@@ -372,20 +484,25 @@ export default function NetworkGraph({
   }, []);
 
   // Focus on search result
-  const focusOnNode = useCallback((nodeId: string) => {
-    if (graphRef.current) {
-      // react-force-graph adds x and y properties at runtime
-      const node = filteredGraphData?.nodes.find((n) => n.id === nodeId) as any;
-      if (node && typeof node.x === 'number' && typeof node.y === 'number') {
-        graphRef.current.centerAt(node.x, node.y, 500);
-        graphRef.current.zoom(2, 500);
-        setHighlightedNodes(new Set([nodeId]));
-      } else {
-        // Fallback: just highlight the node
-        setHighlightedNodes(new Set([nodeId]));
+  const focusOnNode = useCallback(
+    (nodeId: string) => {
+      if (graphRef.current) {
+        // react-force-graph adds x and y properties at runtime
+        const node = filteredGraphData?.nodes.find(
+          (n) => n.id === nodeId
+        ) as any;
+        if (node && typeof node.x === "number" && typeof node.y === "number") {
+          graphRef.current.centerAt(node.x, node.y, 500);
+          graphRef.current.zoom(2, 500);
+          setHighlightedNodes(new Set([nodeId]));
+        } else {
+          // Fallback: just highlight the node
+          setHighlightedNodes(new Set([nodeId]));
+        }
       }
-    }
-  }, [filteredGraphData]);
+    },
+    [filteredGraphData]
+  );
 
   // Toggle node type visibility
   const toggleNodeType = useCallback((type: string) => {
@@ -410,7 +527,7 @@ export default function NetworkGraph({
     return Array.from(categories);
   }, [graphData]);
 
-  if (isLoading) {
+  if (!isMounted || isLoading) {
     return (
       <Card>
         <CardHeader>
@@ -517,7 +634,10 @@ export default function NetworkGraph({
                 >
                   <div
                     className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: NODE_COLORS[node.type as keyof typeof NODE_COLORS] }}
+                    style={{
+                      backgroundColor:
+                        NODE_COLORS[node.type as keyof typeof NODE_COLORS],
+                    }}
                   />
                   <span className="font-medium">{node.label}</span>
                   <Badge variant="outline" className="ml-auto text-xs">
@@ -552,7 +672,10 @@ export default function NetworkGraph({
                 <Label htmlFor="category-filter" className="text-xs">
                   Category
                 </Label>
-                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <Select
+                  value={categoryFilter}
+                  onValueChange={setCategoryFilter}
+                >
                   <SelectTrigger id="category-filter" className="mt-2">
                     <SelectValue />
                   </SelectTrigger>
@@ -567,7 +690,7 @@ export default function NetworkGraph({
                 </Select>
               </div>
             </div>
-            
+
             {/* Node Type Visibility */}
             <div>
               <Label className="text-xs mb-2 block">Show Node Types</Label>
@@ -622,7 +745,7 @@ export default function NetworkGraph({
               </TabsTrigger>
             </TabsList>
           </Tabs>
-          
+
           {explorationMode !== "default" && (
             <TooltipProvider>
               <Tooltip>
@@ -646,14 +769,23 @@ export default function NetworkGraph({
             <div className="flex items-center gap-1 text-sm">
               {pathSteps.map((step, idx) => (
                 <span key={idx} className="flex items-center gap-1">
-                  {idx > 0 && <ChevronRight className="h-4 w-4 text-gray-400" />}
-                  <span className={idx === 0 ? "font-semibold" : "text-gray-600"}>
+                  {idx > 0 && (
+                    <ChevronRight className="h-4 w-4 text-gray-400" />
+                  )}
+                  <span
+                    className={idx === 0 ? "font-semibold" : "text-gray-600"}
+                  >
                     {step}
                   </span>
                 </span>
               ))}
             </div>
-            <Button variant="ghost" size="sm" onClick={clearSelection} className="ml-auto">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearSelection}
+              className="ml-auto"
+            >
               <X className="h-4 w-4" />
             </Button>
           </div>
@@ -663,56 +795,79 @@ export default function NetworkGraph({
         <div className="flex gap-4 text-sm flex-wrap items-center">
           <span className="font-medium">Nodes:</span>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: NODE_COLORS.politician }} />
+            <div
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: NODE_COLORS.politician }}
+            />
             <span>Politicians</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: NODE_COLORS.donor }} />
+            <div
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: NODE_COLORS.donor }}
+            />
             <span>Donors</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: NODE_COLORS.bill }} />
+            <div
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: NODE_COLORS.bill }}
+            />
             <span>Bills</span>
           </div>
           <span className="ml-4 font-medium">Edges:</span>
           <div className="flex items-center gap-1">
-            <div className="w-4 h-0.5" style={{ backgroundColor: EDGE_COLORS.donation }} />
+            <div
+              className="w-4 h-0.5"
+              style={{ backgroundColor: EDGE_COLORS.donation }}
+            />
             <span>Donation</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-4 h-0.5" style={{ backgroundColor: EDGE_COLORS.vote }} />
+            <div
+              className="w-4 h-0.5"
+              style={{ backgroundColor: EDGE_COLORS.vote }}
+            />
             <span>Vote</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-4 h-0.5" style={{ backgroundColor: EDGE_COLORS.sponsor }} />
+            <div
+              className="w-4 h-0.5"
+              style={{ backgroundColor: EDGE_COLORS.sponsor }}
+            />
             <span>Sponsor</span>
           </div>
           {includeIndirect && (
             <div className="flex items-center gap-1">
-              <div className="w-4 h-0.5 border-t-2 border-dashed" style={{ borderColor: EDGE_COLORS.indirect }} />
+              <div
+                className="w-4 h-0.5 border-t-2 border-dashed"
+                style={{ borderColor: EDGE_COLORS.indirect }}
+              />
               <span>Indirect</span>
             </div>
           )}
         </div>
 
         {/* Cluster Legend */}
-        {showClusters && graphData?.clusters && graphData.clusters.length > 0 && (
-          <div className="flex gap-4 text-sm flex-wrap items-center border-t pt-2">
-            <span className="font-medium">Categories:</span>
-            {graphData.clusters.map((cluster) => (
-              <div key={cluster.id} className="flex items-center gap-1">
-                <div
-                  className="w-3 h-3 rounded"
-                  style={{ backgroundColor: cluster.color }}
-                />
-                <span>{cluster.name}</span>
-                <Badge variant="outline" className="text-xs">
-                  {cluster.node_ids.length}
-                </Badge>
-              </div>
-            ))}
-          </div>
-        )}
+        {showClusters &&
+          graphData?.clusters &&
+          graphData.clusters.length > 0 && (
+            <div className="flex gap-4 text-sm flex-wrap items-center border-t pt-2">
+              <span className="font-medium">Categories:</span>
+              {graphData.clusters.map((cluster) => (
+                <div key={cluster.id} className="flex items-center gap-1">
+                  <div
+                    className="w-3 h-3 rounded"
+                    style={{ backgroundColor: cluster.color }}
+                  />
+                  <span>{cluster.name}</span>
+                  <Badge variant="outline" className="text-xs">
+                    {cluster.node_ids.length}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          )}
 
         {/* Graph */}
         <div className="h-[600px] rounded-lg overflow-hidden border relative">
@@ -721,14 +876,18 @@ export default function NetworkGraph({
             <Button
               variant="secondary"
               size="sm"
-              onClick={() => graphRef.current?.zoom(graphRef.current.zoom() * 1.5, 300)}
+              onClick={() =>
+                graphRef.current?.zoom(graphRef.current.zoom() * 1.5, 300)
+              }
             >
               <ZoomIn className="h-4 w-4" />
             </Button>
             <Button
               variant="secondary"
               size="sm"
-              onClick={() => graphRef.current?.zoom(graphRef.current.zoom() / 1.5, 300)}
+              onClick={() =>
+                graphRef.current?.zoom(graphRef.current.zoom() / 1.5, 300)
+              }
             >
               <ZoomOut className="h-4 w-4" />
             </Button>
@@ -740,7 +899,7 @@ export default function NetworkGraph({
               <Maximize2 className="h-4 w-4" />
             </Button>
           </div>
-          
+
           <ForceGraph2D
             ref={graphRef}
             graphData={{
@@ -752,31 +911,40 @@ export default function NetworkGraph({
               })),
             }}
             nodeLabel={(node: any) => {
-              const networkNode = filteredGraphData.nodes.find((n) => n.id === node.id);
+              const networkNode = filteredGraphData.nodes.find(
+                (n) => n.id === node.id
+              );
               if (!networkNode) return node.id;
               let label = `${networkNode.label} (${networkNode.type})`;
-              if (networkNode.category) label += `\nCategory: ${networkNode.category}`;
-              if (networkNode.amount) label += `\nTotal: $${networkNode.amount.toLocaleString()}`;
+              if (networkNode.category)
+                label += `\nCategory: ${networkNode.category}`;
+              if (networkNode.amount)
+                label += `\nTotal: $${networkNode.amount.toLocaleString()}`;
               return label;
             }}
             nodeColor={(node: any) => {
-              const networkNode = filteredGraphData.nodes.find((n) => n.id === node.id);
+              const networkNode = filteredGraphData.nodes.find(
+                (n) => n.id === node.id
+              );
               return networkNode ? getNodeColor(networkNode) : "#6b7280";
             }}
             nodeVal={(node: any) => {
-              const networkNode = filteredGraphData.nodes.find((n) => n.id === node.id);
-              const isHighlighted = highlightedNodes.has(node.id) || 
+              const networkNode = filteredGraphData.nodes.find(
+                (n) => n.id === node.id
+              );
+              const isHighlighted =
+                highlightedNodes.has(node.id) ||
                 highlightedPath?.nodes.includes(node.id);
-              
+
               // Size based on connections
               const connections = filteredGraphData.edges.filter(
                 (e) => e.source === node.id || e.target === node.id
               ).length;
-              
+
               let size = Math.max(5, Math.min(20, connections * 2));
               if (isHighlighted) size *= 1.5;
               if (networkNode?.type === "politician") size *= 1.2;
-              
+
               return size;
             }}
             linkLabel={(link: any) => {
@@ -792,9 +960,12 @@ export default function NetworkGraph({
               const targetNode = filteredGraphData.nodes.find(
                 (n) => n.id === (link.target?.id || link.target)
               );
-              let label = `${sourceNode?.label || link.source} → ${targetNode?.label || link.target}`;
+              let label = `${sourceNode?.label || link.source} → ${
+                targetNode?.label || link.target
+              }`;
               label += `\nType: ${edge.type}`;
-              if (edge.weight > 1) label += `\nAmount: $${edge.weight.toLocaleString()}`;
+              if (edge.weight > 1)
+                label += `\nAmount: $${edge.weight.toLocaleString()}`;
               return label;
             }}
             linkColor={(link: any) => {
@@ -816,10 +987,12 @@ export default function NetworkGraph({
                   pe.source === (link.source?.id || link.source) &&
                   pe.target === (link.target?.id || link.target)
               );
-              
-              let width = edge ? Math.max(1, Math.min(5, edge.weight / 10000)) : 1;
+
+              let width = edge
+                ? Math.max(1, Math.min(5, edge.weight / 10000))
+                : 1;
               if (isInPath) width *= 2;
-              
+
               return width;
             }}
             linkDirectionalArrowLength={6}
@@ -851,7 +1024,12 @@ export default function NetworkGraph({
               <div className="flex items-center gap-2">
                 <div
                   className="w-4 h-4 rounded-full"
-                  style={{ backgroundColor: NODE_COLORS[selectedNode.type as keyof typeof NODE_COLORS] }}
+                  style={{
+                    backgroundColor:
+                      NODE_COLORS[
+                        selectedNode.type as keyof typeof NODE_COLORS
+                      ],
+                  }}
                 />
                 <h3 className="font-semibold text-lg">{selectedNode.label}</h3>
               </div>
@@ -872,49 +1050,68 @@ export default function NetworkGraph({
                 </Button>
               </div>
             </div>
-            
-            {selectedNode.metadata && Object.keys(selectedNode.metadata).length > 0 && (
-              <div className="text-sm text-gray-600 space-y-1">
-                {Object.entries(selectedNode.metadata).map(([key, value]) => (
-                  <div key={key}>
-                    <span className="font-medium capitalize">{key.replace(/_/g, " ")}:</span>{" "}
-                    {typeof value === "number" ? value.toLocaleString() : String(value)}
-                  </div>
-                ))}
-              </div>
-            )}
-            
+
+            {selectedNode.metadata &&
+              Object.keys(selectedNode.metadata).length > 0 && (
+                <div className="text-sm text-gray-600 space-y-1">
+                  {Object.entries(selectedNode.metadata).map(([key, value]) => (
+                    <div key={key}>
+                      <span className="font-medium capitalize">
+                        {key.replace(/_/g, " ")}:
+                      </span>{" "}
+                      {typeof value === "number"
+                        ? value.toLocaleString()
+                        : String(value)}
+                    </div>
+                  ))}
+                </div>
+              )}
+
             <div className="flex gap-4 text-sm text-gray-500 pt-2 border-t">
               <span>
                 Connections:{" "}
-                {filteredGraphData.edges.filter(
-                  (e) => e.source === selectedNode.id || e.target === selectedNode.id
-                ).length}
+                {
+                  filteredGraphData.edges.filter(
+                    (e) =>
+                      e.source === selectedNode.id ||
+                      e.target === selectedNode.id
+                  ).length
+                }
               </span>
-              {selectedNode.type === "donor" && explorationMode !== "influence_path" && (
-                <Button
-                  variant="link"
-                  size="sm"
-                  onClick={() => {
-                    setExplorationMode("influence_path");
-                    handleNodeClick({ id: selectedNode.id });
-                  }}
-                >
-                  Trace Influence Path →
-                </Button>
-              )}
-              {selectedNode.type === "bill" && explorationMode !== "legislative_web" && (
-                <Button
-                  variant="link"
-                  size="sm"
-                  onClick={() => {
-                    setExplorationMode("legislative_web");
-                    handleNodeClick({ id: selectedNode.id });
-                  }}
-                >
-                  Show Legislative Web →
-                </Button>
-              )}
+              {selectedNode.type === "donor" &&
+                explorationMode !== "influence_path" && (
+                  <Button
+                    variant="link"
+                    size="sm"
+                    onClick={() => {
+                      setExplorationMode("influence_path");
+                      // Use setTimeout to ensure state updates before handling click
+                      setTimeout(
+                        () => handleNodeClick({ id: selectedNode.id }),
+                        0
+                      );
+                    }}
+                  >
+                    Trace Influence Path →
+                  </Button>
+                )}
+              {selectedNode.type === "bill" &&
+                explorationMode !== "legislative_web" && (
+                  <Button
+                    variant="link"
+                    size="sm"
+                    onClick={() => {
+                      setExplorationMode("legislative_web");
+                      // Use setTimeout to ensure state updates before handling click
+                      setTimeout(
+                        () => handleNodeClick({ id: selectedNode.id }),
+                        0
+                      );
+                    }}
+                  >
+                    Show Legislative Web →
+                  </Button>
+                )}
             </div>
           </div>
         )}
@@ -923,14 +1120,25 @@ export default function NetworkGraph({
           <div className="p-4 bg-gray-50 rounded-lg space-y-2">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-lg">
-                {filteredGraphData.nodes.find((n) => n.id === selectedEdge.source)?.label}{" "}
+                {
+                  filteredGraphData.nodes.find(
+                    (n) => n.id === selectedEdge.source
+                  )?.label
+                }{" "}
                 →{" "}
-                {filteredGraphData.nodes.find((n) => n.id === selectedEdge.target)?.label}
+                {
+                  filteredGraphData.nodes.find(
+                    (n) => n.id === selectedEdge.target
+                  )?.label
+                }
               </h3>
               <div className="flex items-center gap-2">
                 <Badge
                   style={{
-                    backgroundColor: EDGE_COLORS[selectedEdge.type as keyof typeof EDGE_COLORS],
+                    backgroundColor:
+                      EDGE_COLORS[
+                        selectedEdge.type as keyof typeof EDGE_COLORS
+                      ],
                     color: "white",
                   }}
                 >
@@ -952,19 +1160,27 @@ export default function NetworkGraph({
               )}
               {selectedEdge.category && (
                 <div>
-                  <span className="font-medium">Category:</span> {selectedEdge.category}
+                  <span className="font-medium">Category:</span>{" "}
+                  {selectedEdge.category}
                 </div>
               )}
-              {selectedEdge.metadata && Object.keys(selectedEdge.metadata).length > 0 && (
-                <div className="text-gray-600">
-                  {Object.entries(selectedEdge.metadata).map(([key, value]) => (
-                    <div key={key}>
-                      <span className="font-medium capitalize">{key.replace(/_/g, " ")}:</span>{" "}
-                      {typeof value === "number" ? value.toLocaleString() : String(value)}
-                    </div>
-                  ))}
-                </div>
-              )}
+              {selectedEdge.metadata &&
+                Object.keys(selectedEdge.metadata).length > 0 && (
+                  <div className="text-gray-600">
+                    {Object.entries(selectedEdge.metadata).map(
+                      ([key, value]) => (
+                        <div key={key}>
+                          <span className="font-medium capitalize">
+                            {key.replace(/_/g, " ")}:
+                          </span>{" "}
+                          {typeof value === "number"
+                            ? value.toLocaleString()
+                            : String(value)}
+                        </div>
+                      )
+                    )}
+                  </div>
+                )}
             </div>
           </div>
         )}
@@ -972,22 +1188,30 @@ export default function NetworkGraph({
         {/* Stats */}
         <div className="grid grid-cols-4 gap-4 text-sm">
           <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="font-semibold text-lg">{filteredGraphData.nodes.length}</div>
+            <div className="font-semibold text-lg">
+              {filteredGraphData.nodes.length}
+            </div>
             <div className="text-gray-600">Nodes</div>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="font-semibold text-lg">{filteredGraphData.edges.length}</div>
+            <div className="font-semibold text-lg">
+              {filteredGraphData.edges.length}
+            </div>
             <div className="text-gray-600">Edges</div>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-lg">
             <div className="font-semibold text-lg">
-              {filteredGraphData.nodes.filter((n) => n.type === "politician").length}
+              {
+                filteredGraphData.nodes.filter((n) => n.type === "politician")
+                  .length
+              }
             </div>
             <div className="text-gray-600">Politicians</div>
           </div>
           <div className="text-center p-3 bg-gray-50 rounded-lg">
             <div className="font-semibold text-lg">
-              ${filteredGraphData.edges
+              $
+              {filteredGraphData.edges
                 .filter((e) => e.type === "donation")
                 .reduce((sum, e) => sum + e.weight, 0)
                 .toLocaleString()}
