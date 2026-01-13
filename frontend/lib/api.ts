@@ -27,6 +27,9 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 // Demo mode flag - set to true to use offline demo data
 const DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
 
+// Use local Next.js API routes for visualizations (works without Python backend)
+const USE_LOCAL_VISUALIZATIONS = true;
+
 // Demo data for offline mode
 const DEMO_DATA: DemoData = {
   politicians: [
@@ -181,6 +184,56 @@ async function fetchApi<T>(
         continue;
       }
       // Treat any TypeError as a network error (fetch throws TypeError for network failures)
+      if (error instanceof TypeError) {
+        throw {
+          code: "NETWORK_ERROR",
+          message:
+            "Unable to connect to the API. Please check your connection.",
+        } as ApiError;
+      }
+      throw error;
+    }
+  }
+  throw lastError;
+}
+
+// Fetch from local Next.js API routes (for visualizations)
+async function fetchLocalApi<T>(
+  endpoint: string,
+  options?: RequestInit,
+  retries: number = 2
+): Promise<T> {
+  // Use relative URL for local API routes
+  const url = endpoint;
+
+  let lastError: unknown;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          ...options?.headers,
+        },
+      });
+
+      if (!response.ok) {
+        const error: ApiError = await response.json().catch(() => ({
+          code: "HTTP_ERROR",
+          message: `HTTP ${response.status}: ${response.statusText}`,
+        }));
+        throw error;
+      }
+
+      return await response.json();
+    } catch (error) {
+      lastError = error;
+      if (error instanceof TypeError && attempt < retries) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, 500 * (attempt + 1))
+        );
+        continue;
+      }
       if (error instanceof TypeError) {
         throw {
           code: "NETWORK_ERROR",
@@ -492,11 +545,16 @@ export async function getDonationsMap(params?: {
   if (params?.aggregation_level)
     queryParams.append("aggregation_level", params.aggregation_level);
 
-  return fetchApi<DonationsMapResponse>(
-    `/api/visualizations/donations-map${
-      queryParams.toString() ? `?${queryParams.toString()}` : ""
-    }`
-  );
+  const endpoint = `/api/visualizations/donations-map${
+    queryParams.toString() ? `?${queryParams.toString()}` : ""
+  }`;
+
+  // Use local API routes for visualizations
+  if (USE_LOCAL_VISUALIZATIONS) {
+    return fetchLocalApi<DonationsMapResponse>(endpoint);
+  }
+
+  return fetchApi<DonationsMapResponse>(endpoint);
 }
 
 export async function getPoliticianTimeline(
@@ -536,11 +594,16 @@ export async function getPoliticianTimeline(
     );
   }
 
-  return fetchApi<TimelineResponse>(
-    `/api/visualizations/politician-timeline/${politicianId}${
-      queryParams.toString() ? `?${queryParams.toString()}` : ""
-    }`
-  );
+  const endpoint = `/api/visualizations/politician-timeline/${politicianId}${
+    queryParams.toString() ? `?${queryParams.toString()}` : ""
+  }`;
+
+  // Use local API routes for visualizations
+  if (USE_LOCAL_VISUALIZATIONS) {
+    return fetchLocalApi<TimelineResponse>(endpoint);
+  }
+
+  return fetchApi<TimelineResponse>(endpoint);
 }
 
 // Generate demo timeline events for a politician
@@ -964,11 +1027,16 @@ export async function getNetworkGraph(params?: {
     queryParams.append("category", params.category);
   }
 
-  return fetchApi<NetworkGraphResponse>(
-    `/api/visualizations/network-graph${
-      queryParams.toString() ? `?${queryParams.toString()}` : ""
-    }`
-  );
+  const endpoint = `/api/visualizations/network-graph${
+    queryParams.toString() ? `?${queryParams.toString()}` : ""
+  }`;
+
+  // Use local API routes for visualizations
+  if (USE_LOCAL_VISUALIZATIONS) {
+    return fetchLocalApi<NetworkGraphResponse>(endpoint);
+  }
+
+  return fetchApi<NetworkGraphResponse>(endpoint);
 }
 
 // Generate demo network graph data
@@ -1326,11 +1394,16 @@ export async function getPoliticianRadial(
   if (params?.start_date) queryParams.append("start_date", params.start_date);
   if (params?.end_date) queryParams.append("end_date", params.end_date);
 
-  return fetchApi<RadialResponse>(
-    `/api/visualizations/politician-radial/${politicianId}${
-      queryParams.toString() ? `?${queryParams.toString()}` : ""
-    }`
-  );
+  const endpoint = `/api/visualizations/politician-radial/${politicianId}${
+    queryParams.toString() ? `?${queryParams.toString()}` : ""
+  }`;
+
+  // Use local API routes for visualizations
+  if (USE_LOCAL_VISUALIZATIONS) {
+    return fetchLocalApi<RadialResponse>(endpoint);
+  }
+
+  return fetchApi<RadialResponse>(endpoint);
 }
 
 // Generate demo radial data for a politician

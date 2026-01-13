@@ -14,4 +14,8 @@ frontendvite/
 nul
 tmpclaude-*
 
+# Demo and presentation materials (local only)
+DEMO_SCRIPT.md
+ELEVATOR_PITCH.md
+
 GenAIPromptHelp.md

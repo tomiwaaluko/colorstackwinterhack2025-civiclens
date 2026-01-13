@@ -5,6 +5,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { CacheProvider } from "@/components/CacheProvider";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-sans",
@@ -108,11 +109,13 @@ export default function RootLayout({
     >
       <body className="antialiased bg-background text-foreground min-h-screen flex flex-col font-sans">
         <ErrorBoundary>
-          <TooltipProvider>
-            <Header />
-            <main className="flex-grow">{children}</main>
-            <Footer />
-          </TooltipProvider>
+          <CacheProvider>
+            <TooltipProvider>
+              <Header />
+              <main className="flex-grow">{children}</main>
+              <Footer />
+            </TooltipProvider>
+          </CacheProvider>
         </ErrorBoundary>
       </body>
     </html>
