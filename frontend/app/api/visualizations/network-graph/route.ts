@@ -189,9 +189,9 @@ export async function GET(request: NextRequest) {
         }
       });
 
-      // Add edges only for donors meeting the threshold
+      // Add edges only for donors meeting the threshold and when both nodes exist
       pendingEdges.forEach((edge) => {
-        if (validDonorIds.has(edge.donorId)) {
+        if (validDonorIds.has(edge.donorId) && nodeIds.has(edge.politicianId)) {
           edges.push({
             source: edge.donorId,
             target: edge.politicianId,
@@ -230,12 +230,13 @@ export async function GET(request: NextRequest) {
           }
         }
 
-        // Add vote edge if bill was added
-        if (nodeIds.has(billId)) {
+        // Add vote edge if both bill and politician nodes exist
+        const politicianNodeId = `pol-${vote.politician_id}`;
+        if (nodeIds.has(billId) && nodeIds.has(politicianNodeId)) {
           const voteValue = vote.vote_position?.toLowerCase();
           const isYes = voteValue === "yea" || voteValue === "yes" || voteValue === "aye";
           edges.push({
-            source: `pol-${vote.politician_id}`,
+            source: politicianNodeId,
             target: billId,
             type: "vote",
             weight: isYes ? 1 : -1,

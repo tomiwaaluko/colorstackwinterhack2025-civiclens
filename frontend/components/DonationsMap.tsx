@@ -132,7 +132,12 @@ export default function DonationsMap({
   // Load state boundaries
   useEffect(() => {
     fetch("/data/us-states.json")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        return res.json();
+      })
       .then((data) => {
         setGeoJson(data);
       })
@@ -201,14 +206,19 @@ export default function DonationsMap({
           end_date: dateRange.end || undefined,
         }).then((data) => ({ id: pol.id, data }))
       )
-    ).then((results) => {
-      const newComparativeData: Record<string | number, DonationsMapResponse> =
-        {};
-      results.forEach(({ id, data }) => {
-        newComparativeData[id] = data;
+    )
+      .then((results) => {
+        const newComparativeData: Record<string | number, DonationsMapResponse> =
+          {};
+        results.forEach(({ id, data }) => {
+          newComparativeData[id] = data;
+        });
+        setComparativeData(newComparativeData);
+      })
+      .catch((err) => {
+        console.error("Failed to load comparative donations data:", err);
+        setComparativeData({});
       });
-      setComparativeData(newComparativeData);
-    });
   }, [
     viewMode,
     comparativePoliticians,
@@ -237,11 +247,11 @@ export default function DonationsMap({
           independent: stateData.party_breakdown.independent || 0,
         };
       } else {
-        // Fallback if no party data - shouldn't happen with updated API
+        // Fallback if no party data - set all to 0 to avoid misleading data
         partyAggregation[stateCode] = {
           democrat: 0,
           republican: 0,
-          independent: stateData.total_amount || 0,
+          independent: 0,
         };
       }
     });

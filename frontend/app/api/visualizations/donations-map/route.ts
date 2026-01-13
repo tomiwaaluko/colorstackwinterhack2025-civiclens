@@ -48,13 +48,12 @@ export async function GET(request: NextRequest) {
   const aggregationLevel = searchParams.get("aggregation_level") || "state";
 
   // Pagination parameters
-  const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+  const parsedPage = parseInt(searchParams.get("page") || "1", 10);
+  const parsedLimit = parseInt(searchParams.get("limit") || String(DEFAULT_PAGE_SIZE), 10);
+  const page = Math.max(1, Number.isNaN(parsedPage) ? 1 : parsedPage);
   const pageSize = Math.min(
     MAX_PAGE_SIZE,
-    Math.max(
-      1,
-      parseInt(searchParams.get("limit") || String(DEFAULT_PAGE_SIZE), 10)
-    )
+    Math.max(1, Number.isNaN(parsedLimit) ? DEFAULT_PAGE_SIZE : parsedLimit)
   );
   const offset = (page - 1) * pageSize;
 

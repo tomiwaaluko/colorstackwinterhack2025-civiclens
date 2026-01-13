@@ -200,6 +200,12 @@ export async function GET(
       events.push(...demoBills);
     }
 
+    // Add demo donations if no real donations
+    if (!hasRealData.donation && (eventTypes.length === 0 || eventTypes.includes("donation"))) {
+      const demoDonations = demoData.events.filter((e: any) => e.type === "donation");
+      events.push(...demoDonations);
+    }
+
     // If still no events at all, return full demo data
     if (events.length === 0) {
       return createCachedResponse(demoData);

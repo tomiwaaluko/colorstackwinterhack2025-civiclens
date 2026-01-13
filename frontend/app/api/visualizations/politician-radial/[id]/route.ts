@@ -165,13 +165,13 @@ export async function GET(
     // Check if "Other" is still dominant (>50% of total)
     const totalAmount = categories.reduce((sum, c) => sum + c.total_amount, 0);
     const otherCategory = categories.find(c => c.category === "Other");
-    const otherPercentage = otherCategory ? (otherCategory.total_amount / totalAmount) : 0;
+    const otherPercentage = (otherCategory && totalAmount > 0) ? (otherCategory.total_amount / totalAmount) : 0;
 
     // If "Other" is >50%, use demo data but scale amounts to match real total
-    if (otherPercentage > 0.5) {
+    if (otherPercentage > 0.5 && totalAmount > 0) {
       const demoData = generateDemoRadialData(politicianId);
       const demoTotal = demoData.total_amount;
-      const scaleFactor = totalAmount / demoTotal;
+      const scaleFactor = demoTotal > 0 ? (totalAmount / demoTotal) : 1;
 
       // Scale demo data to match real total amounts
       demoData.categories = demoData.categories.map((cat: any) => ({
