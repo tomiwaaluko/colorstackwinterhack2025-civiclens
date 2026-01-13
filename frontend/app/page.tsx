@@ -21,6 +21,8 @@ import {
   Building2,
   ChevronRight,
   Users,
+  Briefcase,
+  UserCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -50,17 +52,17 @@ const issues = [
     title: "Economy & Jobs",
     description:
       "Economic policy, job creation, and workforce development legislation.",
-    icon: DollarSign,
+    icon: Briefcase,
     politicianCount: 534,
     voteCount: 3241,
-    color: "bg-amber-500/20",
+    color: "bg-blue-500/20",
   },
   {
     id: "immigration",
     title: "Immigration",
     description:
       "Border security, visa programs, and immigration reform policies.",
-    icon: Globe,
+    icon: UserCheck,
     politicianCount: 412,
     voteCount: 1523,
     color: "bg-blue-500/20",

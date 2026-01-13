@@ -524,8 +524,7 @@ Open your browser and navigate to:
    - "Show me controversial votes on healthcare"
 4. View **AI-generated insights** with citations
 5. Click **citation links** to verify sources
-6. Use **Smart Suggestions** for related queries
-7. Review **conversation history** for context
+6. Review **conversation history** for context
 
 **AI Features**:
 

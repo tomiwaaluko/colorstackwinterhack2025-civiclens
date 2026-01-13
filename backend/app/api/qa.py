@@ -160,6 +160,84 @@ async def ask_question(payload: QARequest, db: AsyncSession = Depends(get_db)):
             # Fall through to AI general knowledge
     
     try:
+        # First, check if question is on-topic (about US politics/government)
+        if not context_text:  # Only check for off-topic if no database match
+            # Keyword-based quick check first
+            question_lower = payload.question.lower()
+            
+            # Government/civics keywords that indicate on-topic question
+            government_keywords = [
+                # Core institutions
+                'congress', 'senate', 'house', 'representative', 'senator', 'politician',
+                'president', 'vice president', 'cabinet', 'supreme court', 'court', 'judge',
+                'governor', 'mayor', 'legislature', 'assembly', 'council',
+                
+                # Processes & actions
+                'vote', 'voting', 'election', 'ballot', 'campaign', 'legislation', 'bill',
+                'law', 'amendment', 'constitution', 'veto', 'override', 'filibuster',
+                'impeachment', 'confirmation', 'hearing', 'committee', 'caucus', 'primary',
+                
+                # Government roles & positions
+                'parliamentarian', 'clerk', 'speaker', 'majority leader', 'minority leader',
+                'whip', 'chair', 'member', 'delegate', 'appointee', 'nominee', 'official',
+                
+                # Civic concepts
+                'democracy', 'republic', 'government', 'federal', 'state', 'local',
+                'policy', 'regulation', 'executive order', 'jurisdiction', 'constituent',
+                'lobbying', 'advocacy', 'gerrymandering', 'redistricting',
+                
+                # Specific terms
+                'affordable care act', 'aca', 'obamacare', 'medicare', 'medicaid',
+                'social security', 'h.r.', 's.', 'resolution', 'act', 'statute',
+                'donor', 'donation', 'pac', 'super pac', 'campaign finance'
+            ]
+            
+            # Check if any government keyword is in the question
+            has_government_keyword = any(keyword in question_lower for keyword in government_keywords)
+            
+            if has_government_keyword:
+                # Contains government keywords - definitely on-topic, skip AI check
+                print(f"   ✓ Question contains government/civics keywords - treating as on-topic")
+                is_on_topic = True
+            else:
+                # No obvious keywords - ask AI to check
+                topic_check_prompt = f"""Is the following question related to US politics, government, politicians, legislation, or civic processes? 
+Answer with ONLY "YES" or "NO".
+
+Question: {payload.question}"""
+                
+                topic_response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=topic_check_prompt,
+                    config=types.GenerateContentConfig(temperature=0.1, max_output_tokens=10)
+                )
+                
+                is_on_topic = (topic_response.text or "").strip().upper().startswith("YES")
+            
+            if not is_on_topic:
+                # Off-topic question - return low confidence response
+                print(f"   ⚠️ Question detected as off-topic (not about US politics/government)")
+                
+                return QAResponse(
+                    answer="I'm CivicLens AI, specialized in US politics and government information. This question appears to be outside my area of expertise. Please ask me about politicians, legislation, voting records, or government processes.",
+                    claims=[Claim(
+                        text="Off-topic question",
+                        citations=["off-topic"],
+                        confidence=0.4
+                    )],
+                    citations=[Citation(
+                        source_id="off-topic",
+                        url="",
+                        title="Off-Topic Response",
+                        publisher="CivicLens AI",
+                        retrieved_at=datetime.utcnow().isoformat(),
+                        snippet="Question is not related to US politics or government.",
+                        source_type="ai_general"
+                    )],
+                    limitations="This question is outside the scope of CivicLens AI, which focuses on US political and government information.",
+                    disclosure="CivicLens AI is designed to answer questions about US politicians, legislation, and government processes."
+                )
+        
         # Generate answer with Gemini
         if context_text:
             # Database sources found - use data extraction mode
