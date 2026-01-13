@@ -70,12 +70,43 @@ export async function GET(request: NextRequest) {
       donationsQuery = donationsQuery.eq("category", category);
     }
 
-    const { data: donations, error: donationsError } = await donationsQuery;
+    // Fetch votes with bill info for these politicians
+    let votesQuery = supabase
+      .from("votes")
+      .select(`
+        id,
+        politician_id,
+        vote_position,
+        bills (
+          id,
+          title,
+          policy_area
+        )
+      `);
 
-    if (donationsError) {
+    if (hasPoliticianFilter) {
+      votesQuery = votesQuery.in("politician_id", politicianIds);
+    }
+
+    const [donationsResult, votesResult] = await Promise.all([
+      donationsQuery,
+      votesQuery,
+    ]);
+
+    const donations = donationsResult.data;
+    const votes = votesResult.data;
+
+    if (donationsResult.error) {
       console.error(
         "Error fetching donations for network graph:",
-        donationsError
+        donationsResult.error
+      );
+    }
+
+    if (votesResult.error) {
+      console.error(
+        "Error fetching votes for network graph:",
+        votesResult.error
       );
     }
 
@@ -173,15 +204,84 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // If we have very few nodes, return demo data
-    if (nodes.length < 3) {
-      return createCachedResponse(
-        generateDemoNetworkGraph(
-          politicianIds.map((id) => parseInt(id, 10)),
-          minAmount,
-          category
-        )
+    // Add bill nodes and vote edges
+    if (votes && votes.length > 0) {
+      const billsAdded = new Set<string>();
+
+      votes.forEach((vote: any) => {
+        if (!vote.bills) return;
+
+        const billId = `bill-${vote.bills.id}`;
+        const billCategory = vote.bills.policy_area || "Other";
+
+        // Add bill node if not already added
+        if (!nodeIds.has(billId) && !billsAdded.has(billId)) {
+          // Filter by category if specified
+          if (!category || billCategory === category) {
+            nodeIds.add(billId);
+            billsAdded.add(billId);
+            nodes.push({
+              id: billId,
+              label: vote.bills.title || "Unknown Bill",
+              type: "bill",
+              category: billCategory,
+              metadata: { category: billCategory },
+            });
+          }
+        }
+
+        // Add vote edge if bill was added
+        if (nodeIds.has(billId)) {
+          const voteValue = vote.vote_position?.toLowerCase();
+          const isYes = voteValue === "yea" || voteValue === "yes" || voteValue === "aye";
+          edges.push({
+            source: `pol-${vote.politician_id}`,
+            target: billId,
+            type: "vote",
+            weight: isYes ? 1 : -1,
+            category: billCategory,
+            metadata: { vote: isYes ? "yes" : "no" },
+          });
+        }
+      });
+    }
+
+    // If we have very few nodes, augment with demo data
+    const hasBills = nodes.some((n) => n.type === "bill");
+    const hasDonors = nodes.some((n) => n.type === "donor");
+
+    if (nodes.length < 3 || (!hasBills && !hasDonors)) {
+      // Get demo data to fill in missing pieces
+      const demoData = generateDemoNetworkGraph(
+        politicianIds.map((id) => parseInt(id, 10)),
+        minAmount,
+        category
       );
+
+      // Add demo bills if no real bills
+      if (!hasBills) {
+        const demoBills = demoData.nodes.filter((n: any) => n.type === "bill");
+        demoBills.forEach((bill: any) => {
+          if (!nodeIds.has(bill.id)) {
+            nodeIds.add(bill.id);
+            nodes.push(bill);
+          }
+        });
+
+        // Add demo vote edges for bills
+        const demoVoteEdges = demoData.edges.filter((e: any) => e.type === "vote");
+        demoVoteEdges.forEach((edge: any) => {
+          // Only add if the politician exists in our nodes
+          if (nodeIds.has(edge.source) && nodeIds.has(edge.target)) {
+            edges.push(edge);
+          }
+        });
+      }
+
+      // If still very few nodes, return full demo data
+      if (nodes.length < 3) {
+        return createCachedResponse(demoData);
+      }
     }
 
     // Generate clusters by category

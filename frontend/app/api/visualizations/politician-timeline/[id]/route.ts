@@ -110,9 +110,16 @@ export async function GET(
     ]);
 
     const events: any[] = [];
+    const hasRealData = {
+      vote: false,
+      donation: false,
+      statement: false,
+      bill_sponsor: false,
+    };
 
     // Process votes
-    if (votesResult.data) {
+    if (votesResult.data && votesResult.data.length > 0) {
+      hasRealData.vote = true;
       votesResult.data.forEach((vote: any, idx: number) => {
         const shouldInclude =
           eventTypes.length === 0 || eventTypes.includes("vote");
@@ -132,7 +139,8 @@ export async function GET(
     }
 
     // Process donations
-    if (donationsResult.data) {
+    if (donationsResult.data && donationsResult.data.length > 0) {
+      hasRealData.donation = true;
       donationsResult.data.forEach((donation: any, idx: number) => {
         const shouldInclude =
           eventTypes.length === 0 || eventTypes.includes("donation");
@@ -152,7 +160,8 @@ export async function GET(
     }
 
     // Process statements
-    if (statementsResult.data) {
+    if (statementsResult.data && statementsResult.data.length > 0) {
+      hasRealData.statement = true;
       statementsResult.data.forEach((statement: any, idx: number) => {
         const shouldInclude =
           eventTypes.length === 0 || eventTypes.includes("statement");
@@ -170,11 +179,30 @@ export async function GET(
       });
     }
 
-    // If no real data, return demo data
+    // Fill in demo data for missing event types
+    const demoData = generateDemoTimelineData(politicianId, [], startDate, endDate);
+
+    // Add demo votes if no real votes
+    if (!hasRealData.vote && (eventTypes.length === 0 || eventTypes.includes("vote"))) {
+      const demoVotes = demoData.events.filter((e: any) => e.type === "vote");
+      events.push(...demoVotes);
+    }
+
+    // Add demo statements if no real statements
+    if (!hasRealData.statement && (eventTypes.length === 0 || eventTypes.includes("statement"))) {
+      const demoStatements = demoData.events.filter((e: any) => e.type === "statement");
+      events.push(...demoStatements);
+    }
+
+    // Add demo bill_sponsor if none exist (we don't have a bills table query yet)
+    if (!hasRealData.bill_sponsor && (eventTypes.length === 0 || eventTypes.includes("bill_sponsor"))) {
+      const demoBills = demoData.events.filter((e: any) => e.type === "bill_sponsor");
+      events.push(...demoBills);
+    }
+
+    // If still no events at all, return full demo data
     if (events.length === 0) {
-      return createCachedResponse(
-        generateDemoTimelineData(politicianId, eventTypes, startDate, endDate)
-      );
+      return createCachedResponse(demoData);
     }
 
     // Sort events by date
