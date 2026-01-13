@@ -18,7 +18,7 @@ router = APIRouter(prefix="/api/visualizations", tags=["visualizations"])
 
 @router.get("/politician-timeline/{politician_id}", response_model=TimelineResponse)
 async def get_politician_timeline(
-    politician_id: int,
+    politician_id: str,
     start_date: Optional[date] = Query(None, description="Start date (ISO8601)"),
     end_date: Optional[date] = Query(None, description="End date (ISO8601)"),
     event_types: Optional[List[EventType]] = Query(None, description="Filter by event types"),

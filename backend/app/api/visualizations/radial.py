@@ -18,7 +18,7 @@ router = APIRouter(prefix="/api/visualizations", tags=["visualizations"])
 
 @router.get("/politician-radial/{politician_id}", response_model=RadialResponse)
 async def get_politician_radial(
-    politician_id: int,
+    politician_id: str,
     start_date: Optional[date] = Query(None, description="Start date (ISO8601)"),
     end_date: Optional[date] = Query(None, description="End date (ISO8601)"),
     db: AsyncSession = Depends(get_db)

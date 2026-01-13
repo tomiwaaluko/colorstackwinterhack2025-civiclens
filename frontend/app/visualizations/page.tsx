@@ -1030,7 +1030,7 @@ export default function VisualizationsPage() {
 
               {timelineFilters.politicianId && (
                 <TimelineChart
-                  politicianId={parseInt(timelineFilters.politicianId, 10)}
+                  politicianId={timelineFilters.politicianId}
                   startDate={timelineFilters.startDate || undefined}
                   endDate={timelineFilters.endDate || undefined}
                   showClustering={true}
@@ -1204,7 +1204,7 @@ export default function VisualizationsPage() {
 
               {radialFilters.politicianId && (
                 <RadialChart
-                  politicianId={parseInt(radialFilters.politicianId, 10)}
+                  politicianId={radialFilters.politicianId}
                   startDate={radialFilters.startDate || undefined}
                   endDate={radialFilters.endDate || undefined}
                   onCitationClick={(citations) =>

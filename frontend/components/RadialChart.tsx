@@ -51,11 +51,11 @@ const VOTE_COLORS = {
 };
 
 interface RadialChartProps {
-  politicianId: number;
+  politicianId: number | string;
   startDate?: string;
   endDate?: string;
   // Comparative mode
-  comparativePoliticians?: Array<{ id: number; name: string; party: string }>;
+  comparativePoliticians?: Array<{ id: number | string; name: string; party: string }>;
   onCitationClick?: (citations: any[]) => void;
 }
 
@@ -86,7 +86,7 @@ export default function RadialChart({
   const animationRef = useRef<NodeJS.Timeout | null>(null);
   
   // Comparative data
-  const [comparativeData, setComparativeData] = useState<Record<number, RadialResponse>>({});
+  const [comparativeData, setComparativeData] = useState<Record<string | number, RadialResponse>>({});
   
   const chartRef = useRef<any>(null);
 

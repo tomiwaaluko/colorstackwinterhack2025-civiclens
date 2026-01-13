@@ -103,28 +103,41 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 civic-gradient opacity-5" />
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-accent/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+        {/* Video Background */}
+        <div className="absolute inset-0 w-full h-full">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ filter: "brightness(0.4) contrast(1.1)" }}
+          >
+            <source
+              src="/Lawyer video background 2 - Nature Relaxing Music (720p, h264, youtube).mp4"
+              type="video/mp4"
+            />
+          </video>
+          {/* Dark overlay for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60" />
         </div>
 
-        <div className="container relative py-24 md:py-32 lg:py-40">
+        <div className="container relative py-24 md:py-32 lg:py-40 z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/20 text-sm font-medium text-accent-foreground mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-sm font-medium text-white mb-8">
               <Scale className="h-4 w-4" />
               <span>Transparency First. Evidence-Based Political Insight.</span>
             </div>
 
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-foreground tracking-tight mb-6 leading-tight">
+            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight mb-6 leading-tight drop-shadow-lg">
               Democracy Deserves{" "}
               <span className="relative">
                 <span className="relative z-10">Clarity</span>
-                <span className="absolute bottom-2 left-0 w-full h-3 gold-accent-gradient opacity-40 -z-0" />
+                <span className="absolute bottom-2 left-0 w-full h-3 bg-yellow-400/60 -z-0" />
               </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+            <p className="text-lg md:text-xl text-gray-100 max-w-2xl mx-auto mb-10 leading-relaxed drop-shadow-md">
               Search, compare, and understand your representatives—backed by
               evidence, not opinions. Access verified voting records, donor
               data, and public statements.
@@ -133,17 +146,27 @@ export default function Home() {
             <SearchBarNew onSearch={handleSearch} />
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-              <Button asChild size="lg" variant="outline" className="group">
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="group bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
+              >
                 <Link href="/ask">
                   <Sparkles className="h-5 w-5 mr-2" />
                   Ask CivicLens AI
                   <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
-              <Button asChild size="lg" variant="ghost">
+              <Button
+                asChild
+                size="lg"
+                className="group bg-white text-gray-900 hover:bg-gray-100 font-semibold shadow-xl"
+              >
                 <Link href="/compare">
                   <Users className="h-5 w-5 mr-2" />
                   Compare Politicians
+                  <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
             </div>
