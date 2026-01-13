@@ -63,7 +63,10 @@ export async function GET(
     > = {};
 
     // Try to infer category from donor name if category is missing
-    const inferCategory = (donorName: string, existingCategory: string | null): string => {
+    const inferCategory = (
+      donorName: string,
+      existingCategory: string | null
+    ): string => {
       if (existingCategory && existingCategory !== "Other") {
         return existingCategory;
       }
@@ -71,55 +74,109 @@ export async function GET(
       const name = (donorName || "").toLowerCase();
 
       // Healthcare keywords
-      if (name.includes("health") || name.includes("medical") || name.includes("hospital") ||
-          name.includes("pharma") || name.includes("drug") || name.includes("nurse") ||
-          name.includes("doctor") || name.includes("physician")) {
+      if (
+        name.includes("health") ||
+        name.includes("medical") ||
+        name.includes("hospital") ||
+        name.includes("pharma") ||
+        name.includes("drug") ||
+        name.includes("nurse") ||
+        name.includes("doctor") ||
+        name.includes("physician")
+      ) {
         return "Healthcare";
       }
 
       // Finance keywords
-      if (name.includes("bank") || name.includes("financial") || name.includes("investment") ||
-          name.includes("credit") || name.includes("insurance") || name.includes("securities") ||
-          name.includes("wall street") || name.includes("capital")) {
+      if (
+        name.includes("bank") ||
+        name.includes("financial") ||
+        name.includes("investment") ||
+        name.includes("credit") ||
+        name.includes("insurance") ||
+        name.includes("securities") ||
+        name.includes("wall street") ||
+        name.includes("capital")
+      ) {
         return "Finance";
       }
 
       // Technology keywords
-      if (name.includes("tech") || name.includes("software") || name.includes("computer") ||
-          name.includes("internet") || name.includes("digital") || name.includes("data") ||
-          name.includes("cyber") || name.includes("telecom")) {
+      if (
+        name.includes("tech") ||
+        name.includes("software") ||
+        name.includes("computer") ||
+        name.includes("internet") ||
+        name.includes("digital") ||
+        name.includes("data") ||
+        name.includes("cyber") ||
+        name.includes("telecom")
+      ) {
         return "Technology";
       }
 
       // Energy keywords
-      if (name.includes("energy") || name.includes("oil") || name.includes("gas") ||
-          name.includes("petroleum") || name.includes("solar") || name.includes("wind") ||
-          name.includes("electric") || name.includes("utility") || name.includes("coal")) {
+      if (
+        name.includes("energy") ||
+        name.includes("oil") ||
+        name.includes("gas") ||
+        name.includes("petroleum") ||
+        name.includes("solar") ||
+        name.includes("wind") ||
+        name.includes("electric") ||
+        name.includes("utility") ||
+        name.includes("coal")
+      ) {
         return "Energy";
       }
 
       // Defense keywords
-      if (name.includes("defense") || name.includes("military") || name.includes("aerospace") ||
-          name.includes("veteran") || name.includes("security") || name.includes("lockheed") ||
-          name.includes("boeing") || name.includes("raytheon")) {
+      if (
+        name.includes("defense") ||
+        name.includes("military") ||
+        name.includes("aerospace") ||
+        name.includes("veteran") ||
+        name.includes("security") ||
+        name.includes("lockheed") ||
+        name.includes("boeing") ||
+        name.includes("raytheon")
+      ) {
         return "Defense";
       }
 
       // Labor keywords
-      if (name.includes("union") || name.includes("labor") || name.includes("worker") ||
-          name.includes("afl") || name.includes("teamster") || name.includes("teacher")) {
+      if (
+        name.includes("union") ||
+        name.includes("labor") ||
+        name.includes("worker") ||
+        name.includes("afl") ||
+        name.includes("teamster") ||
+        name.includes("teacher")
+      ) {
         return "Labor";
       }
 
       // Real Estate keywords
-      if (name.includes("real estate") || name.includes("realty") || name.includes("property") ||
-          name.includes("housing") || name.includes("construction") || name.includes("builder")) {
+      if (
+        name.includes("real estate") ||
+        name.includes("realty") ||
+        name.includes("property") ||
+        name.includes("housing") ||
+        name.includes("construction") ||
+        name.includes("builder")
+      ) {
         return "Real Estate";
       }
 
       // Agriculture keywords
-      if (name.includes("farm") || name.includes("agriculture") || name.includes("crop") ||
-          name.includes("dairy") || name.includes("cattle") || name.includes("grain")) {
+      if (
+        name.includes("farm") ||
+        name.includes("agriculture") ||
+        name.includes("crop") ||
+        name.includes("dairy") ||
+        name.includes("cattle") ||
+        name.includes("grain")
+      ) {
         return "Agriculture";
       }
 
@@ -164,14 +221,17 @@ export async function GET(
 
     // Check if "Other" is still dominant (>50% of total)
     const totalAmount = categories.reduce((sum, c) => sum + c.total_amount, 0);
-    const otherCategory = categories.find(c => c.category === "Other");
-    const otherPercentage = (otherCategory && totalAmount > 0) ? (otherCategory.total_amount / totalAmount) : 0;
+    const otherCategory = categories.find((c) => c.category === "Other");
+    const otherPercentage =
+      otherCategory && totalAmount > 0
+        ? otherCategory.total_amount / totalAmount
+        : 0;
 
     // If "Other" is >50%, use demo data but scale amounts to match real total
     if (otherPercentage > 0.5 && totalAmount > 0) {
       const demoData = generateDemoRadialData(politicianId);
       const demoTotal = demoData.total_amount;
-      const scaleFactor = demoTotal > 0 ? (totalAmount / demoTotal) : 1;
+      const scaleFactor = demoTotal > 0 ? totalAmount / demoTotal : 1;
 
       // Scale demo data to match real total amounts
       demoData.categories = demoData.categories.map((cat: any) => ({

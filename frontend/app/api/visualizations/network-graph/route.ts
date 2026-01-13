@@ -71,9 +71,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch votes with bill info for these politicians
-    let votesQuery = supabase
-      .from("votes")
-      .select(`
+    let votesQuery = supabase.from("votes").select(`
         id,
         politician_id,
         vote_position,
@@ -234,7 +232,8 @@ export async function GET(request: NextRequest) {
         const politicianNodeId = `pol-${vote.politician_id}`;
         if (nodeIds.has(billId) && nodeIds.has(politicianNodeId)) {
           const voteValue = vote.vote_position?.toLowerCase();
-          const isYes = voteValue === "yea" || voteValue === "yes" || voteValue === "aye";
+          const isYes =
+            voteValue === "yea" || voteValue === "yes" || voteValue === "aye";
           edges.push({
             source: politicianNodeId,
             target: billId,
@@ -270,7 +269,9 @@ export async function GET(request: NextRequest) {
         });
 
         // Add demo vote edges for bills
-        const demoVoteEdges = demoData.edges.filter((e: any) => e.type === "vote");
+        const demoVoteEdges = demoData.edges.filter(
+          (e: any) => e.type === "vote"
+        );
         demoVoteEdges.forEach((edge: any) => {
           // Only add if the politician exists in our nodes
           if (nodeIds.has(edge.source) && nodeIds.has(edge.target)) {

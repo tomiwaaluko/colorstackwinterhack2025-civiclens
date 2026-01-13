@@ -49,7 +49,10 @@ export async function GET(request: NextRequest) {
 
   // Pagination parameters
   const parsedPage = parseInt(searchParams.get("page") || "1", 10);
-  const parsedLimit = parseInt(searchParams.get("limit") || String(DEFAULT_PAGE_SIZE), 10);
+  const parsedLimit = parseInt(
+    searchParams.get("limit") || String(DEFAULT_PAGE_SIZE),
+    10
+  );
   const page = Math.max(1, Number.isNaN(parsedPage) ? 1 : parsedPage);
   const pageSize = Math.min(
     MAX_PAGE_SIZE,
@@ -106,7 +109,11 @@ export async function GET(request: NextRequest) {
         donations: any[];
         top_donor_category: string;
         top_category_amount: number;
-        party_breakdown: { democrat: number; republican: number; independent: number };
+        party_breakdown: {
+          democrat: number;
+          republican: number;
+          independent: number;
+        };
       }
     > = {};
 
@@ -185,14 +192,57 @@ function generateDemoData() {
   // State political leanings based on recent elections (D = Democrat lean, R = Republican lean)
   // Values represent approximate Democrat share of donations (0-1)
   const statePoliticalLean: Record<string, number> = {
-    CA: 0.65, TX: 0.42, NY: 0.62, FL: 0.47, IL: 0.58, PA: 0.50, OH: 0.44,
-    GA: 0.49, NC: 0.48, MI: 0.51, NJ: 0.57, VA: 0.54, WA: 0.60, AZ: 0.49,
-    MA: 0.66, TN: 0.35, IN: 0.40, MO: 0.41, MD: 0.65, WI: 0.50, CO: 0.55,
-    MN: 0.53, SC: 0.42, AL: 0.36, LA: 0.40, KY: 0.36, OR: 0.58, OK: 0.32,
-    CT: 0.60, UT: 0.35, IA: 0.44, NV: 0.51, AR: 0.34, MS: 0.40, KS: 0.41,
-    NM: 0.55, NE: 0.38, ID: 0.30, WV: 0.29, HI: 0.64, NH: 0.53, ME: 0.54,
-    MT: 0.40, RI: 0.60, DE: 0.59, SD: 0.35, ND: 0.31, AK: 0.42, VT: 0.67,
-    WY: 0.26, DC: 0.92,
+    CA: 0.65,
+    TX: 0.42,
+    NY: 0.62,
+    FL: 0.47,
+    IL: 0.58,
+    PA: 0.5,
+    OH: 0.44,
+    GA: 0.49,
+    NC: 0.48,
+    MI: 0.51,
+    NJ: 0.57,
+    VA: 0.54,
+    WA: 0.6,
+    AZ: 0.49,
+    MA: 0.66,
+    TN: 0.35,
+    IN: 0.4,
+    MO: 0.41,
+    MD: 0.65,
+    WI: 0.5,
+    CO: 0.55,
+    MN: 0.53,
+    SC: 0.42,
+    AL: 0.36,
+    LA: 0.4,
+    KY: 0.36,
+    OR: 0.58,
+    OK: 0.32,
+    CT: 0.6,
+    UT: 0.35,
+    IA: 0.44,
+    NV: 0.51,
+    AR: 0.34,
+    MS: 0.4,
+    KS: 0.41,
+    NM: 0.55,
+    NE: 0.38,
+    ID: 0.3,
+    WV: 0.29,
+    HI: 0.64,
+    NH: 0.53,
+    ME: 0.54,
+    MT: 0.4,
+    RI: 0.6,
+    DE: 0.59,
+    SD: 0.35,
+    ND: 0.31,
+    AK: 0.42,
+    VT: 0.67,
+    WY: 0.26,
+    DC: 0.92,
   };
 
   const states = Object.keys(statePoliticalLean);
@@ -207,7 +257,7 @@ function generateDemoData() {
 
     // Calculate party breakdown based on political lean with some variation
     const demLean = statePoliticalLean[state];
-    const variation = (idx % 7 - 3) * 0.03; // Small variation ±9%
+    const variation = ((idx % 7) - 3) * 0.03; // Small variation ±9%
     const demShare = Math.max(0.1, Math.min(0.9, demLean + variation));
     const indShare = 0.05 + (idx % 3) * 0.02; // 5-9% independent
     const repShare = 1 - demShare - indShare;

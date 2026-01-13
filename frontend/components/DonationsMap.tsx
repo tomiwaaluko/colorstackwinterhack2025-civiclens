@@ -208,8 +208,10 @@ export default function DonationsMap({
       )
     )
       .then((results) => {
-        const newComparativeData: Record<string | number, DonationsMapResponse> =
-          {};
+        const newComparativeData: Record<
+          string | number,
+          DonationsMapResponse
+        > = {};
         results.forEach(({ id, data }) => {
           newComparativeData[id] = data;
         });

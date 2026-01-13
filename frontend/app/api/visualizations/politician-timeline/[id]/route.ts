@@ -180,29 +180,52 @@ export async function GET(
     }
 
     // Fill in demo data for missing event types
-    const demoData = generateDemoTimelineData(politicianId, [], startDate, endDate);
+    const demoData = generateDemoTimelineData(
+      politicianId,
+      [],
+      startDate,
+      endDate
+    );
 
     // Add demo votes if no real votes
-    if (!hasRealData.vote && (eventTypes.length === 0 || eventTypes.includes("vote"))) {
+    if (
+      !hasRealData.vote &&
+      (eventTypes.length === 0 || eventTypes.includes("vote"))
+    ) {
       const demoVotes = demoData.events.filter((e: any) => e.type === "vote");
       events.push(...demoVotes);
     }
 
     // Add demo statements if no real statements
-    if (!hasRealData.statement && (eventTypes.length === 0 || eventTypes.includes("statement"))) {
-      const demoStatements = demoData.events.filter((e: any) => e.type === "statement");
+    if (
+      !hasRealData.statement &&
+      (eventTypes.length === 0 || eventTypes.includes("statement"))
+    ) {
+      const demoStatements = demoData.events.filter(
+        (e: any) => e.type === "statement"
+      );
       events.push(...demoStatements);
     }
 
     // Add demo bill_sponsor if none exist (we don't have a bills table query yet)
-    if (!hasRealData.bill_sponsor && (eventTypes.length === 0 || eventTypes.includes("bill_sponsor"))) {
-      const demoBills = demoData.events.filter((e: any) => e.type === "bill_sponsor");
+    if (
+      !hasRealData.bill_sponsor &&
+      (eventTypes.length === 0 || eventTypes.includes("bill_sponsor"))
+    ) {
+      const demoBills = demoData.events.filter(
+        (e: any) => e.type === "bill_sponsor"
+      );
       events.push(...demoBills);
     }
 
     // Add demo donations if no real donations
-    if (!hasRealData.donation && (eventTypes.length === 0 || eventTypes.includes("donation"))) {
-      const demoDonations = demoData.events.filter((e: any) => e.type === "donation");
+    if (
+      !hasRealData.donation &&
+      (eventTypes.length === 0 || eventTypes.includes("donation"))
+    ) {
+      const demoDonations = demoData.events.filter(
+        (e: any) => e.type === "donation"
+      );
       events.push(...demoDonations);
     }
 
