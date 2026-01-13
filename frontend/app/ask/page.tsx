@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from "react";
 import { CitationBadge } from "@/components/CitationBadge";
+import { ChatSidebar, SidebarProvider } from "@/components/ChatSidebar";
 import { askQuestion } from "@/lib/api";
 import type { AIResponse, Citation as APICitation, Claim } from "@/lib/types";
 import {
@@ -147,9 +148,14 @@ function AskPageContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Page Header */}
-      <section className="py-8 bg-card border-b border-border">
+    <div className="min-h-screen flex">
+      {/* Chat Sidebar */}
+      <ChatSidebar />
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Page Header */}
+        <section className="py-8 bg-card border-b border-border">
         <div className="container">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2.5 rounded-xl bg-accent">
@@ -352,14 +358,18 @@ function AskPageContent() {
           </p>
         </div>
       </section>
+      </div>
     </div>
   );
 }
 
 export default function AskPage() {
   return (
-    <Suspense fallback={<div className="py-12 text-center">Loading...</div>}>
-      <AskPageContent />
-    </Suspense>
+    <SidebarProvider>
+      <Suspense fallback={<div className="py-12 text-center">Loading...</div>}>
+        <AskPageContent />
+      </Suspense>
+    </SidebarProvider>
   );
 }
+

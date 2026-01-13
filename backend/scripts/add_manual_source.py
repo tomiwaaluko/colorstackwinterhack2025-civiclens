@@ -129,6 +129,55 @@ async def main():
     # Example sources - edit these with your manually curated content
     sources = [
         {
+            "url": "https://clerk.house.gov/",
+            "title": "Office of the Clerk - U.S. House of Representatives",
+            "publisher": "U.S. House of Representatives",
+            "source_type": "official_document",
+            "topics": ["house", "legislation", "voting records", "official records"],
+            "credibility_score": 1.0,
+            "content": """
+The Office of the Clerk serves as the chief legislative officer of the U.S. House of Representatives. 
+The Clerk maintains and publishes all official House records, legislative documents, and proceedings.
+
+Key Functions of the Clerk's Office:
+
+Legislative Records: The Clerk maintains custody of all legislative documents including bills, 
+resolutions, committee reports, and amendments. All official legislative actions are recorded and 
+published by the Clerk's office.
+
+Roll Call Votes: The Office of the Clerk records and publishes all roll call votes taken on the 
+House floor. These voting records show how each member voted on bills, amendments, and procedural 
+matters. Vote tallies are available immediately after each vote is concluded.
+
+Official Documents: The Clerk publishes the House Journal, which is the official record of House 
+proceedings. The Journal includes votes, actions taken, messages from the President and Senate, 
+and other official business.
+
+Member Information: The Clerk maintains biographical and contact information for all current 
+House members. This includes committee assignments, leadership positions, and district information.
+
+Legislative Statistics: The office compiles statistics on legislative activity including bills 
+introduced, votes taken, committee meetings held, and laws enacted. These statistics help track 
+congressional productivity and activity.
+
+Election Certificates: The Clerk receives and processes certificates of election for newly 
+elected members. The Clerk presides over the House at the start of each new Congress until 
+a Speaker is elected.
+
+Public Access: The Clerk's website provides public access to legislative documents, voting records, 
+and House rules. Citizens can track legislation, view voting records, and access historical 
+congressional records.
+
+Committee Information: The office maintains records of all House committees, including membership, 
+jurisdiction, and meeting schedules. Committee reports and legislative documents are published 
+through the Clerk's office.
+
+The Office of the Clerk plays a crucial role in maintaining transparency and public access to 
+House proceedings. All records maintained by the Clerk are considered official documents of the 
+U.S. House of Representatives.
+            """.strip()
+        },
+        {
             "url": "https://www.congress.gov/about",
             "title": "About Congress.gov",
             "publisher": "U.S. Congress",
@@ -160,6 +209,28 @@ Congress consists of two chambers: the House of Representatives with 435 members
 serving two-year terms, and the Senate with 100 members (two from each state) 
 serving six-year terms. All legislation must pass both chambers and be signed 
 by the President to become law.
+
+H.R.7005 - To prohibit discrimination in public accommodations on the basis of sex, 
+gender identity, and sexual orientation, and for other purposes. Sponsor: Rep. Watson Coleman, 
+Bonnie [D-NJ-12] (Introduced 01/09/2026). Committees:	House - Judiciary
+Latest Action:	House - 01/09/2026 Referred to the House Committee on the Judiciary. 
+
+H.R.1043 - La Paz County Solar Energy and Job Creation Act. 
+Sponsor: Rep. Gosar, Paul A. [R-AZ-9] (Introduced 02/06/2025)
+Committees:	House - Natural Resources | Senate - Energy and Natural Resources
+Committee Meetings:	09/11/25 9:00AM 04/09/25 10:00AM
+Committee Reports:	H. Rept. 119-183
+Latest Action:	12/29/2025 Became Public Law No: 119-68
+This bill directs the Department of the Interior, after receiving a request from La Paz County, Arizona, to convey 
+approximately 3,400 acres of identified land managed by the Bureau of Land Management to the county for fair market value.
+Interior must exclude from the conveyance any federal land that contains significant cultural, environmental, wildlife, 
+or recreational resources. As a condition of the conveyance, La Paz County and any subsequent owner must
+make good faith efforts to avoid disturbing tribal artifacts;
+minimize impacts on tribal artifacts if they are disturbed;
+coordinate with the Colorado River Indian Tribes Tribal Historic Preservation Office to identify 
+artifacts of cultural and historic significance; and allow tribal representatives to 
+rebury unearthed artifacts at, or near, where they were discovered. 
+The federal land is withdrawn from the operation of U.S. mining and mineral leasing laws.
             """.strip()
         },
         {
@@ -192,6 +263,16 @@ For each bill, GovTrack shows the bill's sponsors, cosponsors, current status,
 and full text. Users can see the bill's path through the legislative process 
 and read analyses of what the bill would do. The site sends automatic email 
 alerts when tracked bills are updated.
+
+H.R. 1834: [Reinstates enhanced Affordable Care Act subsidies for three years]
+All votes: Yea: 230 (17 republicans, 213 democrats) Nay: 196 (196 republicans)
+Statistically notable votes: [Yea	CA  22	  R  	Valadao, David
+Yea	CO  3	  R  	Hurd, Jeff
+Yea	FL  27	  R  	Salazar, Maria
+Yea	IA  3	  R  	Nunn, Zachary (Zach)
+Yea	NJ  7	  R  	Kean, Thomas
+Yea	NY  1	  R  	LaLota, Nicolas]
+
             """.strip()
         },
         {
@@ -249,6 +330,34 @@ in both chambers.
 A bill becomes law when it is signed by the President or when Congress overrides 
 a presidential veto. The new law is assigned a public law number and published 
 in the United States Statutes at Large.
+
+How to check your immigration case status and find processing times
+If you filed an immigration application or petition with the U.S. Citizenship 
+and Immigration Services (USCIS), you can check the progress of your case’s status 
+online or by phone. And learn how long it may take to process it.
+Check your immigration case status
+Online: Use the case status online tool to check for updates about your immigration 
+case. You will need your 13-character receipt number from your application or petition.
+By phone: If you are calling from the U.S., contact the USCIS Contact Center at 1-800-375-5283 
+or TTY 1-800-767-1833. If you are outside the U.S., call 212-620-3418 or contact a USCIS 
+international field office.
+
+Become a U.S. citizen through naturalization
+Naturalization is the process of voluntarily becoming a United States citizen. 
+Learn about the steps that lead to U.S. citizenship, including the naturalization test.
+What are the requirements for U.S. citizenship?
+To be eligible for U.S. citizenship, you must meet certain eligibility requirements. 
+These include being:
+At least 18 years old when you apply
+Able to read, write, and speak basic English (depending on age)
+Of good moral character
+
+How to apply for U.S. citizenship:
+Follow the 10-step naturalization process from the U.S. Citizenship and Immigration 
+Services (USCIS). You will learn:
+If you are eligible for naturalization
+How to fill out Form N-400 to apply for naturalization
+What to do before taking the oath of citizenship
             """.strip()
         }
     ]
