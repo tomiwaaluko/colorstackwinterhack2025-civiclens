@@ -121,7 +121,7 @@ export default function TimelineChart({
   );
   const [viewMode, setViewMode] = useState<"single" | "comparative">("single");
   const [comparativeData, setComparativeData] = useState<
-    Record<number, TimelineResponse>
+    Record<string | number, TimelineResponse>
   >({});
   const [visibleTypes, setVisibleTypes] = useState<Set<EventType>>(
     new Set(["vote", "donation", "statement", "bill_sponsor"])
@@ -167,7 +167,7 @@ export default function TimelineChart({
         }).then((data) => ({ id: pol.id, data: enrichTimelineData(data) }))
       )
     ).then((results) => {
-      const newData: Record<number, TimelineResponse> = {};
+      const newData: Record<string | number, TimelineResponse> = {};
       results.forEach(({ id, data }) => {
         newData[id] = data;
       });

@@ -500,7 +500,7 @@ export async function getDonationsMap(params?: {
 }
 
 export async function getPoliticianTimeline(
-  politicianId: number,
+  politicianId: string | number,
   params?: {
     start_date?: string;
     end_date?: string;
@@ -544,7 +544,7 @@ export async function getPoliticianTimeline(
 }
 
 // Generate demo timeline events for a politician
-function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
+function generateDemoTimelineEvents(politicianId: string | number): TimelineEvent[] {
   const topics = [
     "Healthcare",
     "Energy",
@@ -559,7 +559,11 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
   let eventId = 1;
 
   // Generate events based on politician ID (for variety)
-  const seed = politicianId * 7;
+  // Convert string IDs to a numeric seed using hash
+  const numericId = typeof politicianId === 'number'
+    ? politicianId
+    : politicianId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const seed = numericId * 7;
 
   // Healthcare cluster - votes and donations close together
   events.push({
@@ -567,7 +571,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     type: "vote",
     date: `${baseYear}-01-15`,
     title: "Affordable Care Act Extension",
-    outcome: politicianId % 2 === 1 ? "yes" : "no",
+    outcome: numericId % 2 === 1 ? "yes" : "no",
     topic: "Healthcare",
     citations: [
       {
@@ -668,7 +672,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     type: "vote",
     date: `${baseYear}-02-28`,
     title: "Infrastructure Modernization Bill",
-    outcome: politicianId % 3 === 0 ? "no" : "yes",
+    outcome: numericId % 3 === 0 ? "no" : "yes",
     topic: "Energy",
     citations: [
       {
@@ -730,7 +734,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     type: "vote",
     date: `${baseYear}-04-05`,
     title: "Banking Regulation Reform",
-    outcome: politicianId % 2 === 0 ? "yes" : "no",
+    outcome: numericId % 2 === 0 ? "yes" : "no",
     topic: "Finance",
     citations: [
       {
@@ -910,7 +914,7 @@ function generateDemoTimelineEvents(politicianId: number): TimelineEvent[] {
     type: "vote",
     date: `${baseYear}-08-15`,
     title: "Education Funding Amendment",
-    outcome: politicianId % 2 === 1 ? "yes" : "no",
+    outcome: numericId % 2 === 1 ? "yes" : "no",
     topic: "Other",
     citations: [
       {
@@ -1307,7 +1311,7 @@ function generateDemoNetworkGraph(
 }
 
 export async function getPoliticianRadial(
-  politicianId: number,
+  politicianId: string | number,
   params?: {
     start_date?: string;
     end_date?: string;
@@ -1330,8 +1334,12 @@ export async function getPoliticianRadial(
 }
 
 // Generate demo radial data for a politician
-function generateDemoRadialData(politicianId: number): RadialResponse {
-  const seed = politicianId * 11;
+function generateDemoRadialData(politicianId: string | number): RadialResponse {
+  // Convert string IDs to a numeric seed using hash
+  const numericId = typeof politicianId === 'number'
+    ? politicianId
+    : politicianId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const seed = numericId * 11;
 
   // Categories with related bills
   const categoryData = [

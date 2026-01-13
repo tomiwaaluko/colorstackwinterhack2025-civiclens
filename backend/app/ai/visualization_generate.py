@@ -187,20 +187,22 @@ def generate_visualization_answer(
     *,
     model: str = DEFAULT_MODEL,
     api_key: Optional[str] = None,
+    retry_on_invalid_json: int = 2,
 ) -> VisualizationQAResponse:
     """
     Generate an AI answer to a question about a visualization.
-    
+
     Args:
         request: The question and visualization context
         model: Gemini model to use
         api_key: Optional API key override
-        
+        retry_on_invalid_json: Number of retries if JSON parsing fails
+
     Returns:
         VisualizationQAResponse with the answer
     """
     system_prompt = _load_prompt("visualization_ask_prompt.txt")
-    
+
     user_text = f"""
 VISUALIZATION TYPE: {request.visualization_type.value}
 
@@ -214,17 +216,24 @@ SELECTED ITEMS: {', '.join(request.selected_items) if request.selected_items els
 
 USER QUESTION: {request.question}
 
-Answer the user's question based on the visualization data.
+Answer the user's question based on the visualization data. Return ONLY valid JSON, no extra text.
 """
-    
+
     prompt = _compose_prompt(system_prompt, user_text)
-    
-    try:
-        response_text = _call_gemini(prompt, model=model, api_key=api_key)
-        data = _parse_json_response(response_text)
-        return VisualizationQAResponse.model_validate(data)
-    except (json.JSONDecodeError, ValidationError, ValueError) as e:
-        raise VisualizationGenerationError(f"Failed to generate answer: {e}")
+
+    last_err: Exception = ValueError("No attempts made")
+    for attempt in range(retry_on_invalid_json + 1):
+        try:
+            response_text = _call_gemini(prompt, model=model, api_key=api_key)
+            data = _parse_json_response(response_text)
+            return VisualizationQAResponse.model_validate(data)
+        except (json.JSONDecodeError, ValidationError, ValueError) as e:
+            last_err = e
+            if attempt < retry_on_invalid_json:
+                continue
+            break
+
+    raise VisualizationGenerationError(f"Failed to generate answer after {retry_on_invalid_json + 1} attempts: {last_err}")
 
 
 def generate_visualization_suggestions(
@@ -232,20 +241,22 @@ def generate_visualization_suggestions(
     *,
     model: str = DEFAULT_MODEL,
     api_key: Optional[str] = None,
+    retry_on_invalid_json: int = 2,
 ) -> SuggestionsResponse:
     """
     Generate AI-powered exploration suggestions.
-    
+
     Args:
         request: The current visualization state
         model: Gemini model to use
         api_key: Optional API key override
-        
+        retry_on_invalid_json: Number of retries if JSON parsing fails
+
     Returns:
         SuggestionsResponse with suggested explorations
     """
     system_prompt = _load_prompt("visualization_suggestions_prompt.txt")
-    
+
     user_text = f"""
 VISUALIZATION TYPE: {request.visualization_type.value}
 
@@ -254,14 +265,22 @@ CURRENT STATE:
 
 USER HISTORY: {', '.join(request.user_history) if request.user_history else 'No previous actions'}
 
-Generate contextual exploration suggestions.
+Generate contextual exploration suggestions. Return ONLY valid JSON, no extra text.
 """
-    
+
     prompt = _compose_prompt(system_prompt, user_text)
-    
-    try:
-        response_text = _call_gemini(prompt, model=model, api_key=api_key)
-        data = _parse_json_response(response_text)
-        return SuggestionsResponse.model_validate(data)
-    except (json.JSONDecodeError, ValidationError, ValueError) as e:
-        raise VisualizationGenerationError(f"Failed to generate suggestions: {e}")
+
+    last_err: Exception = ValueError("No attempts made")
+    for attempt in range(retry_on_invalid_json + 1):
+        try:
+            response_text = _call_gemini(prompt, model=model, api_key=api_key)
+            data = _parse_json_response(response_text)
+            return SuggestionsResponse.model_validate(data)
+        except (json.JSONDecodeError, ValidationError, ValueError) as e:
+            last_err = e
+            if attempt < retry_on_invalid_json:
+                # Retry with slightly higher temperature
+                continue
+            break
+
+    raise VisualizationGenerationError(f"Failed to generate suggestions after {retry_on_invalid_json + 1} attempts: {last_err}")

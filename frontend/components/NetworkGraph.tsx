@@ -3,61 +3,13 @@
 import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import dynamic from "next/dynamic";
 
-// Define THREE and AFRAME stubs immediately at module load time
-// This MUST run before any react-force-graph related code is imported
-// react-force-graph has peer dependencies on three.js and aframe for 3D/VR features
-if (typeof window !== "undefined") {
-  // THREE.js stub - required by react-force-graph
-  if (typeof (window as any).THREE === "undefined") {
-    (window as any).THREE = {
-      REVISION: "stub",
-      Vector3: class Vector3 {
-        constructor() {}
-      },
-      Vector2: class Vector2 {
-        constructor() {}
-      },
-      Color: class Color {
-        constructor() {}
-      },
-      Object3D: class Object3D {
-        constructor() {}
-      },
-      Scene: class Scene {
-        constructor() {}
-      },
-      Camera: class Camera {
-        constructor() {}
-      },
-      WebGLRenderer: class WebGLRenderer {
-        constructor() {}
-      },
-    };
-  }
+// Import THREE.js - required peer dependency for react-force-graph
+import * as THREE from "three";
 
-  // AFRAME stub - required by react-force-graph 3D features
-  if (typeof (window as any).AFRAME === "undefined") {
-    (window as any).AFRAME = {
-      registerComponent: () => {},
-      registerSystem: () => {},
-      registerShader: () => {},
-      registerPrimitive: () => {},
-      registerGeometry: () => {},
-      registerState: () => {},
-      components: {},
-      geometries: {},
-      primitives: {},
-      shaders: {},
-      systems: {},
-      utils: {
-        device: {
-          isMobile: () => false,
-          isBrowserEnvironment: true,
-        },
-      },
-      version: "1.0.0-stub",
-    };
-  }
+// Expose THREE globally for react-force-graph compatibility
+// Create an extensible copy since ES modules are frozen and react-force-graph needs to add loaders
+if (typeof window !== "undefined") {
+  (window as any).THREE = Object.assign({}, THREE);
 }
 
 // Dynamically load ForceGraph2D only on client-side
